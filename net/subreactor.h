@@ -1,5 +1,5 @@
-#ifndef __EV_THREAD_H
-#define __EV_THREAD_H
+#ifndef __SUBREACTOR_H
+#define __SUBREACTOR_H
 
 #include "cb.h"
 #include "event_loop.h"
@@ -29,9 +29,9 @@ struct msg_t {
 };
 
 class event_loop;
-class ev_thread {
+class subreactor {
 public:
-    ev_thread();
+    subreactor();
 
 public:
     void notify(const msg_t& msg);         //用于main reactor处理了连接事件后,把acceptfd传送给子进程并让其开始监听
@@ -41,8 +41,8 @@ public:
     std::thread::id get_threadid() { return std::this_thread::get_id(); }
 
 private:
-    int eventfd_; // linux下用于事件通知的fd
-    std::shared_ptr<event_loop> sp_loop_;
+    int eventfd_;                         // linux下用于事件通知的fd
+    std::shared_ptr<event_loop> sp_loop_; // one thread peer loop
     std::vector<msg_t> msgs_;
     std::mutex mtx_;
 };

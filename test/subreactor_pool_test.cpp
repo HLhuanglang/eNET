@@ -1,4 +1,4 @@
-#include "../net/ev_thread_pool.h"
+#include "../net/subreactor_pool.h"
 
 #include <chrono>
 #include <iostream>
@@ -18,7 +18,7 @@ void func(event_loop *loop, void *args) {
 
 int main() {
     signal(SIGINT, handle_sig);
-    ev_thread_pool pool(4);
+    subreactor_pool pool(4);
     while (1) {
         auto reactor = pool.get_sub_reactor();
         task_t t;

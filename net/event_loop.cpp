@@ -77,3 +77,5 @@ void event_loop::add_io_event(int fd, event_cb_f cb, int mask, void *args) {
         // log
     }
 }
+
+int event_loop::run_at(event_cb_f cb, void *args, uint64_t ts) {}
