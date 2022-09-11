@@ -1,0 +1,4 @@
+bin
+output
+.clangd
+compile_commands.json
