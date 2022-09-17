@@ -1,6 +1,9 @@
 #ifndef __SIGLETON_H
 #define __SIGLETON_H
 
+#include <memory>
+#include <mutex>
+
 template <typename T>
 class sigleton {
 public:
