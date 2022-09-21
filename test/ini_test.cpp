@@ -1,4 +1,4 @@
-#include "../util/ini.h"
+#include "ini.h"
 #include <iostream>
 
 int main() {

@@ -1,4 +1,6 @@
 #include "subreactor_pool.h"
+#include "print_debug.h"
+#include "tcp_connection.h"
 #include <iostream>
 
 void get_msg_cb(event_loop* loop, int fd, void* args) {
@@ -8,10 +10,12 @@ void get_msg_cb(event_loop* loop, int fd, void* args) {
     for (auto& n : msgs) {
         if (n.msg_type_ == msg_type_t::NEW_CONN) {
             //创建新的连接
+            tcp_connection* new_conn = new tcp_connection(loop, fd);
+            //然后将acceptfd添加到epoll中进行监视.
+            new_conn->init(loop, n.accept_fd_);
         }
         if (n.msg_type_ == msg_type_t::NEW_TASK) {
             //添加任务
-            std::cout << "thread:" << mq->get_threadid() << "  ";
             n.task_->func_(loop, n.task_->args_);
         }
     }

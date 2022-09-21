@@ -1,8 +1,6 @@
 #ifndef __CB_H
 #define __CB_H
 
-#include "buffer.h"
-#include "tcp_connection.h"
 #include <functional>
 
 // Pre-declaration

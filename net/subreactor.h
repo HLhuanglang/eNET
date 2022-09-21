@@ -38,13 +38,14 @@ public:
     void wakeup(std::vector<msg_t>& msgs); //子进程接收main reactor发送的通知和数据
     std::shared_ptr<event_loop> get_loop() { return sp_loop_; }
     void set_loop(std::shared_ptr<event_loop> loop, event_cb_f func, void* args = nullptr);
-    std::thread::id get_threadid() { return std::this_thread::get_id(); }
+    std::thread::id get_threadid() { return thread_id_; }
 
 private:
     int eventfd_;                         // linux下用于事件通知的fd
     std::shared_ptr<event_loop> sp_loop_; // one thread peer loop
     std::vector<msg_t> msgs_;
     std::mutex mtx_;
+    std::thread::id thread_id_;
 };
 
 #endif

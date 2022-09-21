@@ -7,6 +7,7 @@
 #include "buffer.h"
 #include "cb.h"
 #include "event_loop.h"
+#include "subreactor_pool.h"
 #include <cstddef>
 #include <map>
 
@@ -14,7 +15,8 @@ class tcp_connection;
 class tcp_server {
 public:
     tcp_server(event_loop* loop, const char* ip, size_t port);
-    ~tcp_server();
+    ~tcp_server() = default;
+    void _do_accept();
 
 public:
     //设置当接收到客户端数据时回调
@@ -29,7 +31,7 @@ public:
     //---一般用于服务器断开或者客户端断开后打印信息
     void set_close_connection_cb(std::function<void()>);
 
-    //设置loop中的线程数量
+    //设置loop中的线程数量,必须在start之前设置.
     void set_thread_cnt(size_t cnt);
 
     //运行
@@ -38,6 +40,10 @@ public:
 private:
     event_loop* loop_;                              //每一个tcp服务器都应该有一个loop,用来处理各种事件
     std::map<int, tcp_connection*> connection_map_; // acceptfd----connection：通过acceptfd来定位到具体的连接
+    int socketfd_;                                  //处理监听请求
+    int idlefd_;                                    //占位符,防止文件描述符使用达到上限导致无法处理连接事件
+    subreactor_pool* sub_reactor_pool_;
+    std::mutex mtx_;
 };
 
 #endif

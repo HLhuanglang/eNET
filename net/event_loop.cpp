@@ -1,5 +1,6 @@
 #include "event_loop.h"
 #include "event.h"
+#include "print_debug.h"
 #include <cstdio>
 #include <sys/epoll.h>
 
@@ -73,7 +74,7 @@ void event_loop::add_io_event(int fd, event_cb_f cb, int mask, void *args) {
     ev.data.fd = fd;
     int ret = ::epoll_ctl(this->epoll_fd_, final_opt, fd, &ev);
     if (ret == -1) {
-        perror("epoll_ctl error!");
+        printfd("epoll_ctl error!");
         // log
     }
 }

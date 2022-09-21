@@ -3,6 +3,7 @@
 #include <mutex>
 #include <type_traits>
 #include <unistd.h>
+#include <utility>
 
 #include <sys/eventfd.h>
 
@@ -12,11 +13,12 @@ subreactor::subreactor() {
         perror("eventfd(0, EFD_NONBLOCK)");
         exit(-1);
     }
+    thread_id_ = std::this_thread::get_id();
 }
 
 void subreactor::set_loop(std::shared_ptr<event_loop> loop, event_cb_f func, void* args) {
-    this->sp_loop_ = loop;
-    this->sp_loop_.get()->add_io_event(this->eventfd_, func, EPOLLIN, args);
+    this->sp_loop_ = std::move(loop);
+    this->sp_loop_.get()->add_io_event(this->eventfd_, std::move(func), EPOLLIN, args);
 }
 
 // main reactor可能一次性收到很多连接请求,accept完事后,然后通过调度算法分配给子reactor
@@ -34,7 +36,8 @@ void subreactor::notify(const msg_t& msg) {
     msgs_.emplace_back(msg);
 }
 
-// 子线程调用时会主动阻塞住,等main reactor发送了消息read才会返回,然后进行后续处理
+// 子线程调用时会x主动阻塞住x,等main reactor发送了消息read才会返回,然后进行后续处理
+// eventfd设置成了非阻塞模式，子线程主动调用wakeup并不会阻塞，read会直接返回。
 void subreactor::wakeup(std::vector<msg_t>& msgs) {
     std::lock_guard<std::mutex> lg(this->mtx_);
     eventfd_msg_t t;

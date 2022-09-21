@@ -1,4 +1,5 @@
 #include "buffer.h"
+#include <cassert>
 #include <cstring>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -20,6 +21,10 @@ void buffer::copy(const buffer* other) {
 
 void buffer::clear() {
     offset_ = 0;
+}
+
+size_t buffer::size() {
+    return end_of_data_;
 }
 
 size_t buffer_pool::_align_block_size(size_t size) {
@@ -78,23 +83,70 @@ buffer* buffer_pool::get(size_t size) {
     }
 }
 
+void buffer_pool::release(buffer* buf) {
+    std::lock_guard<std::mutex> lg(mtx_);
+    size_t block_idx = buf->size();
+    if (pool_map_.count(block_idx)) {
+        buffer* tmp = nullptr;
+        tmp = pool_map_[block_idx];
+        while (tmp->next_ != nullptr) {
+            tmp = tmp->next_;
+        }
+        tmp->next_ = buf;
+    }
+    else {
+        pool_map_[buf->size()] = buf;
+    }
+}
+
+void buffer_pool::clear_all() {
+    // todo
+}
+
+void buffer_pool::clear_by_blocksize(blocksize_t type) {
+    // toodo
+    if (pool_map_.count(type)) {
+    }
+}
+
 int read_buffer::read(int fd) {
-    // 1,获取当前fd需要读取多少数据
-    int total_size = 0;
-    if (::ioctl(fd, FIONREAD, &total_size) == -1) {
+    // 1,获取当前fd需要读取多少数据（to-fix：如果对方发送数据很大，进行多次发送后，此时无法读取到全部数据）
+    int read_total_size = 0;
+    if (::ioctl(fd, FIONREAD, &read_total_size) == -1) {
         return -1;
     }
 
     // 2,获取buf用于存储
     if (!buf_) {
-        buf_ = sigleton<buffer_pool>::get_instance()->get(total_size);
+        //直接申请全新的
+        buf_ = sigleton<buffer_pool>::get_instance()->get(read_total_size);
     }
     else {
+        //旧的,判断剩余空间够不够使用,不够就扩容,然后再拷贝旧的
+        size_t left_size = buf_->end_of_data_ - buf_->offset_;
+        if (left_size < read_total_size) {
+            buffer* old_one = buf_;
+            buffer* new_one = sigleton<buffer_pool>::get_instance()->get(read_total_size + left_size);
+            new_one->copy(old_one);
+            sigleton<buffer_pool>::get_instance()->release(old_one);
+            buf_ = new_one;
+        }
     }
 
     // 3,执行read读取数据
     int ret = 0;
     do {
-        ret = ::read(fd, buf_, total_size);
+        ret = ::read(fd, buf_->data_ + buf_->offset_, read_total_size);
     } while (ret == -1 && errno == EINTR);
+
+    if (ret > 0) {
+        assert(ret == read_total_size);
+        buf_->offset_ += read_total_size;
+    }
+
+    return ret;
+}
+
+const char* read_buffer::data() const {
+    return buf_->data_;
 }

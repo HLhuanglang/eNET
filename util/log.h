@@ -88,20 +88,15 @@ private:
 #define log_set_filesize(filesize) sigleton<log>::get_instance()->logger_set_filesize(filesize)
 
 // 日志信息
-#define log_debug(fmt, ...) \
-    sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_DEBUG, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define log_debug(fmt, ...) sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_DEBUG, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 
-#define log_info(fmt, ...) \
-    sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_INFO, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define log_info(fmt, ...) sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_INFO, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 
-#define log_warn(fmt, ...) \
-    sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_WARN, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define log_warn(fmt, ...) sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_WARN, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 
-#define log_error(fmt, ...) \
-    sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_ERROR, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define log_error(fmt, ...) sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_ERROR, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 
-#define log_fatal(fmt, ...) \
-    sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_FATAL, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define log_fatal(fmt, ...) sigleton<log>::get_instance()->logger_print(log_level_e::LOG_LEVEL_FATAL, "[%s:%d][%s]" fmt __newline, __filename, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 
 // 别名
 #define LOG_DEBUG log_debug

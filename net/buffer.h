@@ -11,14 +11,15 @@
     4,考虑大文件传输
 
     注意：
-    不使用vector<char>，因为vector本身扩容也是要移动的...
+    x 不使用vector<char>，因为vector本身扩容也是要移动的...
+    看了一圈书，发现还是采用std::vector<char>来实现更好.
 
     实现：
 */
 #ifndef __BUFFER_H
 #define __BUFFER_H
 
-#include "../util/sigleton.h"
+#include "sigleton.h"
 #include <cstddef>
 #include <unordered_map>
 
@@ -26,9 +27,10 @@ class buffer {
 public:
     buffer(size_t size);
 
-    void pop(size_t size);
-    void copy(const buffer* other);
-    void clear();
+    void pop(size_t size);          //删除buffer中数据,从尾部开始删
+    void copy(const buffer* other); //当前buffer不足以存下数据时，需要申请更大内存的块,然后做一个拷贝动作
+    void clear();                   //清空数据
+    size_t size();
 
 public:
     /*
@@ -39,7 +41,7 @@ public:
         ↑                          ↑
         data_                      end_of_data_
     */
-    size_t end_of_data_;
+    size_t end_of_data_; //大小一定时blocksize_t中的一种
     size_t offset_;
     buffer* next_;
     char* data_;
@@ -47,8 +49,6 @@ public:
 
 class buffer_pool {
     friend sigleton<buffer_pool>;
-
-public:
     enum blocksize_t {
         _4kb = 4096,
         _8kb = 8192,
@@ -63,26 +63,37 @@ public:
         _4mb = 4194304,
         _8mb = 8388608
     };
-    buffer* get(size_t size);
 
 public:
-    buffer_pool();
+    buffer* get(size_t size);
+    void release(buffer* buf);
+    void clear_all();                          //清空整个buffer pool
+    void clear_by_blocksize(blocksize_t type); //将某个大小的内存块链表全部释放.
+
+public:
+    buffer_pool() = default;
+    ~buffer_pool() { clear_all(); }
 
 private:
     size_t _align_block_size(size_t size);
 
 private:
     std::mutex mtx_;
-    std::unordered_map<size_t, buffer*> pool_map_;
+    std::unordered_map<size_t, buffer*> pool_map_; //在这个上面的buffer块都是未被使用的
 };
 
 class read_buffer {
 public:
     int read(int fd);
+    const char* data() const;
 
 private:
-    buffer* buf_;
+    buffer* buf_ = nullptr;
 };
 
-class write_buffer {};
+class write_buffer {
+public:
+private:
+    buffer* buf_ = nullptr;
+};
 #endif
