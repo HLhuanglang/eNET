@@ -5,6 +5,7 @@
 #ifndef __HTTP_RESPONSE_H
 #define __HTTP_RESPONSE_H
 
+#include <map>
 #include <string>
 
 class http_response {
@@ -12,6 +13,8 @@ private:
     std::string version_;         // http1.1
     std::string status_code_;     //状态码200、301、404等
     std::string status_code_msg_; //状态码描述信息,例如200的描述信息是ok
+    std::map<std::string, std::string> headers_;
+    std::string body_;
 };
 
 #endif

@@ -22,4 +22,3 @@ ${OUTPUT_LIB_PATH}/${TARGET_SO}:${OBJS}
 
 $(OBJS):%.o:%.cpp
 	${CXX} ${CXXFLAGS} -c $< -o $@ ${LDFLAGES}
-	@cp $@ ${OUTPUT_OBJ_DIR}
