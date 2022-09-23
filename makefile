@@ -10,19 +10,17 @@ SUB_DIRS=easy_net\
 
 ROOT_DIR=$(shell pwd)
 OUTPUT_BIN_DIR=$(ROOT_DIR)/debug/bin
-OUTPUT_OBJ_DIR=$(ROOT_DIR)/debug/obj
 OUTPUT_LIB_PATH=$(ROOT_DIR)/output/lib
 OUTPUT_INC_PATH=${ROOT_DIR}/output/include
 
 TARGET_SO=libeasynet.so
 
 $(shell mkdir -p ${OUTPUT_BIN_DIR})
-$(shell mkdir -p ${OUTPUT_OBJ_DIR})
 $(shell mkdir -p ${OUTPUT_LIB_PATH})
 $(shell mkdir -p ${OUTPUT_INC_PATH})
 
 ## 导出给子makefile使用
-export ROOT_DIR OUTPUT_BIN_DIR OUTPUT_OBJ_DIR OUTPUT_LIB_PATH OUTPUT_INC_PATH CXX CXXFLAGS LDFLAGES TARGET_SO
+export ROOT_DIR OUTPUT_BIN_DIR OUTPUT_LIB_PATH OUTPUT_INC_PATH CXX CXXFLAGS LDFLAGES TARGET_SO
 
 .PHONY: default
 default: all
@@ -57,3 +55,4 @@ test: easy_net
 clean:
 	rm -rf debug
 	rm -rf output
+	find easy_net -name "*.o"  | xargs rm -f
