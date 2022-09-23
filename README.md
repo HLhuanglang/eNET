@@ -1,7 +1,18 @@
 # EasyNet
 
-## 项目简介
-EasyNet对于我而言首先是为了学习网络编程而创建的，考虑到后续库的一个完善使用，选择两个分支:
+*“study分支——代码垃圾废话超多~”*
 
-- study：完全用于学习目的，代码怎么直观怎么来
-- master：实际可用于生产环境，代码抽象更好，实现也更加优雅
+## 支持平台
+- linux
+
+## 运行要求
+- 编译器支持c++11环境
+- clangd：用于代码跳转、智能补充、提示错误
+- bear：生成compile_commands.json
+
+## 编译
+- `bear make all`：编译动态库、测试程序、一些原始socket接口使用案例
+- `make raw_examples`：原始socket使用案例
+- `make easy_net`：只编译动态库
+- `make example`：如何使用easy_net进行tcp、udp服务的开发案例
+- `make test`：测试用例

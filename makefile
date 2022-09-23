@@ -43,10 +43,6 @@ easy_net:
 example:easy_net
 	${MAKE} -C example
 
-.PHONY:protocol
-protocol: easy_net
-	${MAKE} -C protocol
-
 .PHONY: test
 test: easy_net
 	${MAKE} -C test
