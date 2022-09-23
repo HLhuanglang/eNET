@@ -30,6 +30,6 @@ int main() {
         msg.msg_type_ = msg_type_t::NEW_TASK;
         msg.task_ = &t;
         reactor->notify(msg);
-        std::this_thread::sleep_for(std::chrono::microseconds(500));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }

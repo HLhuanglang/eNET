@@ -10,12 +10,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-static void accepter_cb(event_loop* loop, int fd, void* args) {
-    // todo
-    tcp_server* server = (tcp_server*)(args);
-    server->_do_accept();
-}
-
 tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port) : loop_(loop), sub_reactor_pool_(nullptr) {
     if (!util::check_ipv4(ip) || !util::check_port(port)) {
         printfd("error format ip or port!\n");
@@ -71,7 +65,20 @@ tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port) : loop_(lo
 
     // 7,将监听事件以及回调添加到epoll中进行管理。
     loop_ = loop;
-    loop_->add_io_event(socketfd_, accepter_cb, EPOLLIN, this);
+    loop_->add_io_event(
+        socketfd_, [&](event_loop* loop, int fd, void* args) { this->_do_accept(); }, EPOLLIN, this);
+}
+
+void tcp_server::set_recv_msg_cb(const recv_msg_cb_f& t) {
+    // todo
+}
+
+void tcp_server::set_build_connection_cb(std::function<void()>) {
+    // TODO
+}
+
+void tcp_server::set_close_connection_cb(std::function<void()>) {
+    // todo
 }
 
 void tcp_server::set_thread_cnt(size_t cnt) {
@@ -79,12 +86,7 @@ void tcp_server::set_thread_cnt(size_t cnt) {
     if (sub_reactor_pool_ != nullptr) {
         delete sub_reactor_pool_;
     }
-    if (cnt < k_sub_reactor_cnt) {
-        sub_reactor_pool_ = new subreactor_pool(k_sub_reactor_cnt);
-    }
-    else {
-        sub_reactor_pool_ = new subreactor_pool(cnt);
-    }
+    sub_reactor_pool_ = new subreactor_pool(cnt);
 }
 
 void tcp_server::_do_accept() {

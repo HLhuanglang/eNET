@@ -1,10 +1,24 @@
+SRC=buffer_test.cpp\
+	event_loop_test.cpp\
+	ini_test.cpp\
+	log_test.cpp\
+	subreactor_pool_test.cpp\
+	tcp_server_test.cpp\
+	util_test.cpp\
+
+TARGET_BIN=$(patsubst %.cpp,%,$(SRC))
+
+CXXFLAGS+= -I${OUTPUT_INC_PATH} -L${OUTPUT_LIB_PATH} 
+LDFLAGES+= -Wl,-rpath=${OUTPUT_LIB_PATH} -leasynet
+
+BIN_PATH=${OUTPUT_BIN_DIR}/test
+$(shell mkdir -p ${BIN_PATH})
+
+.PHONY:default
+default:test
+
 .PHONY: test
-test:
-	mkdir -p ../bin/test
-	g++ -std=c++11 util_test.cpp -o ../bin/test/util_test -g -I../output/include	-lpthread
-	g++ -std=c++11 event_loop_test.cpp -o ../bin/test/event_loop_test -g -I../output/include  -L../output/lib -leasynet -Wl,-rpath=$(LIB_PATH) -lpthread
-	g++ -std=c++11 subreactor_pool_test.cpp -o ../bin/test/subreactor_pool -g -I../output/include  -L../output/lib -leasynet -Wl,-rpath=$(LIB_PATH) -lpthread
-	g++ -std=c++11 ini_test.cpp -o ../bin/test/ini -g -I../output/include  -L../output/lib -leasynet -Wl,-rpath=$(LIB_PATH) -lpthread
-	g++ -std=c++11 log_test.cpp -o ../bin/test/log -g -I../output/include  -L../output/lib -leasynet -Wl,-rpath=$(LIB_PATH) -lpthread
-	g++ -std=c++11 buffer_test.cpp -o ../bin/test/buffer_test -g -I../output/include  -L../output/lib -leasynet -Wl,-rpath=$(LIB_PATH) -lpthread
-	g++ -std=c++11 tcp_server_test.cpp -o ../bin/test/tcp_server_test -g -I../output/include  -L../output/lib -leasynet -Wl,-rpath=$(LIB_PATH) -lpthread
+test:${TARGET_BIN}
+
+%:%.cpp
+	${CXX} ${CXXFLAGS} $< -o ${BIN_PATH}/$@ ${LDFLAGES}

@@ -3,8 +3,8 @@
 #include <iostream>
 
 int main() {
-    event_loop loop;
-    tcp_server server(&loop, "127.0.0.1", 8888);
+    event_loop* loop = new event_loop();
+    tcp_server server(loop, "127.0.0.1", 8888);
 
     // 1,设置连接建立回调
     server.set_build_connection_cb([]() {

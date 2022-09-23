@@ -16,7 +16,6 @@ class tcp_server {
 public:
     tcp_server(event_loop* loop, const char* ip, size_t port);
     ~tcp_server() = default;
-    void _do_accept();
 
 public:
     //设置当接收到客户端数据时回调
@@ -36,6 +35,9 @@ public:
 
     //运行
     void start() { loop_->process_event(); }
+
+private:
+    void _do_accept();
 
 private:
     event_loop* loop_;                              //每一个tcp服务器都应该有一个loop,用来处理各种事件

@@ -1,3 +1,6 @@
+/*
+** 每一个tcp连接都有一个tcp_connection对象,该对象
+*/
 #ifndef __TCP_CONNECTION_H
 #define __TCP_CONNECTION_H
 
@@ -18,8 +21,10 @@ public:
 public:
     void init(event_loop* loop, int fd);
     int send_data(const char* data, size_t data_size);
-    void handle_read();
-    void handle_write();
+
+private:
+    void _handle_read();
+    void _handle_write();
 
 private:
     event_loop* loop_;

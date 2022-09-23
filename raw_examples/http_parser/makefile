@@ -1,8 +1,12 @@
-.PHONY:all
-all:
-	mkdir -p ../../bin/raw_examples/http_parser
-	g++ -std=c++11 http_parser_demo.cpp http_parser.c -o ../../bin/raw_examples/http_parser/http_parser_demo -g -I./
+SRC=$(wildcard ./*cpp ./*c)
 
-.PHONY:clean
-clean:
-	rm -rf main
+BIN_PATH=${OUTPUT_BIN_DIR}/http_parser
+TARGET_BIN=http_parser
+
+.PHONY:default
+default:build
+
+.PHONY:build
+build:
+	@mkdir -p ${BIN_PATH}
+	${CXX} ${CXXFLAGS} ${LDFLAGES} ${SRC} -o ${BIN_PATH}/${TARGET_BIN}

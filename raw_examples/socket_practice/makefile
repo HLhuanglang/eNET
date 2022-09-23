@@ -1,7 +1,8 @@
-SUB_DIRS=socket_practice\
-			http_parser\
+SUB_DIRS=epoll\
+			eventfd\
+			timerfd\
 
-OUTPUT_BIN_DIR:=${OUTPUT_BIN_DIR}/raw_examples
+OUTPUT_BIN_DIR:=${OUTPUT_BIN_DIR}/socket_practice
 
 .PHONY:default
 default:build
