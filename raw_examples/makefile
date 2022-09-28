@@ -1,5 +1,6 @@
 SUB_DIRS=socket_practice\
 			http_parser\
+			libuv\
 
 OUTPUT_BIN_DIR:=${OUTPUT_BIN_DIR}/raw_examples
 

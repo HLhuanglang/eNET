@@ -1,7 +1,6 @@
 SRC=buffer_test.cpp\
 	event_loop_test.cpp\
 	ini_test.cpp\
-	log_test.cpp\
 	subreactor_pool_test.cpp\
 	tcp_server_test.cpp\
 	util_test.cpp\

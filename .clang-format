@@ -10,7 +10,7 @@ AlignOperands:   true
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
@@ -20,24 +20,40 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: true
 BinPackArguments: true
 BinPackParameters: true
+# 大括号换行，只有当 BreakBeforeBraces 设置为Custom时才有效
+# true表示换行，fasle表示不换行
 BraceWrapping:
+  #case语句后面
+  AfterCaseLabel:  true
+  #class定义后面
   AfterClass:      false
+  #控制语句后面
   AfterControlStatement: false
-  AfterEnum:       false
-  AfterFunction:   false
+  #enmu是一行还是分行
+  AfterEnum:       true
+  #是否跟在函数定义后面
+  AfterFunction:   true
+  #命名空间后面
   AfterNamespace:  false
   AfterObjCDeclaration: false
   AfterStruct:     false
   AfterUnion:      false
   BeforeCatch:     true
-  BeforeElse:      true
+  BeforeElse:      false
   IndentBraces:    false
+  #空函数的大括号是否可以在一行
+  SplitEmptyFunction: false
+  # 空记录体(struct/class/union)的大括号是否可以在一行
+  SplitEmptyRecord: false
+  # 空名字空间的大括号是否可以在一行
+  SplitEmptyNamespace: false
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: true
+BreakConstructorInitializers: BeforeComma
 ColumnLimit:     200
 CommentPragmas:  '^ IWYU pragma:'
 ConstructorInitializerAllOnOneLineOrOnePerLine: false

@@ -1,8 +1,14 @@
-.PHONY: demo
-demo:
-	mkdir -p ../../bin/raw_examples/libuv
-	g++ -std=c++11 echo_server.cpp -o ../../bin/raw_examples/libuv/echo_server -lpthread -I/opt/libuv/include -L/opt/libuv/lib -luv
+SRC=$(wildcard *.cpp *.c)
 
-.PHONY: clean
-clean:
-	rm -rf echo_server
+BIN_PATH=${OUTPUT_BIN_DIR}/libuv
+TARGET_BIN=libuv_echo
+
+LDFLAGES+= -I/opt/libuv/include -L/opt/libuv/lib -luv
+
+.PHONY:default
+default:build
+
+.PHONY:build
+build:
+	@mkdir -p ${BIN_PATH}
+	${CXX} ${CXXFLAGS} ${SRC} -o ${BIN_PATH}/${TARGET_BIN} ${LDFLAGES}
