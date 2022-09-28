@@ -17,7 +17,7 @@ public:
 
     void append_to_buffer(buffer* buf);
 
-private:
+public:
     std::string version_;         // http1.1
     std::string status_code_;     //状态码200、301、404等
     std::string status_code_msg_; //状态码描述信息,例如200的描述信息是ok

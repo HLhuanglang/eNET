@@ -9,7 +9,7 @@
 #include <string>
 
 class http_request {
-private:
+public:
     std::string method_;
     std::string url_;
     std::string version_;

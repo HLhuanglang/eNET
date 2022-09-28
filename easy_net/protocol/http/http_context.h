@@ -8,24 +8,20 @@
 #include "http_request.h"
 
 class http_context {
-    enum parser_state
-    {
-        REQUEST_LINE,
-        HEADERS,
-        BODY,
-        END
-    };
+public:
+    http_context();
+    size_t parser_http_context(const char* data, size_t len, http_request& req);
 
 public:
-    const http_request& parser_http_context(const char* begin, const char* end);
+    void _handle_header();
 
-private:
-    //请求方法<br>URL<br>协议版本\r\n
-    void _parser_request_line(const char* begin, const char* end);
-    void _parser_headers(const char* begin, const char* end);
-
-private:
+public:
     http_request* req_;
-    parser_state curr_state_;
+    std::string header_filed_;
+    std::string header_value_;
+
+private:
+    static http_parser_settings parser_settings_;
+    http_parser parser_;
 };
 #endif

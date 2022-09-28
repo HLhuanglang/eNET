@@ -4,6 +4,7 @@ SRC=buffer_test.cpp\
 	subreactor_pool_test.cpp\
 	tcp_server_test.cpp\
 	util_test.cpp\
+	http_parser_test.cpp\
 
 TARGET_BIN=$(patsubst %.cpp,%,$(SRC))
 

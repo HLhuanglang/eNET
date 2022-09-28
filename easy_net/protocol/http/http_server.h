@@ -20,7 +20,7 @@ public:
 private:
     void _on_connection();
     void _on_msg(const tcp_connection& conn, buffer* buf);
-    void _on_request(tcp_connection& conn, const http_request& req);
+    void _on_request(const tcp_connection& conn, const http_request& req);
 
 private:
     tcp_server server_;
