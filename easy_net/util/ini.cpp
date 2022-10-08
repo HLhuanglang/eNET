@@ -2,7 +2,8 @@
 #include <cstdio>
 #include <cstring>
 
-ini_datatype_e ini_handle::_ini_parser::parse_line(std::string line, parse_data_t &data) {
+ini_datatype_e ini::parse_line(std::string line, parse_data_t &data)
+{
     line.erase(line.find_last_not_of(k_whitespace_delimiters) + 1);
     line.erase(0, line.find_first_not_of(k_whitespace_delimiters));
     data.first.clear();
@@ -37,54 +38,75 @@ ini_datatype_e ini_handle::_ini_parser::parse_line(std::string line, parse_data_
     return ini_datatype_e::DATA_UNKNOWN;
 }
 
-ini_handle::ini_handle(const char *file_path) : file_name_(file_path) {
-    this->parser_ = new ini_handle::_ini_parser();
+std::string ini::covert_inifile_to_string(const inifile &ini)
+{
+    std::string data;
+    for (auto &n : ini.data_) {
+        // section
+        data += "[" + n.first + "]" + CRLF;
+        if (n.second.size() > 0) {
+            // key-val
+            for (auto &it : n.second) {
+                data += it.first + "=" + it.second + CRLF;
+            }
+        }
+    }
+    return data;
 }
 
-ini_handle::~ini_handle() {
-    if (!this->parser_) {
-        delete this->parser_;
-    }
-    if (!this->fp_) {
-        fclose(fp_);
-    }
-}
-
-bool ini_handle::read(ini &ini) {
-    this->file_name_ = file_name_;
-    this->fp_ = fopen(file_name_, "r");
-    if (!this->fp_) {
-        return false;
-    }
+bool ini::read(inifile &inifile)
+{
     char buf[1024] = {0};
     std::string section;
     parse_data_t parse_data;
-    while (!feof(this->fp_)) {
-        fgets(buf, 1024, this->fp_);
+    while (!feof(inifile.fp_)) {
+        fgets(buf, 1024, inifile.fp_);
         size_t len = strlen(buf);
-        auto parse_ret = this->parser_->parse_line(buf, parse_data);
+        auto parse_ret = ini::parse_line(buf, parse_data);
         if (parse_ret == ini_datatype_e::DATA_SECTION) {
             section = parse_data.first;
-            ini.data_[section];
+            inifile.data_[section];
         }
         if (parse_ret == ini_datatype_e::DATA_KEY_VAL) {
-            ini.data_[section][parse_data.first] = parse_data.second;
+            inifile.data_[section][parse_data.first] = parse_data.second;
+        }
+        if (parse_ret == ini_datatype_e::DATA_UNKNOWN) {
+            return false;
         }
     }
     return true;
 }
 
-bool ini_handle::write(ini &data) const {
-    // todo
+bool ini::write(inifile &inifile)
+{
+    auto data = ini::covert_inifile_to_string(inifile);
+    fclose(inifile.fp_);
+    inifile.fp_ = fopen(inifile.file_name_, "w");
+    if (!inifile.fp_) {
+        // perror("fopen error");
+        return false;
+    }
+    fwrite(data.c_str(), 1, data.size(), inifile.fp_);
     return true;
 }
 
-bool ini_handle::gengerate(ini &data) const {
-    // todo
+bool inifile::load(const char *path)
+{
+    file_name_ = path;
+    fp_ = fopen(file_name_, "r");
+    if (!this->fp_) {
+        // perror("fopen error");
+        return false;
+    }
     return true;
 }
 
-std::string ini::get_val(const char *section, const char *key) {
-    // todo
+std::string inifile::get_val(const char *section, const char *key)
+{
     return data_[section][key];
+}
+
+void inifile::set_val(const char *section, const char *key, const char *val)
+{
+    data_[section][key] = val;
 }
