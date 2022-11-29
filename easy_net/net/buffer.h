@@ -49,19 +49,20 @@ public:
 
 class buffer_pool {
     friend sigleton<buffer_pool>;
-    enum blocksize_t {
-        _4kb = 4096,
-        _8kb = 8192,
-        _16kb = 16384,
-        _32kb = 32768,
-        _64kb = 65536,
+    enum blocksize_t
+    {
+        _4kb   = 4096,
+        _8kb   = 8192,
+        _16kb  = 16384,
+        _32kb  = 32768,
+        _64kb  = 65536,
         _128kb = 131072,
         _256kb = 262144,
         _512kb = 524800,
-        _1mb = 1048576,
-        _2mb = 2097512,
-        _4mb = 4194304,
-        _8mb = 8388608
+        _1mb   = 1048576,
+        _2mb   = 2097512,
+        _4mb   = 4194304,
+        _8mb   = 8388608
     };
 
 public:

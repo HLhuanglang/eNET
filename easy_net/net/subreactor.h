@@ -11,13 +11,14 @@
 
 using eventfd_msg_t = std::uint64_t;
 
-enum class msg_type_t {
+enum class msg_type_t
+{
     NEW_CONN,
     NEW_TASK,
 };
 struct task_t {
     task_cb_f func_ = nullptr;
-    void* args_ = nullptr;
+    void* args_     = nullptr;
 };
 
 struct msg_t {

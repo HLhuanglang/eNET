@@ -12,7 +12,7 @@ static int on_message_complete(http_parser* parser);
 static int on_chunk_header(http_parser* parser);
 static int on_chunk_complete(http_parser* parser);
 
-http_parser_settings http_context::parser_settings_ = {on_message_begin,    on_url,  on_status,           on_header_field, on_header_value,
+http_parser_settings http_context::parser_settings_ = {on_message_begin, on_url, on_status, on_header_field, on_header_value,
                                                        on_headers_complete, on_body, on_message_complete, on_chunk_header, on_chunk_complete};
 
 http_context::http_context()

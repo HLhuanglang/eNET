@@ -23,15 +23,15 @@ ini_datatype_e ini::parse_line(std::string line, parse_data_t &data)
         auto close_bracket_idx = line.find_last_of(']');
         if (close_bracket_idx != line.npos) {
             auto section = line.substr(1, close_bracket_idx - 1);
-            data.first = section;
+            data.first   = section;
             return ini_datatype_e::DATA_SECTION;
         }
     }
     auto equals_idx = line.find_first_of('=');
     if (equals_idx != line.npos) {
-        auto key = line.substr(0, equals_idx);
-        auto value = line.substr(equals_idx + 1);
-        data.first = key;
+        auto key    = line.substr(0, equals_idx);
+        auto value  = line.substr(equals_idx + 1);
+        data.first  = key;
         data.second = value;
         return ini_datatype_e::DATA_KEY_VAL;
     }
@@ -61,7 +61,7 @@ bool ini::read(inifile &inifile)
     parse_data_t parse_data;
     while (!feof(inifile.fp_)) {
         fgets(buf, 1024, inifile.fp_);
-        size_t len = strlen(buf);
+        size_t len     = strlen(buf);
         auto parse_ret = ini::parse_line(buf, parse_data);
         if (parse_ret == ini_datatype_e::DATA_SECTION) {
             section = parse_data.first;
@@ -93,7 +93,7 @@ bool ini::write(inifile &inifile)
 bool inifile::load(const char *path)
 {
     file_name_ = path;
-    fp_ = fopen(file_name_, "r");
+    fp_        = fopen(file_name_, "r");
     if (!this->fp_) {
         // perror("fopen error");
         return false;

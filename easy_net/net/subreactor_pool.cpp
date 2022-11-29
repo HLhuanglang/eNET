@@ -3,7 +3,8 @@
 #include "tcp_connection.h"
 #include <iostream>
 
-void get_msg_cb(event_loop* loop, int fd, void* args) {
+void get_msg_cb(event_loop* loop, int fd, void* args)
+{
     subreactor* mq = (subreactor*)args;
     std::vector<msg_t> msgs;
     mq->wakeup(msgs);
@@ -21,29 +22,32 @@ void get_msg_cb(event_loop* loop, int fd, void* args) {
     }
 }
 
-void thread_domain(subreactor* mq) {
+void thread_domain(subreactor* mq)
+{
     std::shared_ptr<event_loop> sp_loop(new event_loop());
     mq->set_loop(sp_loop, get_msg_cb, mq);
     sp_loop.get()->process_event();
 }
 
-subreactor_pool::subreactor_pool(int cnt) : curr_idx_(0) {
+subreactor_pool::subreactor_pool(int cnt)
+    : curr_idx_(0)
+{
     if (cnt < k_sub_reactor_cnt) {
         sub_reactor_cnt_ = k_sub_reactor_cnt;
-    }
-    else {
+    } else {
         sub_reactor_cnt_ = cnt;
     }
     sub_reactors_.resize(sub_reactor_cnt_);
     for (int i = 0; i < sub_reactor_cnt_; i++) {
-        subreactor* mq = new subreactor();
+        subreactor* mq   = new subreactor();
         sub_reactors_[i] = mq;
         std::thread t(thread_domain, mq);
         t.detach();
     }
 }
 
-subreactor* subreactor_pool::get_sub_reactor() {
+subreactor* subreactor_pool::get_sub_reactor()
+{
     if (curr_idx_ == sub_reactor_cnt_) {
         curr_idx_ = 0;
     }

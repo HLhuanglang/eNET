@@ -12,9 +12,10 @@
 class event_loop;
 class tcp_connection {
 public:
-    tcp_connection(event_loop* loop, int fd) {
+    tcp_connection(event_loop* loop, int fd)
+    {
         init(loop, fd);
-        read_buf_ = new read_buffer();
+        read_buf_  = new read_buffer();
         write_buf_ = new write_buffer();
     }
 
