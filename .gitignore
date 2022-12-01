@@ -3,3 +3,4 @@ output
 .clangd
 compile_commands.json
 *.o
+.cache
