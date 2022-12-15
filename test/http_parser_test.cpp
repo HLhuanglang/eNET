@@ -1,4 +1,8 @@
+#include "buffer.h"
 #include "http_context.h"
+#include "http_response.h"
+
+#include <iostream>
 
 int main()
 {
@@ -11,8 +15,27 @@ int main()
     str_http_req += "\r\n";
     str_http_req += "{\"DeviceID\":\"12345678\",\"LowPressure\":80,\"HighPressure\":120,\"Pulse\":90}";
 
+    std::string str_http_rsp = "";
+    str_http_rsp += "HTTP/1.1 200 OK\r\n";
+    str_http_rsp += "Cache-Control: private\r\n";
+    str_http_rsp += "Content-Type: application/json; charset=utf-8\r\n";
+    str_http_rsp += "Content-Length: 30\r\n";
+    str_http_rsp += "\r\n";
+    str_http_rsp += "{\"State\":\"Success\",\"Msg\":\"OK\"}";
+
     http_request req;
+    http_response rsp;
     http_context ctx;
     ctx.parser_http_context(str_http_req.c_str(), str_http_req.size(), req);
+    ctx.parser_http_context(str_http_rsp.c_str(), str_http_rsp.size(), rsp);
+
+    buffer buf;
+    req.append_to_buffer(&buf);
+    std::cout << buf.get_data().data() << std::endl;
+
+    buffer buf2;
+    rsp.append_to_buffer(&buf2);
+    std::cout << buf2.get_data().data() << std::endl;
+
     return 0;
 }

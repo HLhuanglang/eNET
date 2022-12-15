@@ -1,5 +1,7 @@
 #include "tcp_connection.h"
+#include "buffer.h"
 #include "print_debug.h"
+#include <cstdio>
 #include <fcntl.h>
 
 void tcp_connection::init(event_loop *loop, int fd)
@@ -26,9 +28,10 @@ int tcp_connection::send_data(const char *data, size_t data_size)
 void tcp_connection::_handle_read()
 {
     // 1,从fd中读取完所有数据并写入read_buf_中
-    read_buf_->read(acceptfd_);
-    printfd("buf=%s", read_buf_->data());
-    // 2,触发回调,将数据返回给用户.
+    int err;
+    auto read_size = read_fd_to_buf(*read_buf_, acceptfd_, err);
+    // 2,触发回调,将数据返回给用户. 需要注意的是,每次调用user_cb后，read_buf_要清空.
+    printf("read_size=%ld", read_size);
 }
 
 void tcp_connection::_handle_write()

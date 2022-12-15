@@ -4,9 +4,9 @@
 #include <cstdio>
 
 #ifdef DEBUG
-#define printfd(fmt, args...) fprintf(stdout, fmt "\n", ##args)
+#    define printfd(fmt, args...) fprintf(stdout, fmt "\n", ##args)
 #else
-#define printfd(fmt, args...)
+#    define printfd(fmt, args...)
 #endif
 
 #endif

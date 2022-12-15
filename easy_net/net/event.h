@@ -11,8 +11,12 @@
 typedef struct io_event_t {
     event_cb_f read_cb;  // for EPOLLIN
     event_cb_f write_cb; // for EPOLLOUT
+    event_cb_f close_cb; // for EPOLLHUB
+    event_cb_f error_cb; // for EPOLLERR
     void *r_cb_args;
     void *w_cb_args;
+    void *c_cb_args;
+    void *e_cb_args;
     int flag;
 } io_event_t;
 

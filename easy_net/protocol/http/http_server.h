@@ -1,6 +1,7 @@
 #ifndef __HTTP_SERVER_H
 #define __HTTP_SERVER_H
 
+#include "buffer.h"
 #include "cb.h"
 #include "http_request.h"
 #include "http_response.h"
@@ -25,5 +26,6 @@ private:
 private:
     tcp_server server_;
     http_cb_f user_cb_;
+    buffer* buf_;
 };
 #endif

@@ -1,150 +1,183 @@
 #include "buffer.h"
+#include <errno.h>
 #include <cassert>
+#include <cstddef>
 #include <cstring>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <sys/uio.h> // readv
+#include "def.h"
+#include <vector>
 
-buffer::buffer(size_t size)
+buffer::buffer()
+    : writeidx_(0)
+    , readidx_(0)
 {
-    data_        = new char[size];
-    end_of_data_ = size;
-    offset_      = 0;
+    data_.resize(k_default_buffer_size);
 }
 
-void buffer::pop(size_t size)
+size_t buffer::readable_size()
 {
-    offset_ = offset_ - size;
+    return writeidx_ - readidx_;
 }
 
-void buffer::copy(const buffer* other)
+size_t buffer::writable_size()
 {
-    ::memmove(data_, other->data_, other->offset_);
-    offset_ = other->offset_;
+    return data_.size() - writeidx_;
 }
 
-void buffer::clear()
+size_t buffer::prependable_size()
 {
-    offset_ = 0;
+    return readidx_;
+}
+
+char* buffer::_begin()
+{
+    return &*data_.begin();
+}
+
+char* buffer::write_start()
+{
+    return _begin() + writeidx_;
+}
+
+const char* buffer::_begin() const
+{
+    return &*data_.begin();
+}
+
+const char* buffer::write_start() const
+{
+    return _begin() + writeidx_;
+}
+
+void buffer::append(const char* data, size_t len)
+{
+    _ensure_writeable_bytes(len);
+    std::copy(data, data + len, write_start());
+    writer_step(len);
+}
+
+void buffer::_ensure_writeable_bytes(size_t len)
+{
+    if (writable_size() < len) {
+        _make_space(len);
+    }
+}
+
+void buffer::_make_space(size_t len)
+{
+    if (prependable_size() + writable_size() >= len + k_prepend_size) {
+        //整个剩余空间还足够存储,则将现有数据全部向前移动.
+        size_t readable = readable_size();
+        std::copy(_begin() + readidx_, _begin() + writeidx_, _begin() + k_prepend_size);
+        readidx_  = k_prepend_size;
+        writeidx_ = k_prepend_size + readable;
+    } else {
+        //空间不够了,则直接扩容
+        data_.resize(writeidx_ + len);
+    }
 }
 
 size_t buffer::size()
 {
-    return end_of_data_;
+    return data_.size();
 }
 
-size_t buffer_pool::_align_block_size(size_t size)
+const std::vector<char>& buffer::get_data()
 {
-    size_t align = 0;
-    if (size <= blocksize_t::_4kb) {
-        align = blocksize_t::_4kb;
-    } else if (size <= blocksize_t::_8kb) {
-        align = blocksize_t::_8kb;
-    } else if (size <= blocksize_t::_16kb) {
-        align = blocksize_t::_16kb;
-    } else if (size <= blocksize_t::_32kb) {
-        align = blocksize_t::_32kb;
-    } else if (size <= blocksize_t::_64kb) {
-        align = blocksize_t::_64kb;
-    } else if (size <= blocksize_t::_128kb) {
-        align = blocksize_t::_128kb;
-    } else if (size <= blocksize_t::_256kb) {
-        align = blocksize_t::_256kb;
-    } else if (size <= blocksize_t::_512kb) {
-        align = blocksize_t::_512kb;
-    } else if (size <= blocksize_t::_1mb) {
-        align = blocksize_t::_1mb;
-    } else if (size <= blocksize_t::_2mb) {
-        align = blocksize_t::_2mb;
-    } else if (size <= blocksize_t::_4mb) {
-        align = blocksize_t::_4mb;
-    } else if (size <= blocksize_t::_8mb) {
-        align = blocksize_t::_8mb;
-    }
-    return align;
+    return data_;
 }
 
-buffer* buffer_pool::get(size_t size)
+void buffer::clear()
 {
-    buffer* ret       = nullptr;
-    size_t block_type = _align_block_size(size);
-    std::lock_guard<std::mutex> lg(mtx_);
-    if (pool_map_.count(block_type)) {
-        ret                          = pool_map_[block_type];
-        pool_map_[block_type]->next_ = ret->next_;
-        return ret;
-    } else {
-        buffer* new_one = new buffer(block_type);
-        return new_one;
-    }
+    writeidx_ = k_prepend_size;
+    readidx_  = k_prepend_size;
+    data_.clear();
 }
 
-void buffer_pool::release(buffer* buf)
+size_t buffer::get_reader_idx()
 {
-    std::lock_guard<std::mutex> lg(mtx_);
-    size_t block_idx = buf->size();
-    if (pool_map_.count(block_idx)) {
-        buffer* tmp = nullptr;
-        tmp         = pool_map_[block_idx];
-        while (tmp->next_ != nullptr) {
-            tmp = tmp->next_;
-        }
-        tmp->next_ = buf;
-    } else {
-        pool_map_[buf->size()] = buf;
-    }
+    return readidx_;
 }
 
-void buffer_pool::clear_all()
+void buffer::set_reader_idx(size_t idx)
 {
-    // todo
+    readidx_ = idx;
 }
 
-void buffer_pool::clear_by_blocksize(blocksize_t type)
+void buffer::reader_step(size_t step)
 {
-    // toodo
-    if (pool_map_.count(type)) {
-    }
+    readidx_ += step;
 }
 
-int read_buffer::read(int fd)
+size_t buffer::get_writer_idx()
 {
-    // 1,获取当前fd需要读取多少数据（to-fix：如果对方发送数据很大，进行多次发送后，此时无法读取到全部数据）
-    int read_total_size = 0;
-    if (::ioctl(fd, FIONREAD, &read_total_size) == -1) {
-        return -1;
-    }
+    return writeidx_;
+}
 
-    // 2,获取buf用于存储
-    if (!buf_) {
-        //直接申请全新的
-        buf_ = sigleton<buffer_pool>::get_instance()->get(read_total_size);
-    } else {
-        //旧的,判断剩余空间够不够使用,不够就扩容,然后再拷贝旧的
-        size_t left_size = buf_->end_of_data_ - buf_->offset_;
-        if (left_size < read_total_size) {
-            buffer* old_one = buf_;
-            buffer* new_one = sigleton<buffer_pool>::get_instance()->get(read_total_size + left_size);
-            new_one->copy(old_one);
-            sigleton<buffer_pool>::get_instance()->release(old_one);
-            buf_ = new_one;
-        }
-    }
+void buffer::set_writer_idx(size_t idx)
+{
+    writeidx_ = idx;
+}
 
-    // 3,执行read读取数据
-    int ret = 0;
+void buffer::writer_step(size_t step)
+{
+    writeidx_ += step;
+}
+
+size_t read_fd_to_buf(buffer& buf, int fd, int& err)
+{
+    // 执行read读取数据,对端某次发生的数据会被全部接受下来
+    char extrabuf[65536];
+    struct iovec vec[2];
+    ssize_t n        = 0;
+    size_t read_size = buf.writable_size();
+
+    vec[0].iov_base = buf.write_start();
+    vec[0].iov_len  = read_size;
+    vec[1].iov_base = extrabuf;
+    vec[1].iov_len  = sizeof(extrabuf);
+
     do {
-        ret = ::read(fd, buf_->data_ + buf_->offset_, read_total_size);
-    } while (ret == -1 && errno == EINTR);
+        //可能被系统调用中断,但是实际并没有调用结束,所以用一层while循环.
+        const int iovcnt = (read_size < sizeof extrabuf) ? 2 : 1;
+        n                = ::readv(fd, vec, iovcnt);
+    } while (n == -1 && errno == EINTR);
 
-    if (ret > 0) {
-        assert(ret == read_total_size);
-        buf_->offset_ += read_total_size;
+    if (n < 0) {
+        //n=-1, errno= EAGAIN时表示 读缓冲区暂时没数据了,需要用户自己拆包确认数据有没有读全,没读全则继续.
+        err = errno;
+        return 0;
+    } else if (n <= read_size) {
+        buf.writer_step(read_size);
+    } else {
+        //读取的数量超过buf的容量,利用栈上空间.
+        //此时writeidx_在buf的末尾,下次写入数据时就会发生扩容.
+        buf.set_writer_idx(buf.size());
+        buf.append(extrabuf, n - read_size);
     }
 
-    return ret;
+    return n;
 }
 
-const char* read_buffer::data() const
+size_t write_buf_to_fd(buffer& buf, int fd)
 {
-    return buf_->data_;
+    size_t n = 0;
+    do {
+        n = ::write(fd, buf.write_start(), buf.readable_size());
+    } while (n == -1 && errno == EINTR);
+
+    if (n > 0) {
+        buf.reader_step(n);
+    } else if (n == -1 && errno == EAGAIN) {
+        return 0;
+    }
+
+    return n;
+}
+
+void write_buf(buffer& buf, const char* data, size_t len)
+{
+    buf.append(data, len);
 }

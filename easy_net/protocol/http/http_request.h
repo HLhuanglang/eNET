@@ -8,7 +8,12 @@
 #include <map>
 #include <string>
 
+#include "buffer.h"
+
 class http_request {
+public:
+    void append_to_buffer(buffer* buf);
+
 public:
     std::string method_;
     std::string url_;

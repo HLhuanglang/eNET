@@ -5,96 +5,84 @@
 
     要求：
     1,大小限制：因为每一个tcp连接都有in_buff和out_buff，大小不可能无限大，否则连接数一多，内存占用就满了.
-    2,动态缩放：在设定的最大容量内，可自由伸缩
-    3,读取操作：因该返回in_buff的数据起始地址和大小，然后调用用户回调，把数据给上层应用，回调结束后in_buff删除这坨数据.
-    避免从in_buff又要拷贝一次到上层应用中.
+    2,动态缩放：大小自适应
+    3,读取操作：因该返回in_buff的数据起始地址和大小，然后调用用户回调，把数据给上层应用，回调结束后in_buff删除这坨数据，避免从in_buff又要拷贝一次到上层应用中.
     4,考虑大文件传输
-
-    注意：
-    x 不使用vector<char>，因为vector本身扩容也是要移动的...
-    看了一圈书，发现还是采用std::vector<char>来实现更好.
-
-    实现：
 */
 #ifndef __BUFFER_H
 #define __BUFFER_H
 
-#include "sigleton.h"
 #include <cstddef>
-#include <unordered_map>
+#include <vector>
 
 class buffer {
 public:
-    buffer(size_t size);
-
-    void pop(size_t size);          //删除buffer中数据,从尾部开始删
-    void copy(const buffer* other); //当前buffer不足以存下数据时，需要申请更大内存的块,然后做一个拷贝动作
-    void clear();                   //清空数据
-    size_t size();
+    buffer();
 
 public:
+    char* write_start();                       //数据开始地址
+    const char* write_start() const;           //数据开始地址
+    void append(const char* data, size_t len); //填充数据(需要注意迭代器失效问题)
+
+    size_t prependable_size();
+    size_t writable_size();
+    size_t readable_size();
+    size_t size();
+    const std::vector<char>& get_data();
+    void clear();
+    //writer
+    size_t get_writer_idx();
+    void set_writer_idx(size_t idx);
+    void writer_step(size_t step);
+    //reader
+    size_t get_reader_idx();
+    void set_reader_idx(size_t idx);
+    void reader_step(size_t step);
+
+private:
+    char* _begin();
+    const char* _begin() const;
+    void _make_space(size_t len);
+    void _ensure_writeable_bytes(size_t len); //确保有足够空间写入数据,如果不够则扩容
+
+private:
     /*
     数据发送从头开始发，写入则从剩余位置开始写
-                     offset_
-                     ↓
-        [----used----|-----left----]
-        ↑                          ↑
-        data_                      end_of_data_
+                            readidx_         writeidx_
+                           ↓                ↓
+        [---prependable----|----readable----|-----writable----]
+        ↑                                                     ↑
+        0                                                     data_.size()
     */
-    size_t end_of_data_; //大小一定时blocksize_t中的一种
-    size_t offset_;
-    buffer* next_;
-    char* data_;
+    std::vector<char> data_;
+    size_t writeidx_;
+    size_t readidx_;
 };
 
-class buffer_pool {
-    friend sigleton<buffer_pool>;
-    enum blocksize_t
-    {
-        _4kb   = 4096,
-        _8kb   = 8192,
-        _16kb  = 16384,
-        _32kb  = 32768,
-        _64kb  = 65536,
-        _128kb = 131072,
-        _256kb = 262144,
-        _512kb = 524800,
-        _1mb   = 1048576,
-        _2mb   = 2097512,
-        _4mb   = 4194304,
-        _8mb   = 8388608
-    };
+//===============================================================================
+//high level functions
+//===============================================================================
 
-public:
-    buffer* get(size_t size);
-    void release(buffer* buf);
-    void clear_all();                          //清空整个buffer pool
-    void clear_by_blocksize(blocksize_t type); //将某个大小的内存块链表全部释放.
+//将fd的接受缓冲区中的数据全部读到buf中
+//返回值：
+//n>0：实际收到值
+//n=0：接收缓冲区空了,可能只读取到了部分数据,用户需要先自己拆包看看满不满足协议,不满足则继续等待接收
+//n<0：接收错误
+size_t read_fd_to_buf(buffer& buf, int fd, int& err);
 
-public:
-    buffer_pool() = default;
-    ~buffer_pool() { clear_all(); }
+//将要发送的数据写入buf中.
+//
+//这个函数主要是为了做异步发送，客户端直接往buf里面写，不让客户端阻塞在write上面
+//上层调用的,只要判断buf中有数据就将EPOLLOUT事件添加到epoll,传入回调。在回调中调用write_buf_to_fd
+//(上层调用有个小优化逻辑,就是数据必须达到多少量才发送,不然频繁的发送小数据不划算...当然如果只发一点点无法触发发送也是不行的，可以增加一个定时器操作,如果达到多少时间后数据量还是不够,就直接发送)
+//当buf写空了以后才把EPOLLOUT事件去除。
+void write_buf(buffer& buf, const char* data, size_t len);
 
-private:
-    size_t _align_block_size(size_t size);
+//将buf中的数据全部写入到fd的发送缓冲区，等待os发送给对端
+//返回值:
+//n>0：实际发送值
+//n=0：由于发送缓冲区满了,只发送了部分数据,还需要再调用
+//n<0：发送错误
+size_t write_buf_to_fd(buffer& buf, int fd);
 
-private:
-    std::mutex mtx_;
-    std::unordered_map<size_t, buffer*> pool_map_; //在这个上面的buffer块都是未被使用的
-};
-
-class read_buffer {
-public:
-    int read(int fd);
-    const char* data() const;
-
-private:
-    buffer* buf_ = nullptr;
-};
-
-class write_buffer {
-public:
-private:
-    buffer* buf_ = nullptr;
-};
 #endif

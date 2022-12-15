@@ -1,7 +1,7 @@
 ##通用的编译器选项
 CXX= g++
-CXXFLAGS= -std=c++11 -g
-LDFLAGES= -lpthread -DDEBUG
+CXXFLAGS= -std=c++11 -g -DDEBUG
+LDFLAGES= -lpthread
 
 SUB_DIRS=easy_net\
 			example\

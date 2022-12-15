@@ -15,8 +15,8 @@ public:
     tcp_connection(event_loop* loop, int fd)
     {
         init(loop, fd);
-        read_buf_  = new read_buffer();
-        write_buf_ = new write_buffer();
+        read_buf_  = new buffer();
+        write_buf_ = new buffer();
     }
 
 public:
@@ -30,8 +30,8 @@ private:
 private:
     event_loop* loop_;
     int acceptfd_;
-    read_buffer* read_buf_;
-    write_buffer* write_buf_;
+    buffer* read_buf_;
+    buffer* write_buf_;
 };
 
 #endif

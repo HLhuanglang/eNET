@@ -1,6 +1,10 @@
 #include "buffer.h"
+#include <string>
 
-int main() {
-    buffer* buf = sigleton<buffer_pool>::get_instance()->get(12345);
+int main()
+{
+    buffer* buf     = new buffer;
+    std::string str = "hello,world";
+    buf->append(str.c_str(), str.size());
     return 0;
 }

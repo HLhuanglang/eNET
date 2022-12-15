@@ -16,3 +16,8 @@
 - `make easy_net`：只编译动态库
 - `make example`：如何使用easy_net进行tcp、udp服务的开发案例
 - `make test`：测试用例
+
+## 调试
+- 修改.vscode目录下launch.json中program即可
+- 由于程序使用多进程,直接调试会在各个线程中切换,所以可以在~/.gdbinit中配置
+    - set scheduler-locking on

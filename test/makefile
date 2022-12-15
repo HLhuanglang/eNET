@@ -1,17 +1,10 @@
-SRC=buffer_test.cpp\
-	event_loop_test.cpp\
-	ini_test.cpp\
-	subreactor_pool_test.cpp\
-	tcp_server_test.cpp\
-	util_test.cpp\
-	http_parser_test.cpp\
-
-TARGET_BIN=$(patsubst %.cpp,%,$(SRC))
+BIN_PATH=${OUTPUT_BIN_DIR}/test
+TARGET_BIN=$(patsubst %.cpp, % ,$(wildcard *.cpp))
 
 CXXFLAGS+= -I${OUTPUT_INC_PATH} -L${OUTPUT_LIB_PATH} 
 LDFLAGES+= -Wl,-rpath=${OUTPUT_LIB_PATH} -leasynet
 
-BIN_PATH=${OUTPUT_BIN_DIR}/test
+
 $(shell mkdir -p ${BIN_PATH})
 
 .PHONY:default

@@ -1,4 +1,5 @@
 #include "event_loop.h"
+#include "cb.h"
 #include "event.h"
 #include "print_debug.h"
 #include <cstdio>
@@ -6,13 +7,13 @@
 
 event_loop::event_loop()
 {
-    //初始化epoll
+    // 初始化epoll
     this->epoll_fd_ = ::epoll_create1(0);
     if (this->epoll_fd_ == -1) {
         perror("epoll_create failed!");
         exit(-1);
     }
-    //初始化timer
+    // 初始化timer
 }
 
 void event_loop::process_event()
@@ -35,7 +36,15 @@ void event_loop::process_event()
                     ev->write_cb(this, ready_events_[i].data.fd, args);
                 }
                 if (ready_events_[i].events & (EPOLLHUP | EPOLLERR)) {
-                    // todo
+                    if (ev->read_cb) {
+                        void *args = ev->r_cb_args;
+                        ev->read_cb(this, ready_events_[i].data.fd, args);
+                    } else if (ev->write_cb) {
+                        void *args = ev->w_cb_args;
+                        ev->write_cb(this, ready_events_[i].data.fd, args);
+                    } else {
+                        del_io_event(ready_events_[i].data.fd);
+                    }
                 }
             }
         } else if (fd_cnts == 0) {
@@ -77,6 +86,12 @@ void event_loop::add_io_event(int fd, event_cb_f cb, int mask, void *args)
         printfd("epoll_ctl error!");
         // log
     }
+}
+
+void event_loop::del_io_event(int fd)
+{
+    io_events_.erase(fd);
+    ::epoll_ctl(this->epoll_fd_, EPOLL_CTL_DEL, fd, NULL);
 }
 
 int event_loop::run_at(event_cb_f cb, void *args, uint64_t ts) {}
