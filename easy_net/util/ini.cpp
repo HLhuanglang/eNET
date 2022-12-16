@@ -61,7 +61,6 @@ bool ini::read(inifile &inifile)
     parse_data_t parse_data;
     while (!feof(inifile.fp_)) {
         fgets(buf, 1024, inifile.fp_);
-        size_t len     = strlen(buf);
         auto parse_ret = ini::parse_line(buf, parse_data);
         if (parse_ret == ini_datatype_e::DATA_SECTION) {
             section = parse_data.first;

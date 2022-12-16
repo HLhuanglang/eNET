@@ -32,6 +32,7 @@ public:
     size_t prependable_size();
     size_t writable_size();
     size_t readable_size();
+
     size_t size();
     const std::vector<char>& get_data();
     void clear();

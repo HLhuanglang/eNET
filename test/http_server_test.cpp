@@ -1,5 +1,5 @@
-#include "cb.h"
-#include "http_server.h"
+#include "easy_net/cb.h"
+#include "easy_net/http_server.h"
 
 int main()
 {

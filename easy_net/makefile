@@ -21,8 +21,9 @@ LDFLAGES+= -I./net -I./util -I./protocol/http
 
 
 .PHONY:default
-default:${OUTPUT_LIB_PATH}/${TARGET_SO}
-	@cp ${INC} ${OUTPUT_INC_PATH}
+default:${OUTPUT_LIB_PATH}/${TARGET_SO} ${INC}
+	@mkdir -p ${OUTPUT_INC_PATH}/easy_net
+	@cp -u ${INC} ${OUTPUT_INC_PATH}/easy_net
 
  
 ${OUTPUT_LIB_PATH}/${TARGET_SO}:${OBJS}
