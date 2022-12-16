@@ -5,7 +5,7 @@
             "name": "gdb",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/debug/bin/test/http_parser_test",
+            "program": "${workspaceFolder}/debug/bin/test/http_server_test",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",

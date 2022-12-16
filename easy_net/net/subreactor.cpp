@@ -1,4 +1,6 @@
 #include "subreactor.h"
+#include "buffer.h"
+#include "cb.h"
 #include <cstdio>
 #include <mutex>
 #include <type_traits>
@@ -6,6 +8,10 @@
 #include <utility>
 
 #include <sys/eventfd.h>
+
+#include "tcp_connection.h"
+#include <fcntl.h>
+#include "print_debug.h"
 
 subreactor::subreactor()
 {
@@ -19,14 +25,18 @@ subreactor::subreactor()
 
 void subreactor::set_loop(std::shared_ptr<event_loop> loop, event_cb_f func, void* args)
 {
-    this->sp_loop_ = std::move(loop);
-    this->sp_loop_.get()->add_io_event(this->eventfd_, std::move(func), EPOLLIN, args);
+    this->sp_loop_ = loop;
+    this->sp_loop_.get()->add_io_event(this->eventfd_, func, EPOLLIN, args);
 }
 
-// main reactor可能一次性收到很多连接请求,accept完事后,然后通过调度算法分配给子reactor
-// 去做后续数据通信的监听
-// 可能的问题在于如果连接数量很大,vector会暴涨,好在元素是pod类型和指针,直接释放就行,不会导致内存泄露.
-//
+void subreactor::enable_accept(int fd)
+{
+    int flag = ::fcntl(fd, F_GETFL, 0);
+    ::fcntl(fd, F_SETFL, O_NONBLOCK | flag);
+    sp_loop_->add_io_event(
+        fd, [&](event_loop* loop, int fd, void* args) { _handle_read(fd); }, EPOLLIN, this); // TCP连接已经建立好了,双方进入ESTABLISH状态，可以进行数据传输。
+}
+
 // 主要是main reactor调用
 void subreactor::notify(const msg_t& msg)
 {
@@ -50,4 +60,17 @@ void subreactor::wakeup(std::vector<msg_t>& msgs)
         perror("read error!");
     }
     std::swap(this->msgs_, msgs);
+}
+
+void subreactor::_handle_read(int fd)
+{
+    tcp_connection* conn = connection_map_[fd];
+    //从这个地方回调到用户注册的接收消息回调
+    if (conn != nullptr) {
+        conn->_handle_read();
+        printfd("buf:\n%s", conn->get_readbuf().readable_start());
+        msg_cb(*conn, conn->get_readbuf());
+    } else {
+        //找不到链接???
+    }
 }

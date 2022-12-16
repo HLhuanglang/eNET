@@ -5,15 +5,16 @@
 
 void get_msg_cb(event_loop* loop, int fd, void* args)
 {
+    //这个fd是eventfd
     subreactor* mq = (subreactor*)args;
     std::vector<msg_t> msgs;
     mq->wakeup(msgs);
     for (auto& n : msgs) {
         if (n.msg_type_ == msg_type_t::NEW_CONN) {
             //创建新的连接
-            tcp_connection* new_conn = new tcp_connection(loop, fd);
-            //然后将acceptfd添加到epoll中进行监视.
-            new_conn->init(loop, n.accept_fd_);
+            tcp_connection* new_conn = new tcp_connection(loop, n.accept_fd_);
+            mq->add_connection(n.accept_fd_, new_conn);
+            mq->enable_accept(n.accept_fd_);
         }
         if (n.msg_type_ == msg_type_t::NEW_TASK) {
             //添加任务

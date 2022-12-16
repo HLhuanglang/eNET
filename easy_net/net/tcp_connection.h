@@ -5,6 +5,7 @@
 #define __TCP_CONNECTION_H
 
 #include "buffer.h"
+#include "cb.h"
 #include "event_loop.h"
 #include <cstddef>
 #include <vector>
@@ -14,16 +15,21 @@ class tcp_connection {
 public:
     tcp_connection(event_loop* loop, int fd)
     {
-        init(loop, fd);
+        //init(loop, fd);
+        loop_      = loop;
+        acceptfd_  = fd;
         read_buf_  = new buffer();
         write_buf_ = new buffer();
     }
 
 public:
-    void init(event_loop* loop, int fd);
+    //void init(event_loop* loop, int fd);
     int send_data(const char* data, size_t data_size);
 
-private:
+    buffer& get_readbuf() { return *read_buf_; }
+    buffer& get_writebuf() { return *write_buf_; }
+
+public:
     void _handle_read();
     void _handle_write();
 

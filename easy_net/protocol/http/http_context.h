@@ -19,15 +19,19 @@ public:
     size_t parser_http_context(const char* data, size_t len, http_request& req);
     size_t parser_http_context(const char* data, size_t len, http_response& rsp);
 
+    bool is_http_complete() { return finish_one_parse_; }
+
 public:
-    void _handle_header();
+    void
+    _handle_header();
 
 public:
     http_type_t type_;
-    http_request* req_;
-    http_response* rsp_;
+    http_request* req_  = nullptr;
+    http_response* rsp_ = nullptr;
     std::string header_filed_;
     std::string header_value_;
+    bool finish_one_parse_ = false;
 
 private:
     static http_parser_settings parser_settings_;

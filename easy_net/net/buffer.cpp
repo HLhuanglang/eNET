@@ -8,12 +8,24 @@
 #include <sys/uio.h> // readv
 #include "def.h"
 #include <vector>
+#include "http_request.h"
+#include "http_response.h"
 
 buffer::buffer()
     : writeidx_(0)
     , readidx_(0)
 {
     data_.resize(k_default_buffer_size);
+}
+
+char* buffer::readable_start()
+{
+    return _begin() + readidx_;
+}
+
+const char* buffer::readble_start() const
+{
+    return _begin() + readidx_;
 }
 
 size_t buffer::readable_size()
@@ -177,7 +189,36 @@ size_t write_buf_to_fd(buffer& buf, int fd)
     return n;
 }
 
-void write_buf(buffer& buf, const char* data, size_t len)
+void append_http_to_buf(const http_response& rsp, buffer& buf)
 {
-    buf.append(data, len);
+    buf.append(rsp.version_.c_str(), rsp.version_.size());
+    buf.append(" ", 1);
+    buf.append(rsp.status_code_.c_str(), rsp.status_code_.size());
+    buf.append(" ", 1);
+    buf.append(rsp.status_code_msg_.c_str(), rsp.status_code_msg_.size());
+    buf.append("\r\n", 2);
+    for (const auto& it : rsp.headers_) {
+        std::string str;
+        str = it.first + ":" + it.second + "\r\n";
+        buf.append(str.c_str(), str.size());
+    }
+    buf.append("\r\n", 2);
+    buf.append(rsp.body_.c_str(), rsp.body_.size());
+}
+
+void append_http_to_buf(const http_request& req, buffer& buf)
+{
+    buf.append(req.method_.c_str(), req.method_.size());
+    buf.append(" ", 1);
+    buf.append(req.url_.c_str(), req.url_.size());
+    buf.append(" ", 1);
+    buf.append(req.version_.c_str(), req.version_.size());
+    buf.append("\r\n", 2);
+    for (const auto& it : req.headers_) {
+        std::string str;
+        str = it.first + ":" + it.second + "\r\n";
+        buf.append(str.c_str(), str.size());
+    }
+    buf.append("\r\n", 2);
+    buf.append(req.body_.c_str(), req.body_.size());
 }

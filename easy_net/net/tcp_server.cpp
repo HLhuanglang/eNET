@@ -72,9 +72,14 @@ tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port)
         socketfd_, [&](event_loop* loop, int fd, void* args) { this->_do_accept(); }, EPOLLIN, this);
 }
 
-void tcp_server::set_recv_msg_cb(const recv_msg_cb_f& t)
+void tcp_server::set_recv_msg_cb(recv_msg_cb_f t)
 {
-    // todo
+    // bug：tcp_server初始化配置,必须等到reactor_pool运行起来.
+    auto cnt = sub_reactor_pool_->get_pool_size();
+    do {
+        auto sub = sub_reactor_pool_->get_sub_reactor();
+        sub->set_recv_msg_cb(t);
+    } while (cnt--);
 }
 
 void tcp_server::set_build_connection_cb(std::function<void()>)
@@ -105,7 +110,6 @@ void tcp_server::_do_accept()
     bool is_connection_full = false; // linux下进程最多可用1024个fd
     static int cnt          = 0;
     for (;; cnt++) {
-        printfd("cnt=%d", cnt);
         // 1,连接出现了问题
         int acceptfd = ::accept(socketfd_, &addr, &addr_len);
         if (acceptfd == -1) {
@@ -137,8 +141,9 @@ void tcp_server::_do_accept()
             if (sub_reactor_pool_ != nullptr) {
                 auto sub = sub_reactor_pool_->get_sub_reactor();
                 msg_t msg;
-                msg.accept_fd_ = acceptfd;
-                msg.msg_type_  = msg_type_t::NEW_CONN;
+                msg.reactor_id_ = sub_reactor_pool_->get_subreactor_id();
+                msg.accept_fd_  = acceptfd;
+                msg.msg_type_   = msg_type_t::NEW_CONN;
                 sub->notify(msg);
             }
         }

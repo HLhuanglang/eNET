@@ -15,11 +15,11 @@ public:
 public:
     //设置当接收到客户端数据时回调
     //---主要用于对服务端发来的数据进程处理
-    void set_recv_msg_cb(const recv_msg_cb_f& t);
+    void set_recv_msg_cb(recv_msg_cb_f& t);
 
     //设置连接建立完成后回调
     //---对于客户端而言,这个回调是客户端发送数据的入口(只有知道什么时候连接建立好了,什么时候发送)。发送的操作,应该封装在channel中
-    void set_build_connection_cb(const after_connection_cb_f& f);
+    void set_build_connection_cb(after_connection_cb_f& f);
 
     //设置断开连接回调
     //---一般用于服务器断开或者客户端断开后打印信息

@@ -12,7 +12,7 @@
 
 class http_request {
 public:
-    void append_to_buffer(buffer* buf);
+    http_request() {}
 
 public:
     std::string method_;

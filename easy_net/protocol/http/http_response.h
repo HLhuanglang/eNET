@@ -11,11 +11,16 @@
 
 class http_response {
 public:
+    http_response(); //默认一个http响应有些字段得填充一下...
+
+public:
     void set_status_code(const std::string& code) { status_code_ = code; }
     void set_status_code_msg(const std::string& msg) { status_code_msg_ = msg; }
     void set_close_connection(bool f) { close_connection_ = f; };
 
-    void append_to_buffer(buffer* buf);
+    void set_body(const char* body)
+    { //todo
+    }
 
 public:
     std::string version_;         // http1.1

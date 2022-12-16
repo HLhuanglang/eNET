@@ -123,7 +123,8 @@ int on_body(http_parser* parser, const char* at, size_t length)
 
 int on_message_complete(http_parser* parser)
 {
-    // todo
+    http_context* ctx      = (http_context*)parser->data;
+    ctx->finish_one_parse_ = true;
     return 0;
 }
 

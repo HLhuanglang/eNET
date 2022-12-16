@@ -15,6 +15,8 @@
 #include <cstddef>
 #include <vector>
 
+class http_request;
+class http_response;
 class buffer {
 public:
     buffer();
@@ -23,6 +25,9 @@ public:
     char* write_start();                       //数据开始地址
     const char* write_start() const;           //数据开始地址
     void append(const char* data, size_t len); //填充数据(需要注意迭代器失效问题)
+
+    char* readable_start();
+    const char* readble_start() const;
 
     size_t prependable_size();
     size_t writable_size();
@@ -70,19 +75,14 @@ private:
 //n<0：接收错误
 size_t read_fd_to_buf(buffer& buf, int fd, int& err);
 
-//将要发送的数据写入buf中.
-//
-//这个函数主要是为了做异步发送，客户端直接往buf里面写，不让客户端阻塞在write上面
-//上层调用的,只要判断buf中有数据就将EPOLLOUT事件添加到epoll,传入回调。在回调中调用write_buf_to_fd
-//(上层调用有个小优化逻辑,就是数据必须达到多少量才发送,不然频繁的发送小数据不划算...当然如果只发一点点无法触发发送也是不行的，可以增加一个定时器操作,如果达到多少时间后数据量还是不够,就直接发送)
-//当buf写空了以后才把EPOLLOUT事件去除。
-void write_buf(buffer& buf, const char* data, size_t len);
-
 //将buf中的数据全部写入到fd的发送缓冲区，等待os发送给对端
 //返回值:
 //n>0：实际发送值
 //n=0：由于发送缓冲区满了,只发送了部分数据,还需要再调用
 //n<0：发送错误
 size_t write_buf_to_fd(buffer& buf, int fd);
+
+void append_http_to_buf(const http_request& req, buffer& buf);
+void append_http_to_buf(const http_response& rsp, buffer& buf);
 
 #endif
