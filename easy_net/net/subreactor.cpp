@@ -20,13 +20,14 @@ subreactor::subreactor()
         perror("eventfd(0, EFD_NONBLOCK)");
         exit(-1);
     }
+    printfd("eventfd=%d", this->eventfd_);
     thread_id_ = std::this_thread::get_id();
 }
 
 void subreactor::set_loop(std::shared_ptr<event_loop> loop, event_cb_f func, void* args)
 {
-    this->sp_loop_ = loop;
-    this->sp_loop_.get()->add_io_event(this->eventfd_, func, EPOLLIN, args);
+    this->sp_loop_ = std::move(loop);
+    this->sp_loop_.get()->add_io_event(this->eventfd_, std::move(func), EPOLLIN, args);
 }
 
 void subreactor::enable_accept(int fd)
@@ -67,9 +68,14 @@ void subreactor::_handle_read(int fd)
     tcp_connection* conn = connection_map_[fd];
     //从这个地方回调到用户注册的接收消息回调
     if (conn != nullptr) {
-        conn->_handle_read();
-        printfd("buf:\n%s", conn->get_readbuf().readable_start());
-        msg_cb(*conn, conn->get_readbuf());
+        auto ret = conn->_handle_read();
+        if (ret) {
+            printfd("buf:\n%s", conn->get_readbuf().readable_start());
+            msg_cb(*conn, conn->get_readbuf());
+        } else {
+            connection_map_.erase(fd);
+            conn->_handle_close();
+        }
     } else {
         //找不到链接???
     }

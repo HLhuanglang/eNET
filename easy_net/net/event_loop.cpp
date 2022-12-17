@@ -62,7 +62,7 @@ void event_loop::add_io_event(int fd, event_cb_f cb, int mask, void *args)
     int final_opt  = 0;
     auto it        = this->io_events_.find(fd);
     if (it != this->io_events_.end()) {
-        final_flag = (*it).second.flag;
+        final_flag = mask;
         final_opt  = EPOLL_CTL_MOD;
     } else {
         final_flag = mask;
@@ -90,6 +90,10 @@ void event_loop::add_io_event(int fd, event_cb_f cb, int mask, void *args)
 
 void event_loop::del_io_event(int fd)
 {
+    for (auto &n : io_events_) {
+        printfd("fd:%d", n.first);
+    }
+    printfd("del fd=%d", fd);
     io_events_.erase(fd);
     ::epoll_ctl(this->epoll_fd_, EPOLL_CTL_DEL, fd, NULL);
 }

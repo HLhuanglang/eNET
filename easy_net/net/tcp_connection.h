@@ -30,8 +30,9 @@ public:
     buffer& get_writebuf() { return *write_buf_; }
 
 public:
-    void _handle_read();
-    void _handle_write();
+    size_t _handle_read();
+    size_t _handle_write();
+    void _handle_close();
 
 private:
     event_loop* loop_;

@@ -161,7 +161,6 @@ size_t read_fd_to_buf(buffer& buf, int fd, int& err)
     if (n < 0) {
         //n=-1, errno= EAGAIN时表示 读缓冲区暂时没数据了,需要用户自己拆包确认数据有没有读全,没读全则继续.
         err = errno;
-        return 0;
     } else if (n <= read_size) {
         buf.writer_step(read_size);
     } else {
@@ -171,6 +170,7 @@ size_t read_fd_to_buf(buffer& buf, int fd, int& err)
         buf.append(extrabuf, n - read_size);
     }
 
+    //返回0表示对端关闭了连接.
     return n;
 }
 
@@ -178,7 +178,7 @@ size_t write_buf_to_fd(buffer& buf, int fd)
 {
     size_t n = 0;
     do {
-        n = ::write(fd, buf.write_start(), buf.readable_size());
+        n = ::write(fd, buf.readble_start(), buf.readable_size());
     } while (n == -1 && errno == EINTR);
 
     if (n > 0) {
