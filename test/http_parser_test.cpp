@@ -33,9 +33,9 @@ int main()
     append_http_to_buf(req, buf);
     std::cout << buf.readable_start() << std::endl;
 
-    buf.clear();
-    append_http_to_buf(rsp, buf);
-    std::cout << buf.readable_start() << std::endl;
+    buffer buf2;
+    append_http_to_buf(rsp, buf2);
+    std::cout << buf2.readable_start() << std::endl;
 
     return 0;
 }

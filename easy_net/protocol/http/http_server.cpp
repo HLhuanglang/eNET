@@ -44,6 +44,7 @@ void http_server::_on_request(tcp_connection& conn, const http_request& req)
 {
     // 将用户要发送的数据转成buffer，然后发送出去
     http_response res;
+    res.default_init();
     user_cb_(req, res); //服务端根据客户端中的数据对res进行填充
 
     append_http_to_buf(res, conn.get_writebuf()); //将http_responese对象中的值转char数据进行发送.

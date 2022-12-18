@@ -70,7 +70,7 @@ void subreactor::_handle_read(int fd)
     if (conn != nullptr) {
         auto ret = conn->_handle_read();
         if (ret) {
-            printfd("buf:\n%s", conn->get_readbuf().readable_start());
+            printfd("buf:%ld\n", conn->get_readbuf().readable_size());
             msg_cb(*conn, conn->get_readbuf());
         } else {
             connection_map_.erase(fd);

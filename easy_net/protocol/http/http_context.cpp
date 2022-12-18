@@ -1,7 +1,9 @@
 #include "http_context.h"
 #include "http_parser.h"
 #include <cstddef>
+#include <cstdlib>
 #include <string>
+#include "print_debug.h"
 
 static int on_url(http_parser* parser, const char* at, size_t length);
 static int on_status(http_parser* parser, const char* at, size_t length);
@@ -56,6 +58,7 @@ int on_message_begin(http_parser* parser)
 
 int on_url(http_parser* parser, const char* at, size_t length)
 {
+    //如果是get请求,url后面会带一串数据
     http_context* ctx = (http_context*)parser->data;
     if (ctx->type_ == http_type_t::HTTP_REQ) {
         ctx->req_->url_.assign(at, length);
@@ -114,9 +117,15 @@ int on_body(http_parser* parser, const char* at, size_t length)
 {
     http_context* ctx = (http_context*)parser->data;
     if (ctx->type_ == http_type_t::HTTP_REQ) {
-        ctx->req_->body_.assign(at, length);
+        auto content_length = std::atoi(ctx->req_->headers_["Content-Length"].c_str());
+        if (content_length == length) {
+            ctx->req_->body_.assign(at, length);
+        }
     } else {
-        ctx->rsp_->body_.assign(at, length);
+        auto content_length = std::atoi(ctx->rsp_->headers_["Content-Length"].c_str());
+        if (content_length == length) {
+            ctx->rsp_->body_.assign(at, length);
+        }
     }
     return 0;
 }
