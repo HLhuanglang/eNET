@@ -98,4 +98,20 @@ void event_loop::del_io_event(int fd)
     ::epoll_ctl(this->epoll_fd_, EPOLL_CTL_DEL, fd, NULL);
 }
 
+void event_loop::update_io_event(int fd, int mask)
+{
+    auto it = this->io_events_.find(fd);
+    if (it != this->io_events_.end()) {
+        this->io_events_[fd].flag = mask;
+        struct epoll_event event;
+        event.events  = mask;
+        event.data.fd = fd;
+        int ret       = ::epoll_ctl(this->epoll_fd_, EPOLL_CTL_MOD, fd, &event);
+        if (ret == -1) {
+            printfd("epoll_ctl error!");
+            // log
+        }
+    }
+}
+
 int event_loop::run_at(event_cb_f cb, void *args, uint64_t ts) {}

@@ -23,6 +23,9 @@ public:
     void default_init(); //默认填充一些值
 
 public:
+    static void append_http_to_buf(const http_response& rsp, buffer& buf);
+
+public:
     std::string version_;         // http1.1
     std::string status_code_;     //状态码200、301、404等
     std::string status_code_msg_; //状态码描述信息,例如200的描述信息是ok

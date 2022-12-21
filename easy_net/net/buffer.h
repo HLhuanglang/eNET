@@ -8,6 +8,10 @@
     2,动态缩放：大小自适应
     3,读取操作：因该返回in_buff的数据起始地址和大小，然后调用用户回调，把数据给上层应用，回调结束后in_buff删除这坨数据，避免从in_buff又要拷贝一次到上层应用中.
     4,考虑大文件传输
+
+    接口：
+    buffer是提供给七层协议使用的,buffer接口必须灵活好用.
+    buffer只提供最小功能，其余封装由上层使用者来做.
 */
 #ifndef __BUFFER_H
 #define __BUFFER_H
@@ -64,26 +68,4 @@ private:
     size_t writeidx_;
     size_t readidx_;
 };
-
-//===============================================================================
-//high level functions
-//===============================================================================
-
-//将fd的接受缓冲区中的数据全部读到buf中
-//返回值：
-//n>0：实际收到值
-//n=0：对端关闭了链接
-//n<0：接收错误
-size_t read_fd_to_buf(buffer& buf, int fd, int& err);
-
-//将buf中的数据全部写入到fd的发送缓冲区，等待os发送给对端
-//返回值:
-//n>0：实际发送值
-//n=0：由于发送缓冲区满了,只发送了部分数据,还需要再调用
-//n<0：发送错误
-size_t write_buf_to_fd(buffer& buf, int fd);
-
-void append_http_to_buf(const http_request& req, buffer& buf);
-void append_http_to_buf(const http_response& rsp, buffer& buf);
-
 #endif

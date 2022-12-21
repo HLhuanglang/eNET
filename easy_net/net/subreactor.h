@@ -43,6 +43,7 @@ public:
 public:
     void set_recv_msg_cb(recv_msg_cb_f f) { msg_cb = f; }
     void add_connection(int fd, tcp_connection* conn) { connection_map_[fd] = conn; }
+    void release_connection(int fd);
     void enable_accept(int fd);
 
 public:

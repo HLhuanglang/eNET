@@ -30,11 +30,11 @@ int main()
     ctx.parser_http_context(str_http_rsp.c_str(), str_http_rsp.size(), rsp);
 
     buffer buf;
-    append_http_to_buf(req, buf);
+    http_request::append_http_to_buf(req, buf);
     std::cout << buf.readable_start() << std::endl;
 
     buffer buf2;
-    append_http_to_buf(rsp, buf2);
+    http_response::append_http_to_buf(rsp, buf2);
     std::cout << buf2.readable_start() << std::endl;
 
     return 0;

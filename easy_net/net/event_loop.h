@@ -18,8 +18,8 @@ public:
 
     // operator for io event
     void add_io_event(int fd, event_cb_f cb, int mask, void *args);
-    void del_io_event(int fd, int mask);
     void del_io_event(int fd);
+    void update_io_event(int fd, int mask);
 
     // operator for timer event
     int run_at(event_cb_f cb, void *args, uint64_t ts);

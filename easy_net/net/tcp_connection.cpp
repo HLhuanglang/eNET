@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <fcntl.h>
+#include "socket_opt.h"
 
 // void tcp_connection::init(event_loop *loop, int fd)
 // {
@@ -18,7 +19,7 @@
 //         acceptfd_, [&](event_loop *loop, int fd, void *args) { this->_handle_read(); }, EPOLLIN, this); // TCP连接已经建立好了,双方进入ESTABLISH状态，可以进行数据传输。
 // }
 
-int tcp_connection::send_data(const char *data, size_t data_size)
+void tcp_connection::send_data(const char *data, size_t data_size)
 {
     bool need_send = false;
     if (write_buf_->readable_size() > 0) {
@@ -33,40 +34,45 @@ int tcp_connection::send_data(const char *data, size_t data_size)
     //当buf写空了以后才把EPOLLOUT事件去除。
     //write_buf_->append(data, data_size);
 
-    //bug：这个地方loop是空的....
     if (need_send) {
         loop_->add_io_event(
             acceptfd_, [&](event_loop *loop, int fd, void *args) { this->_handle_write(); }, EPOLLOUT, this);
     }
-    return 0;
 }
 
-size_t tcp_connection::_handle_read()
+size_t tcp_connection::read_data()
 {
     int err;
-    return read_fd_to_buf(*read_buf_, acceptfd_, err);
+    return socket_opt::read_fd_to_buf(*read_buf_, acceptfd_, err);
 }
 
-size_t tcp_connection::_handle_write()
+void tcp_connection::_handle_write()
 {
     while (write_buf_->readable_size()) {
         printfd("send buf:\n%s", write_buf_->readable_start());
-        auto ret = write_buf_to_fd(*write_buf_, acceptfd_);
+        auto ret = socket_opt::write_buf_to_fd(*write_buf_, acceptfd_);
         if (ret < 0) {
+            //写acceptfd出错了,直接断开连接...
             _handle_close();
-            return 0;
         }
         if (ret == 0) {
-            //当前写缓冲区已经满了
+            //当前写缓冲区已经满了,再次尝试写入
             break;
         }
     }
     if (write_buf_->readable_size() == 0) {
-        loop_->del_io_event(acceptfd_);
+        //无数据可写了,将EPOLLOUT事件删除，避免一直触发
+        _disable_write();
     }
 }
 
 void tcp_connection::_handle_close()
 {
     loop_->del_io_event(acceptfd_);
+}
+
+void tcp_connection::_disable_write()
+{
+    //fixme：从监听EPOLLOUT|EPOLLIN 变成只监听EPOLLIN ????
+    loop_->update_io_event(acceptfd_, EPOLLIN);
 }

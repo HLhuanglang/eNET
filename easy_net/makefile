@@ -6,10 +6,12 @@ SRC_DIR=${ROOT_DIR}/easy_net
 SRC_NET_DIR=${SRC_DIR}/net
 SRC_UTIL_DIR=${SRC_DIR}/util
 SRC_HTTP_DIR=${SRC_DIR}/protocol/http
+SRC_CUSTOMIZE_DIR=${SRC_DIR}/protocol/customize
 
 OBJS=$(patsubst ${SRC_NET_DIR}/%.cpp, ${OUTPUT_OBJ_DIR}/%.o, $(wildcard ${SRC_NET_DIR}/*.cpp))
 OBJS+=$(patsubst ${SRC_UTIL_DIR}/%.cpp, ${OUTPUT_OBJ_DIR}/%.o, $(wildcard ${SRC_UTIL_DIR}/*.cpp))
 OBJS+=$(patsubst ${SRC_HTTP_DIR}/%.cpp, ${OUTPUT_OBJ_DIR}/%.o, $(wildcard ${SRC_HTTP_DIR}/*.cpp))
+OBJS+=$(patsubst ${SRC_CUSTOMIZE_DIR}/%.cpp, ${OUTPUT_OBJ_DIR}/%.o, $(wildcard ${SRC_CUSTOMIZE_DIR}/*.cpp))
 
 INC=net/*.h \
 	util/*h \
@@ -38,4 +40,7 @@ ${OUTPUT_OBJ_DIR}/%.o:${SRC_UTIL_DIR}/%.cpp
 
 
 ${OUTPUT_OBJ_DIR}/%.o:${SRC_HTTP_DIR}/%.cpp
+	${CXX} ${CXXFLAGS} -c $< -o $@ ${LDFLAGES}
+
+${OUTPUT_OBJ_DIR}/%.o:${SRC_CUSTOMIZE_DIR}/%.cpp
 	${CXX} ${CXXFLAGS} -c $< -o $@ ${LDFLAGES}

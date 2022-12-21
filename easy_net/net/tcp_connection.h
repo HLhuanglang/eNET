@@ -22,17 +22,29 @@ public:
         write_buf_ = new buffer();
     }
 
+    ~tcp_connection()
+    {
+        //避免释放连接时候内存泄漏
+        if (read_buf_) {
+            delete read_buf_;
+        }
+        if (write_buf_) {
+            delete write_buf_;
+        }
+    }
+
 public:
     //void init(event_loop* loop, int fd);
-    int send_data(const char* data, size_t data_size);
+    void send_data(const char* data, size_t data_size);
+    size_t read_data();
 
     buffer& get_readbuf() { return *read_buf_; }
     buffer& get_writebuf() { return *write_buf_; }
 
 public:
-    size_t _handle_read();
-    size_t _handle_write();
+    void _handle_write();
     void _handle_close();
+    void _disable_write();
 
 private:
     event_loop* loop_;

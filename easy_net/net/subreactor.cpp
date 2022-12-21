@@ -63,18 +63,27 @@ void subreactor::wakeup(std::vector<msg_t>& msgs)
     std::swap(this->msgs_, msgs);
 }
 
+void subreactor::release_connection(int fd)
+{
+    tcp_connection* conn = connection_map_[fd];
+    if (conn) {
+        connection_map_.erase(fd);
+        conn->_handle_close();
+        delete conn;
+    }
+}
+
 void subreactor::_handle_read(int fd)
 {
     tcp_connection* conn = connection_map_[fd];
     //从这个地方回调到用户注册的接收消息回调
     if (conn != nullptr) {
-        auto ret = conn->_handle_read();
+        auto ret = conn->read_data();
         if (ret) {
             printfd("buf:%ld\n", conn->get_readbuf().readable_size());
             msg_cb(*conn, conn->get_readbuf());
         } else {
-            connection_map_.erase(fd);
-            conn->_handle_close();
+            release_connection(fd);
         }
     } else {
         //找不到链接???
