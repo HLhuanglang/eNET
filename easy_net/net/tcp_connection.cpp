@@ -49,7 +49,7 @@ size_t tcp_connection::read_data()
 void tcp_connection::_handle_write()
 {
     while (write_buf_->readable_size()) {
-        printfd("send buf:\n%s", write_buf_->readable_start());
+        //printfd("send buf:\n%s", write_buf_->readable_start());
         auto ret = socket_opt::write_buf_to_fd(*write_buf_, acceptfd_);
         if (ret < 0) {
             //写acceptfd出错了,直接断开连接...

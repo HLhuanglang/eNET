@@ -5,5 +5,5 @@
 int main()
 {
     event_loop loop;
-    tcp_server server(&loop, "0.0.0.0", 1234);
+    tcp_server server(&loop, "0.0.0.0", 1234, 4);
 }

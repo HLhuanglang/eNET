@@ -15,9 +15,8 @@ public:
     void start() { server_.start(); }
 
 private:
-    void _set_thread_cnt(size_t cnt) { server_.set_thread_cnt(cnt); }
     void _on_connection();
-    void _on_msg(tcp_connection& conn, buffer& buf);
+    int _on_msg(tcp_connection& conn, buffer& buf);
     void _on_request(tcp_connection& conn, const http_request& req);
 
 private:

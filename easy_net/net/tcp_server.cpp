@@ -3,6 +3,8 @@
 #include "subreactor_pool.h"
 #include "util.h"
 #include <arpa/inet.h>
+#include <cstddef>
+#include <cstdio>
 #include <cstring>
 #include <fcntl.h>
 #include <netinet/in.h>
@@ -10,10 +12,16 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port)
+tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port, int thread_cnt)
     : loop_(loop)
     , sub_reactor_pool_(nullptr)
 {
+    if (thread_cnt <= 0) {
+        printfd(" thread_cnt>=1 \n");
+        sub_reactor_pool_ = new subreactor_pool(1);
+    }
+    sub_reactor_pool_ = new subreactor_pool(thread_cnt);
+
     if (!util::check_ipv4(ip) || !util::check_port(port)) {
         printfd("error format ip or port!\n");
         exit(-1);
@@ -74,7 +82,6 @@ tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port)
 
 void tcp_server::set_recv_msg_cb(recv_msg_cb_f t)
 {
-    // bug：tcp_server初始化配置,必须等到reactor_pool运行起来.
     auto cnt = sub_reactor_pool_->get_pool_size();
     do {
         auto sub = sub_reactor_pool_->get_sub_reactor();
@@ -90,15 +97,6 @@ void tcp_server::set_build_connection_cb(std::function<void()>)
 void tcp_server::set_close_connection_cb(std::function<void()>)
 {
     // todo
-}
-
-void tcp_server::set_thread_cnt(size_t cnt)
-{
-    std::lock_guard<std::mutex> lg(mtx_);
-    if (sub_reactor_pool_ != nullptr) {
-        delete sub_reactor_pool_;
-    }
-    sub_reactor_pool_ = new subreactor_pool(cnt);
 }
 
 void tcp_server::_do_accept()

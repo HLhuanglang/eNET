@@ -80,8 +80,8 @@ void subreactor::_handle_read(int fd)
     if (conn != nullptr) {
         auto ret = conn->read_data();
         if (ret) {
-            printfd("buf:%ld\n", conn->get_readbuf().readable_size());
-            msg_cb(*conn, conn->get_readbuf());
+            auto ret = msg_cb(*conn, conn->get_readbuf());
+            printfd("fd=%d,buf_size=%ld, process_size=%ld\n", fd, conn->get_readbuf().readable_size(), ret);
         } else {
             release_connection(fd);
         }

@@ -14,7 +14,7 @@
 class tcp_connection;
 class tcp_server {
 public:
-    tcp_server(event_loop* loop, const char* ip, size_t port);
+    tcp_server(event_loop* loop, const char* ip, size_t port, int thread_cnt);
     ~tcp_server() = default;
 
 public:
@@ -31,7 +31,7 @@ public:
     void set_close_connection_cb(std::function<void()>);
 
     //设置loop中的线程数量,必须在start之前设置.
-    void set_thread_cnt(size_t cnt);
+    // void set_thread_cnt(size_t cnt);
 
     //运行
     void start() { loop_->process_event(); }
@@ -44,7 +44,6 @@ private:
     int socketfd_;     //处理监听请求
     int idlefd_;       //占位符,防止文件描述符使用达到上限导致无法处理连接事件
     subreactor_pool* sub_reactor_pool_;
-    std::mutex mtx_;
 };
 
 #endif

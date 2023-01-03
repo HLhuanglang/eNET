@@ -33,11 +33,7 @@ void thread_domain(subreactor* mq)
 subreactor_pool::subreactor_pool(int cnt)
     : curr_idx_(0)
 {
-    if (cnt < k_sub_reactor_cnt) {
-        sub_reactor_cnt_ = k_sub_reactor_cnt;
-    } else {
-        sub_reactor_cnt_ = cnt;
-    }
+    sub_reactor_cnt_ = cnt;
     sub_reactors_.resize(sub_reactor_cnt_);
     for (int i = 0; i < sub_reactor_cnt_; i++) {
         subreactor* mq   = new subreactor();

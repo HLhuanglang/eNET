@@ -3,6 +3,7 @@
 
 encode_state encode_holo_wo_pkg(const char* buf, size_t buf_size, holo_wo_t& holo_wo)
 {
+    //定长的协议头的优势在于解析会很快,不像http协议,需要根据Content-Length长度来判断请求body长度
     auto head_size = sizeof(holo_wo_head_t);
     if (buf_size < head_size) {
         return encode_state::HEAD_Incomplete;

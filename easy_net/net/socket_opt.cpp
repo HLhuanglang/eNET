@@ -29,7 +29,6 @@ size_t socket_opt::read_fd_to_buf(buffer& buf, int fd, int& err)
         buf.writer_step(read_size);
     } else {
         //读取的数量超过buf的容量,利用栈上空间.
-        //此时writeidx_在buf的末尾,下次写入数据时就会发生扩容.
         buf.set_writer_idx(buf.size());
         buf.append(extrabuf, n - read_size);
     }
