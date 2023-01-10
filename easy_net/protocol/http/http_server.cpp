@@ -38,7 +38,7 @@ int http_server::_on_msg(tcp_connection& conn, buffer& buf)
     } else {
         //收包不完整,继续收
     }
-    return parsed_size;
+    return static_cast<int>(parsed_size);
 }
 
 void http_server::_on_request(tcp_connection& conn, const http_request& req)
