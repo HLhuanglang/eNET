@@ -1,7 +1,4 @@
 #include "tcp_server.h"
-#include "print_debug.h"
-#include "subreactor_pool.h"
-#include "util.h"
 #include <arpa/inet.h>
 #include <cstddef>
 #include <cstdio>
@@ -12,10 +9,13 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port, int thread_cnt)
-    : loop_(loop)
-    , sub_reactor_pool_(nullptr)
-{
+#include "print_debug.h"
+#include "subreactor_pool.h"
+
+#include "util.h"
+
+tcp_server::tcp_server(event_loop *loop, const char *ip, size_t port, int thread_cnt)
+    : loop_(loop), sub_reactor_pool_(nullptr) {
     if (thread_cnt <= 0) {
         printfd(" thread_cnt>=1 \n");
         sub_reactor_pool_ = new subreactor_pool(1);
@@ -45,7 +45,7 @@ tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port, int thread
 
     // 3,设置成可重用模式
     int opend = 1;
-    ret       = ::setsockopt(socketfd_, SOL_SOCKET, SO_REUSEADDR, &opend, sizeof(opend));
+    ret = ::setsockopt(socketfd_, SOL_SOCKET, SO_REUSEADDR, &opend, sizeof(opend));
     if (ret < 0) {
         perror("setsockopt failed!");
         exit(-1);
@@ -61,10 +61,10 @@ tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port, int thread
     // 5,绑定ip和端口
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(sockaddr_in));
-    addr.sin_family      = AF_INET;
+    addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr(ip);
-    addr.sin_port        = htons(port);
-    ret                  = ::bind(socketfd_, (struct sockaddr*)&addr, sizeof(sockaddr));
+    addr.sin_port = htons(port);
+    ret = ::bind(socketfd_, (struct sockaddr *)&addr, sizeof(sockaddr));
     if (ret < 0) {
         // todo:log
         printfd("bind error:%s", strerror(errno));
@@ -77,11 +77,13 @@ tcp_server::tcp_server(event_loop* loop, const char* ip, size_t port, int thread
     // 7,将监听事件以及回调添加到epoll中进行管理。
     loop_ = loop;
     loop_->add_io_event(
-        socketfd_, [&](event_loop* loop, int fd, void* args) { this->_do_accept(); }, EPOLLIN, this);
+        socketfd_, [&](event_loop *loop, int fd, void *args) {
+            this->_do_accept();
+        },
+        EPOLLIN, this);
 }
 
-void tcp_server::set_recv_msg_cb(recv_msg_cb_f t)
-{
+void tcp_server::set_recv_msg_cb(recv_msg_cb_f t) {
     auto cnt = sub_reactor_pool_->get_pool_size();
     do {
         auto sub = sub_reactor_pool_->get_sub_reactor();
@@ -89,24 +91,21 @@ void tcp_server::set_recv_msg_cb(recv_msg_cb_f t)
     } while (cnt--);
 }
 
-void tcp_server::set_build_connection_cb(std::function<void()>)
-{
+void tcp_server::set_build_connection_cb(std::function<void()>) {
     // TODO
 }
 
-void tcp_server::set_close_connection_cb(std::function<void()>)
-{
+void tcp_server::set_close_connection_cb(std::function<void()>) {
     // todo
 }
 
-void tcp_server::_do_accept()
-{
+void tcp_server::_do_accept() {
     //先调用accept处理连接请求
     struct sockaddr addr;
     socklen_t addr_len = sizeof(sockaddr);
 
     bool is_connection_full = false; // linux下进程最多可用1024个fd
-    static int cnt          = 0;
+    static int cnt = 0;
     for (;; cnt++) {
         // 1,连接出现了问题
         int acceptfd = ::accept(socketfd_, &addr, &addr_len);
@@ -140,8 +139,8 @@ void tcp_server::_do_accept()
                 auto sub = sub_reactor_pool_->get_sub_reactor();
                 msg_t msg;
                 msg.reactor_id_ = sub_reactor_pool_->get_subreactor_id();
-                msg.accept_fd_  = acceptfd;
-                msg.msg_type_   = msg_type_t::NEW_CONN;
+                msg.accept_fd_ = acceptfd;
+                msg.msg_type_ = msg_type_t::NEW_CONN;
                 sub->notify(msg);
             }
         }

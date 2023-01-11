@@ -7,10 +7,11 @@
 template <typename T>
 class sigleton {
 public:
-    static T *get_instance()
-    {
+    static T *get_instance() {
         if (nullptr == instance_) {
-            std::call_once(once_f_, [&]() { sigleton::instance_.reset(new T()); });
+            std::call_once(once_f_, [&]() {
+                sigleton::instance_.reset(new T());
+            });
         }
         return instance_.get();
     }

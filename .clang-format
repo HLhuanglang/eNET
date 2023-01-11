@@ -1,109 +1,24 @@
-Language:        Cpp
-# BasedOnStyle:  LLVM
-AccessModifierOffset: -4
-AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: false
-AlignEscapedNewlinesLeft: true
-AlignOperands:   true
-AlignTrailingComments: true
-AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: true
-AllowShortLoopsOnASingleLine: true
-AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakAfterReturnType: None
-AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: true
-BinPackArguments: true
-BinPackParameters: true
-# 大括号换行，只有当 BreakBeforeBraces 设置为Custom时才有效
-# true表示换行，fasle表示不换行
-BraceWrapping:
-  #case语句后面
-  AfterCaseLabel:  true
-  #class定义后面
-  AfterClass:      false
-  #控制语句后面
-  AfterControlStatement: false
-  #enmu是一行还是分行
-  AfterEnum:       true
-  #是否跟在函数定义后面
-  AfterFunction:   true
-  #命名空间后面
-  AfterNamespace:  false
-  AfterObjCDeclaration: false
-  AfterStruct:     false
-  AfterUnion:      false
-  BeforeCatch:     true
-  BeforeElse:      false
-  IndentBraces:    false
-  #空函数的大括号是否可以在一行
-  SplitEmptyFunction: false
-  # 空记录体(struct/class/union)的大括号是否可以在一行
-  SplitEmptyRecord: false
-  # 空名字空间的大括号是否可以在一行
-  SplitEmptyNamespace: false
-BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Custom
-BreakBeforeTernaryOperators: true
-BreakConstructorInitializersBeforeComma: false
-BreakAfterJavaFieldAnnotations: false
-BreakStringLiterals: true
-BreakConstructorInitializers: BeforeComma
-ColumnLimit:     0
-CommentPragmas:  '^ IWYU pragma:'
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
-ConstructorInitializerIndentWidth: 4
-ContinuationIndentWidth: 4
-Cpp11BracedListStyle: true
-DerivePointerAlignment: true
-DisableFormat:   false
-ExperimentalAutoDetectBinPacking: false
-ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
-IncludeCategories:
-  - Regex:           '.*'
-    Priority:        1
-  - Regex:           '^".*/'
-    Priority:        2
-  - Regex:           '^<)'
-    Priority:        3
-IncludeIsMainRegex: '$'
+BasedOnStyle: LLVM
+UseTab: Never
+IndentWidth: 4
+TabWidth: 4
+
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+
 IndentCaseLabels: false
-IndentWidth:     4
-IndentWrappedFunctionNames: false
-JavaScriptQuotes: Leave
-JavaScriptWrapImports: true
-KeepEmptyLinesAtTheStartOfBlocks: true
-MacroBlockBegin: ''
-MacroBlockEnd:   ''
-MaxEmptyLinesToKeep: 1
-NamespaceIndentation: None
-ObjCBlockIndentWidth: 4
-ObjCSpaceAfterProperty: false
-ObjCSpaceBeforeProtocolList: true
-PenaltyBreakBeforeFirstCallParameter: 19
-PenaltyBreakComment: 300
-PenaltyBreakFirstLessLess: 120
-PenaltyBreakString: 1000
-PenaltyExcessCharacter: 1000000
-PenaltyReturnTypeOnItsOwnLine: 60
-PointerAlignment: Right
-ReflowComments:  true
-SortIncludes:    false
-SpaceAfterCStyleCast: false
-SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: ControlStatements
-SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInAngles:  false
-SpacesInContainerLiterals: true
-SpacesInCStyleCastParentheses: false
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
-Standard:        Cpp11
-TabWidth:        4
-UseTab:          Never
+ColumnLimit: 0
+AccessModifierOffset: -4
+FixNamespaceComments: true
+SpaceBeforeInheritanceColon: true
+BreakInheritanceList: AfterColon
 IndentPPDirectives: AfterHash
+
+IncludeBlocks: Regroup
+IncludeCategories:
+    - Regex: '<[[:alnum:].\/-]+>'
+      Priority: 0
+      SortPriority: 0
+    - Regex: '"[[:alnum:].\/-]+"'
+      Priority: 10
+      SortPriority: 10

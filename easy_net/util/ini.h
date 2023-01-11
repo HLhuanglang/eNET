@@ -5,7 +5,7 @@
 #include <string>
 
 const char *const k_whitespace_delimiters = " \t\n\r\f\v";
-const char *const CRLF                    = "\n";
+const char *const CRLF = "\n";
 
 //配合ini_datatype_e，对每一行数据进行解析
 //可以存储的是section名，也可以是k-v数据
@@ -13,11 +13,10 @@ const char *const CRLF                    = "\n";
 //当数据类型是 DATA_KEY_VAL时，key=first，val=second
 using parse_data_t = std::pair<std::string, std::string>;
 
-using kv_t             = std::map<std::string, std::string>;
+using kv_t = std::map<std::string, std::string>;
 using ini_containder_t = std::map<std::string, kv_t>; // inifile: section-kv
 
-enum class ini_datatype_e
-{
+enum class ini_datatype_e {
     DATA_NONE,
     DATA_COMMENT,
     DATA_SECTION,
@@ -34,8 +33,7 @@ public:
 
 public:
     inifile() = default;
-    ~inifile()
-    {
+    ~inifile() {
         if (fp_) {
             fclose(fp_);
         }
@@ -44,7 +42,7 @@ public:
 public:
     ini_containder_t data_;
     const char *file_name_ = nullptr;
-    FILE *fp_              = nullptr;
+    FILE *fp_ = nullptr;
 };
 
 //提供操作,全部都是静态方法

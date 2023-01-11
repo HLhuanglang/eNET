@@ -26,44 +26,46 @@ public:
     buffer();
 
 public:
-    char* write_start();                       //数据开始地址
-    const char* write_start() const;           //数据开始地址
-    void append(const char* data, size_t len); //填充数据(需要注意迭代器失效问题)
+    char *write_start();             //数据开始地址
+    const char *write_start() const; //数据开始地址
+    void append(const char *data,
+                size_t len); //填充数据(需要注意迭代器失效问题)
 
-    char* readable_start();
-    const char* readble_start() const;
+    char *readable_start();
+    const char *readble_start() const;
 
     size_t prependable_size();
     size_t writable_size();
     size_t readable_size();
 
     size_t size();
-    const std::vector<char>& get_data();
+    const std::vector<char> &get_data();
     void clear();
-    //writer
+    // writer
     size_t get_writer_idx();
     void set_writer_idx(size_t idx);
     void writer_step(size_t step);
-    //reader
+    // reader
     size_t get_reader_idx();
     void set_reader_idx(size_t idx);
     void reader_step(size_t step);
 
 private:
-    char* _begin();
-    const char* _begin() const;
+    char *_begin();
+    const char *_begin() const;
     void _make_space(size_t len);
-    void _ensure_writeable_bytes(size_t len); //确保有足够空间写入数据,如果不够则扩容
+    void _ensure_writeable_bytes(
+        size_t len); //确保有足够空间写入数据,如果不够则扩容
 
 private:
     /*
-    数据发送从头开始发，写入则从剩余位置开始写
-                            readidx_         writeidx_
-                           ↓                ↓
-        [---prependable----|----readable----|-----writable----]
-        ↑                                                     ↑
-        0                                                     data_.size()
-    */
+  数据发送从头开始发，写入则从剩余位置开始写
+                          readidx_         writeidx_
+                         ↓                ↓
+      [---prependable----|----readable----|-----writable----]
+      ↑                                                     ↑
+      0                                                     data_.size()
+  */
     std::vector<char> data_;
     size_t writeidx_;
     size_t readidx_;

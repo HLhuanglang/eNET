@@ -1,12 +1,11 @@
+#include <iostream>
+#include <vector>
+
 #include "easy_net/event_loop.h"
 #include "easy_net/http_client.h"
 #include "easy_net/http_response.h"
 
-#include <iostream>
-#include <vector>
-
-int main()
-{
+int main() {
     // event_loop loop;
     // http_client cli(&loop, "127.0.0.1", 12345);
 

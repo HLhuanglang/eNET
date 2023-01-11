@@ -1,9 +1,9 @@
-#include "easy_net/ini.h"
 #include <cstring>
 #include <iostream>
 
-int main()
-{
+#include "easy_net/ini.h"
+
+int main() {
     inifile ifile;
     if (ifile.load("test.ini")) {
         ini::read(ifile);

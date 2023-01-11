@@ -1,0 +1,5 @@
+Checks: 
+'-*,
+clang-diagnostic-*,
+llvm-*,misc-*,
+modernize-loop-convert'

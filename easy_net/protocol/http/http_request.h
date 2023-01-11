@@ -15,7 +15,7 @@ public:
     http_request() {}
 
 public:
-    static void append_http_to_buf(const http_request& req, buffer& buf);
+    static void append_http_to_buf(const http_request &req, buffer &buf);
 
 public:
     std::string method_;

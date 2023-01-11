@@ -1,11 +1,10 @@
+#include <iostream>
+
 #include "easy_net/buffer.h"
 #include "easy_net/http_context.h"
 #include "easy_net/http_response.h"
 
-#include <iostream>
-
-int main()
-{
+int main() {
     std::string str_http_req = "";
     str_http_req += "POST /uploaddata HTTP/1.1\r\n";
     str_http_req += "Host: 127.0.0.1:8080\r\n";

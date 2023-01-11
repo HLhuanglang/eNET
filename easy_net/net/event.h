@@ -4,9 +4,10 @@
 #ifndef __EVENT_H
 #define __EVENT_H
 
-#include "cb.h"
 #include <functional>
 #include <stdint.h>
+
+#include "cb.h"
 
 typedef struct io_event_t {
     event_cb_f read_cb;  // for EPOLLIN

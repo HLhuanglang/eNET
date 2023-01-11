@@ -1,25 +1,24 @@
 #include "socket_opt.h"
-#include <sys/uio.h> // readv
 #include <errno.h>   // errno
+#include <sys/uio.h> // readv
 #include <unistd.h>  // read
 
-size_t socket_opt::read_fd_to_buf(buffer& buf, int fd, int& err)
-{
+size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
     // 执行read读取数据,对端某次发生的数据会被全部接受下来
     char extrabuf[65536];
     struct iovec vec[2];
-    ssize_t n        = 0;
+    ssize_t n = 0;
     size_t read_size = buf.writable_size();
 
     vec[0].iov_base = buf.write_start();
-    vec[0].iov_len  = read_size;
+    vec[0].iov_len = read_size;
     vec[1].iov_base = extrabuf;
-    vec[1].iov_len  = sizeof(extrabuf);
+    vec[1].iov_len = sizeof(extrabuf);
 
     do {
         //可能被系统调用中断,但是实际并没有调用结束,所以用一层while循环.
         const int iovcnt = (read_size < sizeof extrabuf) ? 2 : 1;
-        n                = ::readv(fd, vec, iovcnt);
+        n = ::readv(fd, vec, iovcnt);
     } while (n == -1 && errno == EINTR);
 
     if (n < 0) {
@@ -37,8 +36,7 @@ size_t socket_opt::read_fd_to_buf(buffer& buf, int fd, int& err)
     return n;
 }
 
-size_t socket_opt::write_buf_to_fd(buffer& buf, int fd)
-{
+size_t socket_opt::write_buf_to_fd(buffer &buf, int fd) {
     size_t n = 0;
     do {
         n = ::write(fd, buf.readble_start(), buf.readable_size());

@@ -1,11 +1,13 @@
 #include "tcp_connection.h"
-#include "buffer.h"
-#include "cb.h"
-#include "print_debug.h"
 #include <cstddef>
 #include <cstdio>
 #include <fcntl.h>
+
+#include "print_debug.h"
 #include "socket_opt.h"
+
+#include "buffer.h"
+#include "cb.h"
 
 // void tcp_connection::init(event_loop *loop, int fd)
 // {
@@ -19,8 +21,7 @@
 //         acceptfd_, [&](event_loop *loop, int fd, void *args) { this->_handle_read(); }, EPOLLIN, this); // TCP连接已经建立好了,双方进入ESTABLISH状态，可以进行数据传输。
 // }
 
-void tcp_connection::send_data(const char *data, size_t data_size)
-{
+void tcp_connection::send_data(const char *data, size_t data_size) {
     bool need_send = false;
     if (write_buf_->readable_size() > 0) {
         need_send = true;
@@ -36,18 +37,19 @@ void tcp_connection::send_data(const char *data, size_t data_size)
 
     if (need_send) {
         loop_->add_io_event(
-            acceptfd_, [&](event_loop *loop, int fd, void *args) { this->_handle_write(); }, EPOLLOUT, this);
+            acceptfd_, [&](event_loop *loop, int fd, void *args) {
+                this->_handle_write();
+            },
+            EPOLLOUT, this);
     }
 }
 
-size_t tcp_connection::read_data()
-{
+size_t tcp_connection::read_data() {
     int err;
     return socket_opt::read_fd_to_buf(*read_buf_, acceptfd_, err);
 }
 
-void tcp_connection::_handle_write()
-{
+void tcp_connection::_handle_write() {
     while (write_buf_->readable_size()) {
         //printfd("send buf:\n%s", write_buf_->readable_start());
         auto ret = socket_opt::write_buf_to_fd(*write_buf_, acceptfd_);
@@ -66,13 +68,11 @@ void tcp_connection::_handle_write()
     }
 }
 
-void tcp_connection::_handle_close()
-{
+void tcp_connection::_handle_close() {
     loop_->del_io_event(acceptfd_);
 }
 
-void tcp_connection::_disable_write()
-{
+void tcp_connection::_disable_write() {
     //fixme：从监听EPOLLOUT|EPOLLIN 变成只监听EPOLLIN ????
     loop_->update_io_event(acceptfd_, EPOLLIN);
 }

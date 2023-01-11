@@ -1,11 +1,12 @@
 #include "tcp_client.h"
-#include "print_debug.h"
-#include "util.h"
 #include <signal.h>
 
-tcp_client::tcp_client(event_loop* loop, const char* ip, size_t port)
-    : loop_(loop)
-{
+#include "print_debug.h"
+
+#include "util.h"
+
+tcp_client::tcp_client(event_loop *loop, const char *ip, size_t port)
+    : loop_(loop) {
     // if (!util::check_ipv4(ip) || !util::check_port(port)) {
     //     printfd("error format ip or port!\n");
     //     exit(-1);

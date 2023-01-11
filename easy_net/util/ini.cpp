@@ -2,8 +2,7 @@
 #include <cstdio>
 #include <cstring>
 
-ini_datatype_e ini::parse_line(std::string line, parse_data_t &data)
-{
+ini_datatype_e ini::parse_line(std::string line, parse_data_t &data) {
     line.erase(line.find_last_not_of(k_whitespace_delimiters) + 1);
     line.erase(0, line.find_first_not_of(k_whitespace_delimiters));
     data.first.clear();
@@ -23,23 +22,22 @@ ini_datatype_e ini::parse_line(std::string line, parse_data_t &data)
         auto close_bracket_idx = line.find_last_of(']');
         if (close_bracket_idx != line.npos) {
             auto section = line.substr(1, close_bracket_idx - 1);
-            data.first   = section;
+            data.first = section;
             return ini_datatype_e::DATA_SECTION;
         }
     }
     auto equals_idx = line.find_first_of('=');
     if (equals_idx != line.npos) {
-        auto key    = line.substr(0, equals_idx);
-        auto value  = line.substr(equals_idx + 1);
-        data.first  = key;
+        auto key = line.substr(0, equals_idx);
+        auto value = line.substr(equals_idx + 1);
+        data.first = key;
         data.second = value;
         return ini_datatype_e::DATA_KEY_VAL;
     }
     return ini_datatype_e::DATA_UNKNOWN;
 }
 
-std::string ini::covert_inifile_to_string(const inifile &ini)
-{
+std::string ini::covert_inifile_to_string(const inifile &ini) {
     std::string data;
     for (auto &n : ini.data_) {
         // section
@@ -54,8 +52,7 @@ std::string ini::covert_inifile_to_string(const inifile &ini)
     return data;
 }
 
-bool ini::read(inifile &inifile)
-{
+bool ini::read(inifile &inifile) {
     char buf[1024] = {0};
     std::string section;
     parse_data_t parse_data;
@@ -76,8 +73,7 @@ bool ini::read(inifile &inifile)
     return true;
 }
 
-bool ini::write(inifile &inifile)
-{
+bool ini::write(inifile &inifile) {
     auto data = ini::covert_inifile_to_string(inifile);
     fclose(inifile.fp_);
     inifile.fp_ = fopen(inifile.file_name_, "w");
@@ -89,10 +85,9 @@ bool ini::write(inifile &inifile)
     return true;
 }
 
-bool inifile::load(const char *path)
-{
+bool inifile::load(const char *path) {
     file_name_ = path;
-    fp_        = fopen(file_name_, "r");
+    fp_ = fopen(file_name_, "r");
     if (!this->fp_) {
         // perror("fopen error");
         return false;
@@ -100,12 +95,10 @@ bool inifile::load(const char *path)
     return true;
 }
 
-std::string inifile::get_val(const char *section, const char *key)
-{
+std::string inifile::get_val(const char *section, const char *key) {
     return data_[section][key];
 }
 
-void inifile::set_val(const char *section, const char *key, const char *val)
-{
+void inifile::set_val(const char *section, const char *key, const char *val) {
     data_[section][key] = val;
 }
