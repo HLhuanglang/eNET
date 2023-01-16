@@ -21,3 +21,17 @@ ide使用vscode，配合clangd+error lens能够非常愉快的编写代码
 - 修改.vscode目录下launch.json中program即可
 - 由于程序使用多进程,直接调试会在各个线程中切换,所以可以在~/.gdbinit中配置
     - set scheduler-locking on
+
+## 目录说明
+
+| 目录         | 作用                                               |
+| ------------ | -------------------------------------------------- |
+| .vscode      | vscode一些调试配置                                 |
+| config       | 配置文件模板(暂未使用)                             |
+| docs         | 开发文档                                           |
+| easy_net     | 网络库底层，目前主要支持tcp协议，udp暂未考虑       |
+| protocol     | 用户层协议，例如http、websocket等                  |
+| raw_examples | socket系列接口的原生使用方法、优秀的网络库使用案例 |
+| test         | 测试代码|
+| output       | libeasy_net.a和libeasy_net.so以及公开的头文件      |
+| build        | 编译的中间产物、可执行程序等                       |

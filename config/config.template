@@ -1,2 +1,6 @@
 [log]
 log_name=easynet.log
+log_level=debug
+
+[thread]
+thread_num=4

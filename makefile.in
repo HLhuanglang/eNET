@@ -1,0 +1,171 @@
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# makefile.in可以理解成一个编译函数了，根据入参选项执行不同的编译任务
+#+++++++++++++++++++++++++++++++++configure++++++++++++++++++++++++++++++++++++++++
+# []中的表示默认值,没有则无默认值
+#
+# MODE=[]					编译模式：LIB、EXE
+#LIB模式
+#此模式下需要指定LIB_TYPE
+#INCDIRS、SRCS
+
+#EXE模式
+#编译exe时，m个.cpp、n个.h。m,n>=0
+
+
+# TARGET_NAME=[]			生成目标名字
+# LIB_TYPE=[STATIC]			生成目标类型：SHARED,STATIC,SHARED|STATIC
+# BUILD_TYPE=[DEBUG]		是否带有调试：DEBUG,RELEASE
+# CROSS_COMPILE=[]			编译工具链
+# DEP_LIBSDIRS=[]			依赖的第三方库的库目录
+# DEP_LIBS=[]				依赖的第三方库名字
+# DEP_INCDIRS=[]			依赖的第三方库头文件目录
+# DEFINES=[]				编译宏开关
+
+# OUTDIR=[]					编译输出目录
+# INCDIRS=[]				头文件目录
+# SRCS=[]					具体的源码
+#
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# makefile能够直接使用当前终端下的所有环境变量的值，环境变量的值可以通过toochain.sh修改
+# 优先使用上述设置的参数,其次才是使用环境变量值，最后使用makefile内置变量值
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+##自选配置
+-include easy_net_compile_config.mk
+
+##makeifle变量
+include makefile.vars
+
+#设定默认值
+BUILD_TYPE ?= [DEBUG]
+LIB_TYPE ?= [STATIC]
+
+#设定编译工具链
+ifdef CROSS_COMPILE
+CC 	  = $(CROSS_COMPILE)gcc
+CXX   = $(CROSS_COMPILE)g++
+CPP   = $(CC) -E    ##预处理
+AS 	  = $(CROSS_COMPILE)as
+LD	  = $(CROSS_COMPILE)ld
+AR	  = $(CROSS_COMPILE)ar
+NM	  = $(CROSS_COMPILE)nm
+STRIP = $(CROSS_COMPILE)strip
+endif
+
+
+#==============================
+#获取编译环境：OS, ARCH
+#==============================
+CC_VERSION=$(shell $(CC) --version 2>&1 | head -n 1)
+TARGET_PLATFORM=$(shell $(CC) -v 2>&1 | grep Target | sed 's/Target: //')
+ifneq ($(findstring mingw, $(TARGET_PLATFORM)), )
+	OS=Windows
+endif
+ifneq ($(findstring android, $(TARGET_PLATFORM)), )
+	OS=Android
+endif
+ifneq ($(findstring darwin, $(TARGET_PLATFORM)), )
+	OS=Darwin
+endif
+ifndef OS
+	OS=Linux
+endif
+
+ifndef ARCH
+ARCH=$(shell echo $(TARGET_PLATFORM) | awk -F'-' '{print $$1}')
+endif
+
+#==============================
+# CXXFLAGS, ARFLAGS
+#==============================
+ifeq ($(BUILD_TYPE), DEBUG)
+	DEFAULT_CFLAGS = -g -Wall -O0
+else
+	DEFAULT_CFLAGS += -O2
+endif
+
+CXXFLAGS ?= $(DEFAULT_CFLAGS)
+CXXFLAGS += $(addprefix -I, $(INCDIRS))
+CXXFLAGS += $(addprefix -I, $(DEP_INCDIRS))
+CXXFLAGS += $(addprefix -D, $(DEFINES))
+
+ifeq ($(findstring -fPIC, $(CXXFLAGS)), )
+override CXXFLAGS += -fPIC
+endif
+
+ifeq ($(findstring -std, $(CXXFLAGS)), )
+override CXXFLAGS += -std=c++11
+endif
+
+ARFLAGS ?= cr
+
+#==============================
+# LDFLAGS
+#==============================
+ifneq (${DEP_LIBSDIRS}, )
+	LDFLAGS += $(addprefix -L, $(DEP_LIBSDIRS))
+endif
+ifneq (${DEP_LIBS}, )
+	LDFLAGS += $(addprefix -l, $(DEP_LIBS))
+endif
+ifeq ($(OS), Linux)
+	LDFLAGS += -lstdc++ -lpthread -lm -ldl
+endif
+
+#==============================
+# 打印信息
+#==============================
+$(info $(CC_VERSION))
+$(info OS               = $(OS))
+$(info ARCH             = $(ARCH))
+$(info MAKE             = $(MAKE))
+$(info CC               = $(CC))
+$(info CXX              = $(CXX))
+$(info CFLAGS           = $(CFLAGS))
+$(info CXXFLAGS         = $(CXXFLAGS))
+$(info CPPFLAGS         = $(CPPFLAGS))
+$(info LDFLAGS          = $(LDFLAGS))
+
+$(info MODE             = $(MODE))
+$(info TARGET_NAME      = $(TARGET_NAME))
+$(info LIB_TYPE         = $(LIB_TYPE))	
+$(info BUILD_TYPE       = $(BUILD_TYPE))
+$(info TARGET_PLATFORM  = $(TARGET_PLATFORM))
+$(info CROSS_COMPILE    = $(CROSS_COMPILE))
+$(info DEP_INCDIRS      = $(DEP_INCDIRS))
+$(info DEP_LIBSDIRS     = $(DEP_LIBSDIRS))
+$(info DEP_LIBS         = $(DEP_LIBS))
+$(info DEFINES          = $(DEFINES))
+$(info OUTDIR           = $(OUTDIR))
+$(info INCDIRS          = $(INCDIRS))
+$(info SRCS             = $(SRCS))
+
+
+
+#==============================
+# 编译动作
+#==============================
+.PHONY:build
+build: ${MODE}
+
+####编译LIB
+OBJS = $(addsuffix  .o, $(basename ${SRCS}))
+$(info OBJS             = $(OBJS))
+
+.PHONY: LIB
+LIB:${OBJS}
+ifneq ($(findstring SHARED, $(LIB_TYPE)), )
+	$(CXX) -shared $^ -o $(OUTDIR)/lib${TARGET_NAME}.so $(LDFLAGS)
+endif
+
+ifneq ($(findstring STATIC, $(LIB_TYPE)), )
+	$(AR) $(ARFLAGS) $(OUTDIR)/lib${TARGET_NAME}.a $^
+endif
+
+${OBJS}:%.o:%.cpp
+	${CXX} ${CXXFLAGS} -c $^ -o $@ ${LDFLAGS}
+
+####编译EXE
+.PHONY: EXE
+EXE:
+	${CXX} -static ${CXXFLAGS} ${SRCS} -o ${OUTDIR}/${TARGET_NAME} ${LDFLAGS}
+	

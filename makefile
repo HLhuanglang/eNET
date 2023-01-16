@@ -1,54 +1,131 @@
-##通用的编译器选项
-CXX= g++
-CXXFLAGS= -std=c++11 -g -DDEBUG
-LDFLAGES= -lpthread
+#########总控makefile#########
+##自选配置
+include easy_net_compile_config.mk
 
-SUB_DIRS=easy_net\
-			example\
-			raw_examples\
-			test\
+##makeifle变量
+include makefile.vars
 
-ROOT_DIR=$(shell pwd)
-OUTPUT_BIN_DIR=$(ROOT_DIR)/debug/bin
-OUTPUT_OBJ_DIR=${ROOT_DIR}/debug/obj
-OUTPUT_LIB_PATH=$(ROOT_DIR)/output/lib
-OUTPUT_INC_PATH=${ROOT_DIR}/output/include
+##封装一些功能
+MAKEF = $(MAKE) -f makefile.in
+MKDIR = -mkdir -p 2>/dev/null
+CP    = -cp -r 2>/dev/null
+RM    = -rm -r 2>/dev/null
 
-TARGET_SO=libeasynet.so
-
-$(shell mkdir -p ${OUTPUT_BIN_DIR})
-$(shell mkdir -p ${OUTPUT_LIB_PATH})
-$(shell mkdir -p ${OUTPUT_INC_PATH})
-$(shell mkdir -p ${OUTPUT_OBJ_DIR})
-## 导出给子makefile使用
-export ROOT_DIR OUTPUT_BIN_DIR OUTPUT_OBJ_DIR OUTPUT_LIB_PATH OUTPUT_INC_PATH CXX CXXFLAGS LDFLAGES TARGET_SO
-
+#============================================================
+# 通用编译步骤
+#============================================================
 .PHONY: default
-default: all
-
-##关于socket系列接口使用,以及一些开源的网络库使用案例
-.PHONY: raw_examples
-raw_examples:
-	${MAKE} -C raw_examples
+default:
+	@echo "Usage: make [all|easy_net|raw_examples|test|clean]"
 
 .PHONY: all
-all: 
-	@for dir in ${SUB_DIRS}; do ${MAKE} -C $${dir}; done
-	@echo "\n\n========[make all done, please enjoy easynet]========" 
+all: raw_examples easy_net test
+	@echo "\n ======Compile all Done!======"
+
+.PHONY: premake
+premake:
+	@${MKDIR} ${BUILD_BIN_DIR}
+	@${MKDIR} ${BUILD_EASYNET_DIR}
+
+
+#============================================================
+# easy_net库编译
+#============================================================
+#源码和头文件
+EASYNET_SRC_DIRS= ${ROOT_DIR}/easy_net
+EASYNET_INC_DIRS =${ROOT_DIR}/easy_net/inc
+
+#对外暴露的头文件
+EASYNET_OUT_HEADERS= ${NET_PUB_HEADERS}
+
+#是否添加http模块
+ifeq ($(WITH_HTTP),yes)
+	EASYNET_SRC_DIRS += ${ROOT_DIR}/protocol/http
+	EASYNET_OUT_HEADERS += ${HTTP_HEADERS}
+endif
+
+#是否添加mqtt模块
+ifeq ($(WITH_MQTT),yes)
+	EASYNET_SRC_DIRS += ${ROOT_DIR}/protocol/mqtt
+	EASYNET_OUT_HEADERS += ${MQTT_HEADERS}
+endif
+
+#提取编译lib所需要的src
+EASYNET_SRCS = $(foreach dir, $(EASYNET_SRC_DIRS), $(wildcard $(dir)/*.c $(dir)/*.cc $(dir)/*.cpp))
 
 .PHONY: easy_net
-easy_net:
-	${MAKE} -C easy_net
+easy_net: premake
+	@$(MKDIR) ${BUILD_EASYNET_DIR}/include/easy_net
+	@$(MKDIR) ${BUILD_EASYNET_DIR}/lib
+	@$(MAKEF) MODE=LIB \
+		TARGET_NAME=$@ \
+		LIB_TYPE="SHARED|STATIC" \
+		BUILD_TYPE=DEBUG \
+		DEFINES=DEBUG	\
+		OUTDIR=${BUILD_EASYNET_DIR}/lib \
+		SRCS="$(EASYNET_SRCS)" \
+		INCDIRS="$(EASYNET_INC_DIRS)" \
+		
+	@$(CP) $(EASYNET_OUT_HEADERS) ${BUILD_EASYNET_DIR}/include/easy_net
+	@echo "Compile easy_net Done!"
 
-.PHONY:example
-example:easy_net
-	${MAKE} -C example
+
+#============================================================
+# easy_net单元测试
+#============================================================
+TEST_SRCDIRS = ${ROOT_DIR}/test/easy_net_test
+
+#是否测试http模块
+ifeq ($(WITH_HTTP),yes)
+	TEST_SRCDIRS +=  ${ROOT_DIR}/test/http_test
+endif
+
+#是否测试mqtt模块
+ifeq ($(WITH_MQTT),yes)
+	TEST_SRCDIRS +=  ${ROOT_DIR}/test/mqtt_test
+endif
+
+#过滤所有的单元测试文件
+TEST_SRCS = $(foreach dir, $(TEST_SRCDIRS), $(wildcard $(dir)/*.c $(dir)/*.cc $(dir)/*.cpp))
 
 .PHONY: test
 test: easy_net
-	${MAKE} -C test
+	${MKDIR} ${BUILD_BIN_DIR}/test
+	@for src in ${TEST_SRCS};\
+	do \
+		$(MAKEF) MODE=EXE\
+			TARGET_NAME=`basename $$src .cpp`\
+			SRCS=$$src\
+			OUTDIR=${BUILD_BIN_DIR}/test\
+			DEP_INCDIRS=${BUILD_EASYNET_DIR}/include\
+			DEP_LIBSDIRS=${BUILD_EASYNET_DIR}/lib\
+			DEP_LIBS=easy_net\
+	;done
+	@echo "Compile test Done!"
 
+#============================================================
+# 编译raw_examples
+#============================================================
+.PHONY: raw_examples
+raw_examples: premake
+	@${MAKE} -C raw_examples OUTPUT_BIN_DIR=${BUILD_BIN_DIR}/raw_examples
+	@echo "Compile raw_examples Done!"
+
+#============================================================
+# 调试makefile
+#============================================================
+.PHONY: debug_mk
+debug_mk:
+
+
+#============================================================
+# 清理编译环境
+#============================================================
 .PHONY: clean
 clean:
-	rm -rf debug
-	rm -rf output
+	@find . -name "*.o" | xargs rm -rf
+
+.PHONY: clean_all
+clean_all:clean
+	@${RM} build
+	@echo "Clean All done."

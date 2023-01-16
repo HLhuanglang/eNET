@@ -1,9 +1,15 @@
-SUB_DIRS=socket_practice\
-			http_parser\
-			libuv\
-			cpp-httplib
+SUB_DIRS=http_parser\
+			cpp-httplib\
+			epoll\
+			eventfd\
+			timerfd
+			
+CXX= g++
+CXXFLAGS= -std=c++11 -g -DDEBUG
+LDFLAGES= -lpthread
 
-OUTPUT_BIN_DIR:=${OUTPUT_BIN_DIR}/raw_examples
+
+export OUTPUT_BIN_DIR CXX CXXFLAGS LDFLAGES
 
 .PHONY:default
 default:build

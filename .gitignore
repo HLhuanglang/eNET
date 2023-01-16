@@ -4,3 +4,6 @@ output
 compile_commands.json
 *.o
 .cache
+build
+tmp
+easy_net_compile_config.mk
