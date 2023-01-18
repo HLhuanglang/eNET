@@ -33,5 +33,4 @@ ide使用vscode，配合clangd+error lens能够非常愉快的编写代码
 | protocol     | 用户层协议，例如http、websocket等                  |
 | raw_examples | socket系列接口的原生使用方法、优秀的网络库使用案例 |
 | test         | 测试代码|
-| output       | libeasy_net.a和libeasy_net.so以及公开的头文件      |
-| build        | 编译的中间产物、可执行程序等                       |
+| build        | libeasy_net.so/.a 编译的中间产物、可执行程序等     |
