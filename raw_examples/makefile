@@ -2,7 +2,8 @@ SUB_DIRS=http_parser\
 			cpp-httplib\
 			epoll\
 			eventfd\
-			timerfd
+			timerfd \
+			async_http
 			
 CXX= g++
 CXXFLAGS= -std=c++11 -g -DDEBUG

@@ -9,4 +9,4 @@ default:build
 .PHONY:build
 build:
 	@mkdir -p ${BIN_PATH}
-	${CXX} ${CXXFLAGS} ${LDFLAGES} ${SRC} -o ${BIN_PATH}/${TARGET_BIN}
+	${CXX} ${CXXFLAGS} ${SRC} -o ${BIN_PATH}/${TARGET_BIN} ${LDFLAGES} 
