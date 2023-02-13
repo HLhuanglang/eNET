@@ -23,7 +23,9 @@ subreactor::subreactor() {
     thread_id_ = std::this_thread::get_id();
 }
 
-void subreactor::set_loop(std::shared_ptr<event_loop> loop, event_cb_f func, void *args) {
+// 这个函数应该叫做 set_after_notify_cb
+// 功能就是设置收到主线程的通知后，子线程应该做什么
+void subreactor::set_after_notify_cb(std::shared_ptr<event_loop> loop, event_cb_f func, void *args) {
     this->sp_loop_ = std::move(loop);
     this->sp_loop_.get()->add_io_event(this->eventfd_, std::move(func), EPOLLIN, args);
 }
@@ -46,6 +48,8 @@ void subreactor::notify(const msg_t &msg) {
     if (ret == -1) {
         perror("write error!");
     }
+    //假设子线程正在执行某个计算逻辑，很耗时
+    //如果请求量激增,那么msgs会积累很多数据.
     msgs_.emplace_back(msg);
 }
 

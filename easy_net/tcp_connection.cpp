@@ -65,6 +65,9 @@ void tcp_connection::_handle_write() {
     if (write_buf_->readable_size() == 0) {
         //无数据可写了,将EPOLLOUT事件删除，避免一直触发
         _disable_write();
+
+        //这样子回调才比较优雅
+        //owner_->write_complete(shared_from_this());
     }
 }
 

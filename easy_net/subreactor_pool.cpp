@@ -25,7 +25,7 @@ void get_msg_cb(event_loop *loop, int fd, void *args) {
 
 void thread_domain(subreactor *mq) {
     std::shared_ptr<event_loop> sp_loop(new event_loop());
-    mq->set_loop(sp_loop, get_msg_cb, mq);
+    mq->set_after_notify_cb(sp_loop, get_msg_cb, mq); //设置通知回调，当主线程选择某一个子线程进行通知时，该子线程进入get_msg_cb
     sp_loop.get()->process_event();
 }
 
@@ -37,7 +37,7 @@ subreactor_pool::subreactor_pool(int cnt)
         subreactor *mq = new subreactor();
         sub_reactors_[i] = mq;
         std::thread t(thread_domain, mq);
-        t.detach();
+        t.detach(); //直接detach，子线程的生命周期不受控制，应该提供控制选项???
     }
 }
 

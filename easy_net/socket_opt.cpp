@@ -1,4 +1,5 @@
 #include "socket_opt.h"
+#include <cstddef>
 #include <errno.h>   // errno
 #include <sys/uio.h> // readv
 #include <unistd.h>  // read
@@ -24,7 +25,7 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
     if (n < 0) {
         //n=-1, errno= EAGAIN时表示 读缓冲区暂时没数据了,需要用户自己拆包确认数据有没有读全,没读全则继续.
         err = errno;
-    } else if (n <= read_size) {
+    } else if (static_cast<size_t>(n) <= read_size) {
         buf.writer_step(read_size);
     } else {
         //读取的数量超过buf的容量,利用栈上空间.
@@ -37,9 +38,9 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
 }
 
 size_t socket_opt::write_buf_to_fd(buffer &buf, int fd) {
-    size_t n = 0;
+    int n = 0;
     do {
-        n = ::write(fd, buf.readble_start(), buf.readable_size());
+        n = static_cast<int>(::write(fd, buf.readble_start(), buf.readable_size()));
     } while (n == -1 && errno == EINTR);
 
     if (n > 0) {

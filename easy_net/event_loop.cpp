@@ -7,7 +7,7 @@
 #include "cb.h"
 #include "event.h"
 
-event_loop::event_loop() {
+event_loop::event_loop() : poller_(create_poller(poller_type_e::TYPE_EPOLL, this)) {
     // 初始化epoll
     this->epoll_fd_ = ::epoll_create1(0);
     if (this->epoll_fd_ == -1) {
@@ -19,6 +19,8 @@ event_loop::event_loop() {
 
 void event_loop::process_event() {
     for (;;) {
+        //poller_->polling();
+        //fixme：将下面的逻辑抽象出去
         int fd_cnts = ::epoll_wait(this->epoll_fd_, this->ready_events_, k_init_eventlist_size, k_timeouts_ms);
         if (fd_cnts > 0) {
             for (int i = 0; i < fd_cnts; i++) {
@@ -110,5 +112,3 @@ void event_loop::update_io_event(int fd, int mask) {
         }
     }
 }
-
-int event_loop::run_at(event_cb_f cb, void *args, uint64_t ts) {}

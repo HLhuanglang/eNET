@@ -27,6 +27,11 @@ END
 }
 
 ##解析输入命令
+if [ $# -lt 1 ];then
+    print_help
+    exit 255
+fi
+
 mkdir tmp 2>/dev/null
 while [ -n "$1" ]
 do

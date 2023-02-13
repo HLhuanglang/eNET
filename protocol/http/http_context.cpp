@@ -108,12 +108,12 @@ int on_body(http_parser *parser, const char *at, size_t length) {
     http_context *ctx = (http_context *)parser->data;
     if (ctx->type_ == http_type_t::HTTP_REQ) {
         auto content_length = std::atoi(ctx->req_->headers_["Content-Length"].c_str());
-        if (content_length == length) {
+        if (content_length == static_cast<int>(length)) {
             ctx->req_->body_.assign(at, length);
         }
     } else {
         auto content_length = std::atoi(ctx->rsp_->headers_["Content-Length"].c_str());
-        if (content_length == length) {
+        if (content_length == static_cast<int>(length)) {
             ctx->rsp_->body_.assign(at, length);
         }
     }

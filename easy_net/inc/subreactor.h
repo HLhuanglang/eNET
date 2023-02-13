@@ -51,7 +51,7 @@ public:
     void notify(const msg_t &msg);         //用于main reactor处理了连接事件后,把acceptfd传送给子进程并让其开始监听
     void wakeup(std::vector<msg_t> &msgs); //子进程接收main reactor发送的通知和数据
     std::shared_ptr<event_loop> get_loop() { return sp_loop_; }
-    void set_loop(std::shared_ptr<event_loop> loop, event_cb_f func, void *args = nullptr);
+    void set_after_notify_cb(std::shared_ptr<event_loop> loop, event_cb_f func, void *args = nullptr);
     std::thread::id get_threadid() { return thread_id_; }
 
 private:

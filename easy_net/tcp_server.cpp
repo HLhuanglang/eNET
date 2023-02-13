@@ -100,6 +100,8 @@ void tcp_server::set_close_connection_cb(std::function<void()>) {
     // todo
 }
 
+//这样子实现，就是主线程中做监听。主线程建立新连接后
+//IO操作交给子线程去完成
 void tcp_server::_do_accept() {
     //先调用accept处理连接请求
     struct sockaddr addr;
@@ -137,6 +139,7 @@ void tcp_server::_do_accept() {
         // 3,连接正常建立
         else {
             if (sub_reactor_pool_ != nullptr) {
+                //选择某一个子线程进行通知，并把acceptfd传递给子线程
                 auto sub = sub_reactor_pool_->get_sub_reactor();
                 msg_t msg;
                 msg.reactor_id_ = sub_reactor_pool_->get_subreactor_id();

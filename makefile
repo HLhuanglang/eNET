@@ -6,6 +6,7 @@ include easy_net_compile_config.mk
 include makefile.vars
 
 ##封装一些功能
+MAKE  = make --no-print-directory
 MAKEF = $(MAKE) -f makefile.in
 MKDIR = -mkdir -p 2>/dev/null
 CP    = -cp -r 2>/dev/null
@@ -67,7 +68,7 @@ easy_net: premake
 		INCDIRS="$(EASYNET_INC_DIRS)" \
 		
 	@$(CP) $(EASYNET_OUT_HEADERS) ${BUILD_EASYNET_DIR}/include/easy_net
-	@echo "Compile easy_net Done!"
+	@echo "\nCompile easy_net Done!"
 
 
 #============================================================

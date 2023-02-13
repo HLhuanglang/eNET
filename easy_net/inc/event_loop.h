@@ -1,6 +1,7 @@
 #ifndef __EASYNET_EVENT_LOOP_H
 #define __EASYNET_EVENT_LOOP_H
 
+#include <memory>
 #include <sys/epoll.h>
 
 #include <unordered_map>
@@ -28,10 +29,13 @@ public:
     int run_after(event_cb_f cb, void *args, int sec, int mills);
     int run_every(event_cb_f cb, void *args, int sec, int mills);
 
+    std::unique_ptr<poller> &get_poller() { return poller_; }
+
 private:
     int epoll_fd_;
     struct epoll_event ready_events_[k_init_eventlist_size]; //储存epoll_wait返回的fd
     std::unordered_map<int, io_event_t> io_events_;          //方便ready_events_中所有的fd找到自己的事件处理函数
+    std::unique_ptr<poller> poller_;                         //管理IO多路复用
 };
 
 #endif

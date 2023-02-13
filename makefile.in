@@ -78,9 +78,9 @@ endif
 # CXXFLAGS, ARFLAGS
 #==============================
 ifeq ($(BUILD_TYPE), DEBUG)
-	DEFAULT_CFLAGS = -g -Wall -O0
+	DEFAULT_CFLAGS = -g -O0
 else
-	DEFAULT_CFLAGS += -O2
+	DEFAULT_CFLAGS = -O2
 endif
 
 CXXFLAGS ?= $(DEFAULT_CFLAGS)
@@ -88,6 +88,7 @@ CXXFLAGS += $(addprefix -I, $(INCDIRS))
 CXXFLAGS += $(addprefix -I, $(DEP_INCDIRS))
 CXXFLAGS += $(addprefix -D, $(DEFINES))
 
+CXXFLAGS +=  -Wall -Werror
 ifeq ($(findstring -fPIC, $(CXXFLAGS)), )
 override CXXFLAGS += -fPIC
 endif
@@ -96,7 +97,7 @@ ifeq ($(findstring -std, $(CXXFLAGS)), )
 override CXXFLAGS += -std=c++11
 endif
 
-ARFLAGS ?= cr
+ARFLAGS = cr
 
 #==============================
 # LDFLAGS
@@ -112,8 +113,16 @@ ifeq ($(OS), Linux)
 endif
 
 #==============================
+# 获取.o文件
+#==============================
+OBJS = $(addsuffix  .o, $(basename ${SRCS}))
+
+#==============================
 # 打印信息
 #==============================
+$(info ================================================================)
+$(info =                      Print infomations                       =)
+$(info ================================================================)
 $(info $(CC_VERSION))
 $(info OS               = $(OS))
 $(info ARCH             = $(ARCH))
@@ -138,6 +147,7 @@ $(info DEFINES          = $(DEFINES))
 $(info OUTDIR           = $(OUTDIR))
 $(info INCDIRS          = $(INCDIRS))
 $(info SRCS             = $(SRCS))
+$(info OBJS             = $(OBJS))
 
 
 
@@ -148,24 +158,31 @@ $(info SRCS             = $(SRCS))
 build: ${MODE}
 
 ####编译LIB
-OBJS = $(addsuffix  .o, $(basename ${SRCS}))
-$(info OBJS             = $(OBJS))
-
 .PHONY: LIB
 LIB:${OBJS}
 ifneq ($(findstring SHARED, $(LIB_TYPE)), )
+	@echo "================================================================"
+	@echo "=                      Build libeasy_net.so                    ="
+	@echo "================================================================"
 	$(CXX) -shared $^ -o $(OUTDIR)/lib${TARGET_NAME}.so $(LDFLAGS)
 endif
 
 ifneq ($(findstring STATIC, $(LIB_TYPE)), )
+	@echo "================================================================"
+	@echo "=                      Build libeasy_net.a                     ="
+	@echo "================================================================"
 	$(AR) $(ARFLAGS) $(OUTDIR)/lib${TARGET_NAME}.a $^
 endif
 
-${OBJS}:%.o:%.cpp
-	${CXX} ${CXXFLAGS} -c $^ -o $@ ${LDFLAGS}
-
 ####编译EXE
 .PHONY: EXE
-EXE:
-	${CXX} -static ${CXXFLAGS} ${SRCS} -o ${OUTDIR}/${TARGET_NAME} ${LDFLAGS}
-	
+EXE:${OBJS}
+	@echo "================================================================"
+	@echo "=                      Build $(TARGET_NAME)                   ="
+	@echo "================================================================"
+	${CXX} -static ${CXXFLAGS} ${OBJS} -o ${OUTDIR}/${TARGET_NAME} ${LDFLAGS}
+
+
+####编译规则
+${OBJS}:%.o:%.cpp
+	${CXX} ${CXXFLAGS} -c $^ -o $@ ${LDFLAGS}

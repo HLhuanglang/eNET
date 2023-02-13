@@ -1,19 +1,21 @@
 /*
-** 每一个tcp连接都有一个tcp_connection对象,该对象
+    tcp通信的本质就是建立一条tcp链接，在这条链接中发生读写事件，进而触发读写回调执行相应的逻辑
 */
 #ifndef __EASYNET_TCP_CONNECTION_H
 #define __EASYNET_TCP_CONNECTION_H
 
 #include <cstddef>
+#include <memory>
 #include <vector>
 
+#include "connection_owner.h"
 #include "event_loop.h"
 
 #include "buffer.h"
 #include "cb.h"
 
 class event_loop;
-class tcp_connection {
+class tcp_connection : public std::enable_shared_from_this<tcp_connection> {
 public:
     tcp_connection(event_loop *loop, int fd) {
         //init(loop, fd);
@@ -51,6 +53,8 @@ private:
     int acceptfd_;
     buffer *read_buf_;
     buffer *write_buf_;
+
+    connection_owner *owner_; //当前这条链接属于客户端还是服务端
 };
 
 #endif
