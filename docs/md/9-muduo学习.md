@@ -35,4 +35,6 @@ socket数据到来时，内核从网卡上先读取到数据(放到socket收发�
 
 任何一个线程创建并运行了一个EventLoop,该线程就是IO线程。
 
-s---->代理----->c
+假设在主线程中调用EventLoopThread创建了一个子线程，子线程内部创建了EventLoop对象并返回对象的指针，此时在主线程就能通过指针调用EventLoop的方法了。
+
+如果主线程调用loop->runInLoop()方法，那么runInLoop方法就会判断到调用者并非loop对象的实际运行线程，因此就会把cb塞到队列中，并且通过eventfd唤醒实际所属的线程来执行cb。
