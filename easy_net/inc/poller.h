@@ -2,6 +2,7 @@
 #define __EASYNET_POLLER_H
 
 #include <map>
+#include <vector>
 
 #include "non_copyable.h"
 
@@ -17,14 +18,15 @@ enum class poller_type_e {
 
 class poller : public non_copyable {
 public:
+    using active_events_t = std::vector<fd_event *>;
     poller(event_loop *loop);
 
 public:
+    virtual ~poller() = 0;
     virtual void add_fd_event(fd_event *ev) = 0;
     virtual void del_fd_event(fd_event *ev) = 0;
     virtual void mod_fd_event(fd_event *ev) = 0;
-
-    virtual void polling() = 0;
+    virtual void polling(int timeout_ms, active_events_t &events) = 0;
 
 protected:
     std::map<int, fd_event *> fdmp_; //继承可用

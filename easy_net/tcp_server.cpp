@@ -15,7 +15,7 @@
 #include "util.h"
 
 tcp_server::tcp_server(event_loop *loop, const char *ip, size_t port, int thread_cnt)
-    : loop_(loop), sub_reactor_pool_(nullptr) {
+    : main_loop_(loop), sub_reactor_pool_(nullptr) {
     if (thread_cnt <= 0) {
         printfd(" thread_cnt>=1 \n");
         sub_reactor_pool_ = new subreactor_pool(1);
@@ -75,8 +75,8 @@ tcp_server::tcp_server(event_loop *loop, const char *ip, size_t port, int thread
     ::listen(socketfd_, SOMAXCONN);
 
     // 7,将监听事件以及回调添加到epoll中进行管理。
-    loop_ = loop;
-    loop_->add_io_event(
+    main_loop_ = loop;
+    main_loop_->add_io_event(
         socketfd_, [&](event_loop *loop, int fd, void *args) {
             this->_do_accept();
         },

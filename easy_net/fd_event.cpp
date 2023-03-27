@@ -42,21 +42,21 @@ void fd_event::handle_event() {
     ///            2.6.17 以后的版本增加了EPOLLRDHUP事件，对端连接断开触发
     ///            的事件会包含 EPOLLIN | EPOLLRDHUP，即 0x2001
     ///
-    if (revents_ & (POLLERR | POLLNVAL)) {
+    if (actual_event_ & (POLLERR | POLLNVAL)) {
         // 这里只记录错误，是否close
         // 需要在read流程确认实际的错误
         handle_error();
     }
 
-    if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
+    if ((actual_event_ & POLLHUP) && !(actual_event_ & POLLIN)) {
         handle_close();
     }
 
-    if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
+    if (actual_event_ & (POLLIN | POLLPRI | POLLRDHUP)) {
         handle_read();
     }
 
-    if (revents_ & POLLOUT) {
+    if (actual_event_ & POLLOUT) {
         handle_write();
     }
 }
@@ -75,26 +75,26 @@ void fd_event::handle_write() {
 }
 
 void fd_event::enable_reading(epoll_opt_e optflag) {
-    events_ |= k_read_event;
+    expect_event_ |= k_read_event;
     update_event(optflag);
 }
 
 void fd_event::enable_writing(epoll_opt_e optflag) {
-    events_ |= k_write_evnet;
+    expect_event_ |= k_write_evnet;
     update_event(optflag);
 }
 
 void fd_event::disable_reading(epoll_opt_e optflag) {
-    events_ &= ~k_read_event;
+    expect_event_ &= ~k_read_event;
     update_event(optflag);
 }
 
 void fd_event::disable_writing(epoll_opt_e optflag) {
-    events_ &= ~k_write_evnet;
+    expect_event_ &= ~k_write_evnet;
     update_event(optflag);
 }
 
 void fd_event::disable_all(epoll_opt_e optflag) {
-    events_ = k_non_event;
+    expect_event_ = k_non_event;
     update_event(optflag);
 }

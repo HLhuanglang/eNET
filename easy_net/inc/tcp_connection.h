@@ -10,17 +10,15 @@
 
 #include "connection_owner.h"
 #include "event_loop.h"
+#include "fd_event.h"
 
 #include "buffer.h"
 #include "cb.h"
 
 class event_loop;
-class tcp_connection : public std::enable_shared_from_this<tcp_connection> {
+class tcp_connection : public std::enable_shared_from_this<tcp_connection>, public fd_event {
 public:
-    tcp_connection(event_loop *loop, int fd) {
-        //init(loop, fd);
-        loop_ = loop;
-        acceptfd_ = fd;
+    tcp_connection(connection_owner *owner, int fd) : fd_event(owner->get_loop(), fd), owner_(owner) {
         read_buf_ = new buffer();
         write_buf_ = new buffer();
     }
@@ -49,12 +47,9 @@ public:
     void _disable_write();
 
 private:
-    event_loop *loop_;
-    int acceptfd_;
+    connection_owner *owner_; //当前这条链接属于客户端还是服务端
     buffer *read_buf_;
     buffer *write_buf_;
-
-    connection_owner *owner_; //当前这条链接属于客户端还是服务端
 };
 
 #endif

@@ -4,9 +4,6 @@
 #include <memory>
 #include <utility>
 
-//允许拷贝
-class copyable {};
-
 //禁止拷貝
 class non_copyable {
 protected:

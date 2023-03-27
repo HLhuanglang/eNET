@@ -27,8 +27,8 @@ public:
     fd_event(event_loop *loop, int fd)
         : ioloop_(loop),
           fd_(fd),
-          events_(0),
-          revents_(0),
+          expect_event_(0),
+          actual_event_(0),
           index_(-1) {}
 
     virtual ~fd_event() {}
@@ -48,23 +48,23 @@ public:
     virtual void handle_error();
 
     // 查询、修改类属性
-    bool is_none_event() const { return events_ == k_non_event; }
-    bool is_writing() const { return events_ & k_write_evnet; }
-    bool is_reading() const { return events_ & k_read_event; }
+    bool is_none_event() const { return expect_event_ == k_non_event; }
+    bool is_writing() const { return expect_event_ & k_write_evnet; }
+    bool is_reading() const { return expect_event_ & k_read_event; }
 
     //获取成员变量值
     int get_fd() { return fd_; }
-    int get_events() { return events_; }
-    int get_revents() const { return revents_; }
-    void set_revents(int revt) { revents_ = revt; }
+    int get_events() { return expect_event_; }
+    int get_revents() const { return actual_event_; }
+    void set_revents(int revt) { actual_event_ = revt; }
     int get_index() { return index_; }
     void set_index(int idx) { index_ = idx; }
 
 private:
     event_loop *ioloop_; // 负责处理本描述符的IO线程
     int fd_;             // 被监控的文件描述符
-    int events_;         // 用户设置期望监听的事件
-    int revents_;        // Poller返回实际监听得到的事件
+    int expect_event_;   // 用户设置期望监听的事件
+    int actual_event_;   // Poller返回实际监听得到的事件
     int index_;          // 记录fd_event在vector中的位置used by Poll
 };
 

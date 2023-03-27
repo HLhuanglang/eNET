@@ -22,7 +22,7 @@ epoll_poller::epoll_poller(event_loop *loop) : poller(loop) {
     }
 }
 
-void epoll_poller::polling() {
+void epoll_poller::polling(int timeout_ms, active_events_t &events) {
     //todo
 }
 
@@ -58,7 +58,7 @@ void epoll_poller::del_fd_event(fd_event *ev) {
     } else {
         fdmp_[fd] = ev;
         //LOG_TRACE("add fd = %d; events = %d", inputFd, inputEvent);
-        printfd("add %d", fd);
+        printfd("del %d", fd);
     }
 }
 
@@ -76,6 +76,6 @@ void epoll_poller::mod_fd_event(fd_event *ev) {
     } else {
         fdmp_[fd] = ev;
         //LOG_TRACE("add fd = %d; events = %d", inputFd, inputEvent);
-        printfd("add %d", fd);
+        printfd("mod %d", fd);
     }
 }

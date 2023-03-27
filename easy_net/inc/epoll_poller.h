@@ -13,7 +13,7 @@ public:
     virtual void del_fd_event(fd_event *ev) override;
     virtual void mod_fd_event(fd_event *ev) override;
 
-    virtual void polling() override;
+    virtual void polling(int timeout_ms, active_events_t &events) override;
 
 private:
     int epollfd_;
