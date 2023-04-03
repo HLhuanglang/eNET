@@ -3,9 +3,9 @@
 #include <sys/epoll.h>
 
 #include "fd_event.h"
-#include "print_debug.h"
 
 #include "cb.h"
+#include "log.h"
 
 //epoll、poll使用一样的值
 static_assert(EPOLLIN == POLLIN, "EPOLLIN");
@@ -36,11 +36,9 @@ void epoll_poller::add_fd_event(fd_event *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(epollfd_, EPOLL_CTL_ADD, fd, &event) < 0) {
-        //LOG_FATAL("add fd = %d events = %d fail", inputFd, inputEvent);
+        LOG_FATAL("add fd = %d events = %d fail", fd, events);
     } else {
-        //fdEventMap_[inputFd] = pFdEvent;
-        //LOG_TRACE("add fd = %d; events = %d", inputFd, inputEvent);
-        printfd("add %d", fd);
+        LOG_DEBUG("add %d", fd);
     }
 }
 
@@ -54,11 +52,10 @@ void epoll_poller::del_fd_event(fd_event *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(epollfd_, EPOLL_CTL_DEL, fd, &event) < 0) {
-        //LOG_FATAL("add fd = %d events = %d fail", inputFd, inputEvent);
+        LOG_FATAL("del fd = %d events = %d fail", fd, events);
     } else {
         fdmp_[fd] = ev;
-        //LOG_TRACE("add fd = %d; events = %d", inputFd, inputEvent);
-        printfd("del %d", fd);
+        LOG_DEBUG("del %d", fd);
     }
 }
 
@@ -72,10 +69,9 @@ void epoll_poller::mod_fd_event(fd_event *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(epollfd_, EPOLL_CTL_MOD, fd, &event) < 0) {
-        //LOG_FATAL("add fd = %d events = %d fail", inputFd, inputEvent);
+        LOG_FATAL("mod fd = %d events = %d fail", fd, events);
     } else {
         fdmp_[fd] = ev;
-        //LOG_TRACE("add fd = %d; events = %d", inputFd, inputEvent);
-        printfd("mod %d", fd);
+        LOG_DEBUG("mod %d", fd);
     }
 }

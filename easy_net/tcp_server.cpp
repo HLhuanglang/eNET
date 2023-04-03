@@ -9,37 +9,37 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "print_debug.h"
 #include "subreactor_pool.h"
 
+#include "log.h"
 #include "util.h"
 
 tcp_server::tcp_server(event_loop *loop, const char *ip, size_t port, int thread_cnt)
     : main_loop_(loop), sub_reactor_pool_(nullptr) {
     if (thread_cnt <= 0) {
-        printfd(" thread_cnt>=1 \n");
+        LOG_DEBUG(" thread_cnt>=1 \n");
         sub_reactor_pool_ = new subreactor_pool(1);
     }
     sub_reactor_pool_ = new subreactor_pool(thread_cnt);
 
     if (!util::check_ipv4(ip) || !util::check_port(port)) {
-        printfd("error format ip or port!\n");
+        LOG_FATAL("error format ip or port!\n");
         exit(-1);
     }
     int ret = 0;
     // 1,针对信号做一些处理
     if (::signal(SIGHUP, SIG_IGN) == SIG_ERR) {
-        perror("signal ignore SIGHUP failed!");
+        LOG_FATAL("signal ignore SIGHUP failed!");
     }
     if (::signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-        perror("signal ignore SIGPIPE failed!");
+        LOG_FATAL("signal ignore SIGPIPE failed!");
     }
 
     // 2,创建监听socket
     socketfd_ = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (socketfd_ < 0) {
         // todo：log
-        perror("create socket failed!");
+        LOG_FATAL("create socket failed!");
         exit(-1);
     }
 
@@ -47,14 +47,14 @@ tcp_server::tcp_server(event_loop *loop, const char *ip, size_t port, int thread
     int opend = 1;
     ret = ::setsockopt(socketfd_, SOL_SOCKET, SO_REUSEADDR, &opend, sizeof(opend));
     if (ret < 0) {
-        perror("setsockopt failed!");
+        LOG_FATAL("setsockopt failed!");
         exit(-1);
     }
 
     // 4,创建idlefd_
     idlefd_ = ::open("/tmp/easy_net_idle", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
     if (idlefd_ < 0) {
-        perror("create idlefd failed!");
+        LOG_FATAL("create idlefd failed!");
         exit(-1);
     }
 
@@ -67,7 +67,7 @@ tcp_server::tcp_server(event_loop *loop, const char *ip, size_t port, int thread
     ret = ::bind(socketfd_, (struct sockaddr *)&addr, sizeof(sockaddr));
     if (ret < 0) {
         // todo:log
-        printfd("bind error:%s", strerror(errno));
+        LOG_FATAL("bind error:%s", strerror(errno));
         exit(-1);
     }
 
@@ -123,7 +123,7 @@ void tcp_server::_do_accept() {
             if (errno == EINTR) {
                 continue;
             }
-            perror("accept failed!");
+            LOG_FATAL("accept failed!");
             exit(-1);
         }
         // 2,进程描述符使用完了
@@ -132,7 +132,7 @@ void tcp_server::_do_accept() {
             ::close(acceptfd);
             idlefd_ = ::open("/tmp/easy_net_idle", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
             if (idlefd_ < 0) {
-                perror("create idlefd failed!");
+                LOG_FATAL("create idlefd failed!");
                 exit(-1);
             }
         }

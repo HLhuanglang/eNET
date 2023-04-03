@@ -6,12 +6,12 @@
 #include <unistd.h>
 #include <utility>
 
-#include "print_debug.h"
 #include "tcp_connection.h"
 #include <type_traits>
 
 #include "buffer.h"
 #include "cb.h"
+#include "log.h"
 
 subreactor::subreactor() {
     this->eventfd_ = ::eventfd(0, EFD_NONBLOCK);
@@ -19,7 +19,7 @@ subreactor::subreactor() {
         perror("eventfd(0, EFD_NONBLOCK)");
         exit(-1);
     }
-    printfd("eventfd=%d", this->eventfd_);
+    LOG_DEBUG("eventfd=%d", this->eventfd_);
     thread_id_ = std::this_thread::get_id();
 }
 
@@ -81,7 +81,7 @@ void subreactor::_handle_read(int fd) {
         auto ret = conn->read_data();
         if (ret) {
             auto ret = msg_cb(*conn, conn->get_readbuf());
-            printfd("fd=%d,buf_size=%ld, process_size=%ld\n", fd, conn->get_readbuf().readable_size(), ret);
+            LOG_DEBUG("fd=%d,buf_size=%ld, process_size=%ld\n", fd, conn->get_readbuf().readable_size(), ret);
         } else {
             release_connection(fd);
         }
