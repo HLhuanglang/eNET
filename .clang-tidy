@@ -1,5 +1,16 @@
-Checks: 
-'-*,
-clang-diagnostic-*,
-llvm-*,misc-*,
-modernize-loop-convert'
+---
+# Configure clang-tidy for this project.
+
+Checks: >
+  -*,
+  clang-diagnostic-*,
+  llvm-*,
+  misc-*,
+  bugprone-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+
+# Turn all the warnings from the checks above into errors.
+WarningsAsErrors: "*"

@@ -8,17 +8,8 @@ AllowShortLambdasOnASingleLine: None
 
 IndentCaseLabels: false
 ColumnLimit: 0
-AccessModifierOffset: -4
+AccessModifierOffset: -3
 FixNamespaceComments: true
 SpaceBeforeInheritanceColon: true
 BreakInheritanceList: AfterColon
 IndentPPDirectives: AfterHash
-
-IncludeBlocks: Regroup
-IncludeCategories:
-    - Regex: '<[[:alnum:].\/-]+>'
-      Priority: 0
-      SortPriority: 0
-    - Regex: '"[[:alnum:].\/-]+"'
-      Priority: 10
-      SortPriority: 10
