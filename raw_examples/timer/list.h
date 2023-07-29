@@ -186,7 +186,21 @@ class timer_manager {
                         }
                         case timer_type::E_AFTER: {
                             it->run_task();
-                            // m_tl.m_timer_list.remove(*it++);
+                            // m_tl.m_timer_list.remove(*it++); //需要遍历整个链表,使用earse是直接根据位置进行删除的.
+                            /*
+                            template <class _Tp, class _Alloc>
+                            void list<_Tp, _Alloc>::remove(const _Tp& __value)
+                            {
+                                iterator __first = begin();
+                                iterator __last = end();
+                                while (__first != __last) {
+                                    iterator __next = __first;
+                                    ++__next;
+                                    if (*__first == __value) erase(__first);    //使用remove,在这一步需要用到==操作符
+                                    __first = __next;
+                                }
+                            }
+                            */
                             m_tl.m_timer_list.erase(it++);
                             break;
                         }
