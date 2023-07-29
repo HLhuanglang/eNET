@@ -2,10 +2,8 @@
 
 using namespace httplib;
 
-int main()
-{
+int main() {
     httplib::Client cli("localhost", 12345);
-    httplib::Client cli2("xxxxxx");
     httplib::Headers headers{
         {"Accept-Encoding", "gzip, deflate"},
         {"Holo_wo", "hhhhh"}};

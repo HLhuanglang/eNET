@@ -12,13 +12,13 @@ class timer {};
 
 // 标记唯一定时器
 class timer_id : public copyable {
-public:
-    timer_id() : timer_(nullptr), seq_(0) {}
-    timer_id(timer *timer, size_t seq) : timer_(timer), seq_(seq) {}
+ public:
+    timer_id() : m_timer(nullptr), m_seq(0) {}
+    timer_id(timer *timer, size_t seq) : m_timer(timer), m_seq(seq) {}
 
-private:
-    timer *timer_;
-    size_t seq_;
+ private:
+    timer *m_timer;
+    size_t m_seq;
 };
 using timer_id_t = timer_id;
 

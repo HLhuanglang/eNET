@@ -3,10 +3,8 @@
 #include "epoll_poller.h"
 #include "poll_poller.h"
 
-#include "cb.h"
-
-poller::poller(event_loop *loop) : owner_loop_(loop) {
-    //nothing todo
+poller::poller(event_loop *loop) : m_owner_loop(loop) {
+    // nothing todo
 }
 
 poller *create_poller(poller_type_e type, event_loop *loop) {

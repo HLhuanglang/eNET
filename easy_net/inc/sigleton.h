@@ -6,7 +6,7 @@
 
 template <typename T>
 class sigleton {
-public:
+ public:
     static T *get_instance() {
         if (nullptr == instance_) {
             std::call_once(once_f_, [&]() {
@@ -16,12 +16,12 @@ public:
         return instance_.get();
     }
 
-private:
-    sigleton();
+ public:
+    sigleton() = delete;
     sigleton(const sigleton &rhs) = delete;
     sigleton &operator=(const sigleton &rhs) = delete;
 
-private:
+ private:
     static std::unique_ptr<T> instance_;
     static std::once_flag once_f_;
 };

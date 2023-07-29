@@ -13,13 +13,13 @@
 #include "poller.h"
 
 class event_loop : public non_copyable {
-public:
+ public:
     event_loop();
     virtual ~event_loop();
 
     using pending_func_t = std::function<void()>;
 
-public:
+ public:
     // loop
     void loop();
 
@@ -32,14 +32,14 @@ public:
     void run_in_loop(const pending_func_t &cb);
     void queue_in_loop(const pending_func_t &cb);
 
-    std::unique_ptr<poller> &get_poller() { return poller_; }
+    std::unique_ptr<poller> &get_poller() { return m_poller; }
 
-private:
-    bool quit_;
-    bool looping_;
-    bool pending_func_;
-    poller::active_events_t ready_events; //当前loop上就绪的fd
-    std::unique_ptr<poller> poller_;      //管理IO多路复用
+ private:
+    bool m_quit;
+    bool m_looping;
+    bool m_pending_func;
+    poller::active_events_t m_ready_events; //当前loop上就绪的fd
+    std::unique_ptr<poller> m_poller;       //管理IO多路复用
 };
 
 #endif

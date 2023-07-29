@@ -11,13 +11,13 @@
 #include "buffer.h"
 
 class http_request {
-public:
+ public:
     http_request() {}
 
-public:
+ public:
     static void append_http_to_buf(const http_request &req, buffer &buf);
 
-public:
+ public:
     std::string method_;
     std::string url_;
     std::string version_;

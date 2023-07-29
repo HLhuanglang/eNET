@@ -8,21 +8,26 @@ root_dir="$(dirname "$0")"
 print_help() {
     shini_parse "${root_dir}/config/easy_net_compile_config.ini"
     cat << END
+-----------------------------------------------------------------
 Usage: ./configure [--option]
-
+-----------------------------------------------------------------
 options:
-  --prefix=PREFIX           (DEFAULT: $PREFIX)
+  --prefix=PREFIX                              (DEFAULT: $PREFIX)
   --with-MODULE
   --without-MODULE
   --enable-FEATURE
   --disable-FEATURE
-
-modules:
-  --with-http           compile http module?            (DEFAULT: $WITH_HTTP)
-  --with-mqtt           compile mqtt module?            (DEFAULT: $WITH_MQTT)
-
-features:
-  --enable-uds          enable Unix Domain Socket?      (DEFAULT: $ENABLE_UDS)
+-----------------------------------------------------------------
+MODULE:
+  http          compile http module?           (DEFAULT: $WITH_HTTP)
+  mqtt          compile mqtt module?           (DEFAULT: $WITH_MQTT)
+-----------------------------------------------------------------
+FEATURE:
+  uds           enable Unix Domain Socket?     (DEFAULT: $ENABLE_UDS)
+-----------------------------------------------------------------
+example:
+  ./configure --prefix=/opt/easy_net --with-http --without-mqtt --enable-uds
+-----------------------------------------------------------------
 END
 }
 

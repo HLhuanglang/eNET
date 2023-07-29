@@ -5,15 +5,15 @@
 #include "poller.h"
 
 class poll_poller : public poller {
-public:
+ public:
     poll_poller(event_loop *loop);
 
-public:
-    virtual void add_fd_event(fd_event *ev) override;
-    virtual void del_fd_event(fd_event *ev) override;
-    virtual void mod_fd_event(fd_event *ev) override;
+ public:
+    void add_fd_event(fd_event *ev) override;
+    void del_fd_event(fd_event *ev) override;
+    void mod_fd_event(fd_event *ev) override;
 
-    virtual void polling(int timeout_ms, active_events_t &events) override;
+    void polling(int timeout_ms, active_events_t &events) override;
 };
 
 #endif

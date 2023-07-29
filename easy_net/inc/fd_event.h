@@ -23,22 +23,20 @@ enum epoll_opt_e {
 };
 
 class fd_event : public non_copyable {
-public:
+ public:
     fd_event(event_loop *loop, int fd)
-        : ioloop_(loop),
-          fd_(fd),
-          expect_event_(0),
-          actual_event_(0),
-          index_(-1) {}
+        : m_ioloop(loop),
+          m_fd(fd) {
+        // nothing todo
+    }
 
-    virtual ~fd_event() {}
+    virtual ~fd_event() = default;
 
     void enable_reading(epoll_opt_e optflag);
     void enable_writing(epoll_opt_e optflag);
     void disable_reading(epoll_opt_e optflag);
     void disable_writing(epoll_opt_e optflag);
     void disable_all(epoll_opt_e optflag);
-    void update_event(epoll_opt_e optflag);
 
     // 虚函数，派生类可选择是否重写
     virtual void handle_event();
@@ -48,24 +46,27 @@ public:
     virtual void handle_error();
 
     // 查询、修改类属性
-    bool is_none_event() const { return expect_event_ == k_non_event; }
-    bool is_writing() const { return expect_event_ & k_write_evnet; }
-    bool is_reading() const { return expect_event_ & k_read_event; }
+    bool is_none_event() const { return m_expect_event == k_non_event; }
+    bool is_writing() const { return (m_expect_event & k_write_evnet) != 0; }
+    bool is_reading() const { return (m_expect_event & k_read_event) != 0; }
 
     //获取成员变量值
-    int get_fd() { return fd_; }
-    int get_events() { return expect_event_; }
-    int get_revents() const { return actual_event_; }
-    void set_revents(int revt) { actual_event_ = revt; }
-    int get_index() { return index_; }
-    void set_index(int idx) { index_ = idx; }
+    int get_fd() const { return m_fd; }
+    int get_events() const { return m_expect_event; }
+    int get_revents() const { return m_actual_event; }
+    void set_revents(int revt) { m_actual_event = revt; }
+    int get_index() const { return m_index; }
+    void set_index(int idx) { m_index = idx; }
 
-private:
-    event_loop *ioloop_; // 负责处理本描述符的IO线程
-    int fd_;             // 被监控的文件描述符
-    int expect_event_;   // 用户设置期望监听的事件
-    int actual_event_;   // Poller返回实际监听得到的事件
-    int index_;          // 记录fd_event在vector中的位置used by Poll
+ private:
+    void _update_event(epoll_opt_e optflag);
+
+ private:
+    event_loop *m_ioloop; // 负责处理本描述符的IO线程
+    int m_fd;             // 被监控的文件描述符
+    int m_expect_event{}; // 用户设置期望监听的事件
+    int m_actual_event{}; // Poller返回实际监听得到的事件
+    int m_index{};        // 记录fd_event在vector中的位置used by Poll
 };
 
 #endif

@@ -2,8 +2,8 @@
 
 #include "event_loop.h"
 
-void fd_event::update_event(epoll_opt_e optflag) {
-    std::unique_ptr<poller> &poller = ioloop_->get_poller();
+void fd_event::_update_event(epoll_opt_e optflag) {
+    std::unique_ptr<poller> &poller = m_ioloop->get_poller();
     switch (optflag) {
     case epoll_opt_e::ADD_EVENT: {
         poller->add_fd_event(this);
@@ -42,59 +42,59 @@ void fd_event::handle_event() {
     ///            2.6.17 以后的版本增加了EPOLLRDHUP事件，对端连接断开触发
     ///            的事件会包含 EPOLLIN | EPOLLRDHUP，即 0x2001
     ///
-    if (actual_event_ & (POLLERR | POLLNVAL)) {
+    if (m_actual_event & (POLLERR | POLLNVAL)) {
         // 这里只记录错误，是否close
         // 需要在read流程确认实际的错误
         handle_error();
     }
 
-    if ((actual_event_ & POLLHUP) && !(actual_event_ & POLLIN)) {
+    if ((m_actual_event & POLLHUP) && !(m_actual_event & POLLIN)) {
         handle_close();
     }
 
-    if (actual_event_ & (POLLIN | POLLPRI | POLLRDHUP)) {
+    if (m_actual_event & (POLLIN | POLLPRI | POLLRDHUP)) {
         handle_read();
     }
 
-    if (actual_event_ & POLLOUT) {
+    if (m_actual_event & POLLOUT) {
         handle_write();
     }
 }
 
 void fd_event::handle_error() {
-    //do nothing
+    // do nothing
 }
 void fd_event::handle_close() {
-    //do nothing
+    // do nothing
 }
 void fd_event::handle_read() {
-    //do nothing
+    // do nothing
 }
 void fd_event::handle_write() {
-    //do nothing
+    // do nothing
 }
 
 void fd_event::enable_reading(epoll_opt_e optflag) {
-    expect_event_ |= k_read_event;
-    update_event(optflag);
+    m_expect_event |= k_read_event;
+    _update_event(optflag);
 }
 
 void fd_event::enable_writing(epoll_opt_e optflag) {
-    expect_event_ |= k_write_evnet;
-    update_event(optflag);
+    m_expect_event |= k_write_evnet;
+    _update_event(optflag);
 }
 
 void fd_event::disable_reading(epoll_opt_e optflag) {
-    expect_event_ &= ~k_read_event;
-    update_event(optflag);
+    m_expect_event &= ~k_read_event;
+    _update_event(optflag);
 }
 
 void fd_event::disable_writing(epoll_opt_e optflag) {
-    expect_event_ &= ~k_write_evnet;
-    update_event(optflag);
+    m_expect_event &= ~k_write_evnet;
+    _update_event(optflag);
 }
 
 void fd_event::disable_all(epoll_opt_e optflag) {
-    expect_event_ = k_non_event;
-    update_event(optflag);
+    m_expect_event = k_non_event;
+    _update_event(optflag);
 }

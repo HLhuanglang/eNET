@@ -6,7 +6,7 @@ TabWidth: 4
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLambdasOnASingleLine: None
 
-IndentCaseLabels: false
+IndentCaseLabels: true
 ColumnLimit: 0
 AccessModifierOffset: -3
 FixNamespaceComments: true

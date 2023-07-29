@@ -14,17 +14,17 @@ enum http_type_t {
 };
 
 class http_context {
-public:
+ public:
     size_t parser_http_context(const char *data, size_t len, http_request &req);
     size_t parser_http_context(const char *data, size_t len, http_response &rsp);
 
     bool is_http_complete() { return finish_one_parse_; }
 
-public:
+ public:
     void
     _handle_header();
 
-public:
+ public:
     http_type_t type_;
     http_request *req_ = nullptr;
     http_response *rsp_ = nullptr;
@@ -32,7 +32,7 @@ public:
     std::string header_value_;
     bool finish_one_parse_ = false;
 
-private:
+ private:
     static http_parser_settings parser_settings_;
     http_parser parser_;
 };

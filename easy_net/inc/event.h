@@ -4,12 +4,12 @@
 #ifndef __EASYNET_EVENT_H
 #define __EASYNET_EVENT_H
 
+#include <cstdint>
 #include <functional>
-#include <stdint.h>
 
 #include "cb.h"
 
-typedef struct io_event_t {
+using io_event_t = struct io_event_t {
     event_cb_f read_cb;  // for EPOLLIN
     event_cb_f write_cb; // for EPOLLOUT
     event_cb_f close_cb; // for EPOLLHUB
@@ -19,13 +19,13 @@ typedef struct io_event_t {
     void *c_cb_args;
     void *e_cb_args;
     int flag;
-} io_event_t;
+};
 
-typedef struct timer_event_t {
+using timer_event_t = struct timer_event_t {
     event_cb_f cb;
     void *cb_data;
     uint64_t ts; // timespec
     uint32_t interval;
     int timer_id;
-} timer_event_t;
+};
 #endif

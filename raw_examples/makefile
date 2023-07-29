@@ -1,10 +1,13 @@
-SUB_DIRS=http_parser\
-			cpp-httplib\
-			epoll\
-			eventfd\
-			timerfd \
-			async_http
-			
+# SUB_DIRS=http_parser\
+# 			cpp-httplib\
+# 			epoll\
+# 			eventfd\
+# 			timerfd \
+# 			async_http \
+# 			timer
+
+SUB_DIRS = timer
+
 CXX= g++
 CXXFLAGS= -std=c++11 -g -DDEBUG
 LDFLAGES= -lpthread

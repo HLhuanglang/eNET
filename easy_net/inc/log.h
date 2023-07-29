@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-//todo：实现一个异步日志(多生产者，单消费者)
+// todo：实现一个异步日志(多生产者，单消费者)
 class async_logger {
 };
 

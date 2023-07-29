@@ -7,6 +7,16 @@
             "label": "build_all",
             "type": "shell",
             "command": "bear make all"
-        }
+        },
+        {
+            "label": "build_test",
+            "type": "shell",
+            "command": "make test"
+        },        
+        {
+            "label": "build_example",
+            "type": "shell",
+            "command": "make example"
+        },
     ]
 }

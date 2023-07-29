@@ -8,9 +8,38 @@ Checks: >
   misc-*,
   bugprone-*,
   modernize-*,
+  -modernize-use-trailing-return-type,
   performance-*,
   portability-*,
   readability-*,
+  -readability-redundant-access-specifiers,
+  -readability-identifier-length,
+  -misc-non-private-member-variables-in-classes,
+  -readability-magic-numbers,
 
 # Turn all the warnings from the checks above into errors.
 WarningsAsErrors: "*"
+
+# https://clang.llvm.org/extra/clang-tidy/checks/readability/identifier-naming.html
+CheckOptions:
+  - { key: readability-identifier-naming.NamespaceCase,            value: lower_case }
+  - { key: readability-identifier-naming.ClassCase,                value: lower_case }
+  - { key: readability-identifier-naming.StructCase,               value: lower_case }
+  - { key: readability-identifier-naming.TemplateParameterCase,    value: CamelCase  }
+  - { key: readability-identifier-naming.FunctionCase,             value: lower_case }
+  - { key: readability-identifier-naming.VariableCase,             value: lower_case }
+  - { key: readability-identifier-naming.PrivateMemberPrefix ,     value: m_         }
+  - { key: readability-identifier-naming.ProtectedMemberPrefix,    value: m_         }
+  - { key: readability-identifier-naming.PublicMemberPrefix,       value: m_         }
+  - { key: readability-identifier-naming.MacroDefinitionCase,      value: UPPER_CASE }
+  - { key: readability-identifier-naming.EnumConstantCase,         value: UPPER_CASE }
+  - { key: readability-identifier-naming.ConstexprVariableCase,    value: lower_case }
+  - { key: readability-identifier-naming.ConstexprVariablePrefix,  value: k_         }
+  - { key: readability-identifier-naming.GlobalConstantCase,       value: lower_case }
+  - { key: readability-identifier-naming.GlobalConstantPrefix,     value: g_         }
+  - { key: readability-identifier-naming.MemberConstantCase,       value: lower_case }
+  - { key: readability-identifier-naming.MemberConstantPrefix,     value: k_         }
+  - { key: readability-identifier-naming.StaticConstantCase,       value: lower_case }
+  - { key: readability-identifier-naming.StaticConstantPrefix,     value: k_         }
+  - { key: readability-identifier-naming.PrivateMethodPrefix ,     value: _          }
+  - { key: readability-identifier-naming.ProtectedMethodPrefix ,   value: _          }

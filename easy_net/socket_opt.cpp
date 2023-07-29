@@ -1,6 +1,6 @@
 #include "socket_opt.h"
+#include <cerrno> // errno
 #include <cstddef>
-#include <errno.h>   // errno
 #include <sys/uio.h> // readv
 #include <unistd.h>  // read
 
@@ -11,7 +11,7 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
     ssize_t n = 0;
     size_t read_size = buf.writable_size();
 
-    vec[0].iov_base = buf.write_start();
+    vec[0].iov_base = buf.writeable_start();
     vec[0].iov_len = read_size;
     vec[1].iov_base = extrabuf;
     vec[1].iov_len = sizeof(extrabuf);
@@ -23,7 +23,7 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
     } while (n == -1 && errno == EINTR);
 
     if (n < 0) {
-        //n=-1, errno= EAGAIN时表示 读缓冲区暂时没数据了,需要用户自己拆包确认数据有没有读全,没读全则继续.
+        // n=-1, errno= EAGAIN时表示 读缓冲区暂时没数据了,需要用户自己拆包确认数据有没有读全,没读全则继续.
         err = errno;
     } else if (static_cast<size_t>(n) <= read_size) {
         buf.writer_step(read_size);
@@ -40,7 +40,7 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
 size_t socket_opt::write_buf_to_fd(buffer &buf, int fd) {
     int n = 0;
     do {
-        n = static_cast<int>(::write(fd, buf.readble_start(), buf.readable_size()));
+        n = static_cast<int>(::write(fd, buf.readable_start(), buf.readable_size()));
     } while (n == -1 && errno == EINTR);
 
     if (n > 0) {

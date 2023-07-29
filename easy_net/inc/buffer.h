@@ -17,57 +17,61 @@
 #define __EASYNET_BUFFER_H
 
 #include <cstddef>
+#include <string>
 #include <vector>
 
-class http_request;
-class http_response;
 class buffer {
-public:
+ public:
     buffer();
+    buffer(size_t init_size);
 
-public:
-    char *write_start();             //数据开始地址
-    const char *write_start() const; //数据开始地址
-    void append(const char *data,
-                size_t len); //填充数据(需要注意迭代器失效问题)
-
-    char *readable_start();
-    const char *readble_start() const;
-
-    size_t prependable_size();
-    size_t writable_size();
-    size_t readable_size();
-
-    size_t size();
-    const std::vector<char> &get_data();
-    void clear();
+ public:
     // writer
-    size_t get_writer_idx();
+    char *writeable_start();             //数据开始地址
+    const char *writeable_start() const; //数据开始地址
+    size_t get_writer_idx() const;
     void set_writer_idx(size_t idx);
     void writer_step(size_t step);
+
+    void append(const char *data, size_t len); //填充数据(需要注意迭代器失效问题)
+    void append(const std::string &str);
+
     // reader
-    size_t get_reader_idx();
+    char *readable_start();
+    const char *readable_start() const;
+    size_t get_reader_idx() const;
     void set_reader_idx(size_t idx);
     void reader_step(size_t step);
 
-private:
+    // 获取原始数据
+    const std::vector<char> &get_data();
+
+    // 清空
+    void clear();
+
+    // 获取大小
+    size_t prependable_size() const;
+    size_t writable_size() const;
+    size_t readable_size() const;
+    size_t size();
+
+ private:
     char *_begin();
     const char *_begin() const;
     void _make_space(size_t len);
-    void _ensure_writeable_bytes(
-        size_t len); //确保有足够空间写入数据,如果不够则扩容
+    void _ensure_writeable_bytes(size_t len); //确保有足够空间写入数据,如果不够则扩容
 
-private:
+ private:
     /*
-  数据发送从头开始发，写入则从剩余位置开始写
-                          readidx_         writeidx_
-                         ↓                ↓
+      数据发送从头开始发，写入则从剩余位置开始写
+                          readidx_        writeidx_
+                          ↓               ↓
       [---prependable----|----readable----|-----writable----]
       ↑                                                     ↑
       0                                                     data_.size()
   */
-    std::vector<char> data_;
-    size_t writeidx_;
-    size_t readidx_;
+    std::vector<char> m_data;
+    size_t m_writeidx;
+    size_t m_readidx;
 };
 #endif

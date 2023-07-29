@@ -17,11 +17,10 @@ RM    = -rm -r 2>/dev/null
 #============================================================
 .PHONY: default
 default:
-	@echo "Usage: make [all|easy_net|raw_examples|test|clean]"
+	@echo "Usage: make [all|easy_net|raw_examples|test|clean|install|uninstall]"
 
 .PHONY: all
 all: raw_examples easy_net test
-	@echo "\n ======Compile all Done!======"
 
 .PHONY: premake
 premake:
@@ -42,13 +41,13 @@ EASYNET_OUT_HEADERS= ${NET_PUB_HEADERS}
 #是否添加http模块
 ifeq ($(WITH_HTTP),yes)
 	EASYNET_SRC_DIRS += ${ROOT_DIR}/protocol/http
-	EASYNET_OUT_HEADERS += ${HTTP_HEADERS}
+	EASYNET_OUT_HEADERS += ${HTTP_PUB_HEADERS}
 endif
 
 #是否添加mqtt模块
 ifeq ($(WITH_MQTT),yes)
 	EASYNET_SRC_DIRS += ${ROOT_DIR}/protocol/mqtt
-	EASYNET_OUT_HEADERS += ${MQTT_HEADERS}
+	EASYNET_OUT_HEADERS += ${MQTT_PUB_HEADERS}
 endif
 
 #提取编译lib所需要的src
@@ -68,7 +67,6 @@ easy_net: premake
 		INCDIRS="$(EASYNET_INC_DIRS)" \
 		
 	@$(CP) $(EASYNET_OUT_HEADERS) ${BUILD_EASYNET_DIR}/include/easy_net
-	@echo "\nCompile easy_net Done!"
 
 
 #============================================================
@@ -91,7 +89,7 @@ TEST_SRCS = $(foreach dir, $(TEST_SRCDIRS), $(wildcard $(dir)/*.c $(dir)/*.cc $(
 
 .PHONY: test
 test: easy_net
-	${MKDIR} ${BUILD_BIN_DIR}/test
+	@${MKDIR} ${BUILD_BIN_DIR}/test
 	@for src in ${TEST_SRCS};\
 	do \
 		$(MAKEF) MODE=EXE\
@@ -102,7 +100,6 @@ test: easy_net
 			DEP_LIBSDIRS=${BUILD_EASYNET_DIR}/lib\
 			DEP_LIBS=easy_net\
 	;done
-	@echo "Compile test Done!"
 
 #============================================================
 # 编译raw_examples
@@ -110,7 +107,21 @@ test: easy_net
 .PHONY: raw_examples
 raw_examples: premake
 	@${MAKE} -C raw_examples OUTPUT_BIN_DIR=${BUILD_BIN_DIR}/raw_examples
-	@echo "Compile raw_examples Done!"
+
+
+#============================================================
+# 安装与卸载easy_net
+#============================================================
+.PHONY: install
+install:
+	@${MKDIR} ${PREFIX}
+	@${CP} ${BUILD_EASYNET_DIR}/* ${PREFIX}
+	@echo "Install easy_net Done!"
+
+.PHONY: uninstall
+uninstall:
+	@${RM} ${PREFIX}/*
+	@echo "Uninstall easy_net Done!"
 
 #============================================================
 # 调试makefile
@@ -125,6 +136,7 @@ debug_mk:
 .PHONY: clean
 clean:
 	@find . -name "*.o" | xargs rm -rf
+	@find . -name "*.d" | xargs rm -rf
 
 .PHONY: clean_all
 clean_all:clean

@@ -2,6 +2,10 @@
 #define __EASYNET_COPYABLE_H
 
 //允许拷贝
-class copyable {};
+class copyable {
+ public:
+    copyable() = default;
+    ~copyable() = default;
+};
 
 #endif

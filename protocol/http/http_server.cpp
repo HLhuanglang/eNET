@@ -9,18 +9,20 @@
 #include "def.h"
 
 http_server::http_server(event_loop *loop, const std::string &ip, size_t port)
-    : server_(loop, ip.c_str(), port, k_sub_reactor_cnt), user_cb_([](const http_request &req, http_response &res) {
+    : m_server(loop, ip.c_str(), port),
+      m_user_cb([](const http_request &req, http_response &res) {
           //默认情况下的响应
           res.set_status_code("404");
           res.set_status_code_msg("Not Found");
           res.set_close_connection(true);
       }) {
-    buf_ = nullptr;
-    server_.set_build_connection_cb(std::bind(&http_server::_on_connection, this));
-    server_.set_recv_msg_cb(std::bind(&http_server::_on_msg, this, std::placeholders::_1, std::placeholders::_2));
+
+    //绑定回调接口
+    m_server.set_new_connection_cb(std::bind(&http_server::_on_connection, this, std::placeholders::_1));
+    m_server.set_recv_msg_cb(std::bind(&http_server::_on_msg, this, std::placeholders::_1, std::placeholders::_2));
 }
 
-void http_server::_on_connection(/*tcp_connection& conn*/) {
+void http_server::_on_connection(const sp_tcp_connection_t &conn) {
     // fixme：
     // if (conn->connected()) {
     //     http_context *ctx = new http_context;
@@ -28,12 +30,12 @@ void http_server::_on_connection(/*tcp_connection& conn*/) {
     // }
 }
 
-int http_server::_on_msg(tcp_connection &conn, buffer &buf) {
+int http_server::_on_msg(const sp_tcp_connection_t &conn, timestemp ts) {
     //做http数据完整性校验.
     //某一次http请求发生，客户端调用write后会将本次请求的所有数据都发送过来，服务端会全部read出来的！ 直到read返回-1 并且errno=EAGAIN才表示当前这次传输over了
     auto sp_ctx = std::make_shared<http_context>(); //频繁的创建对象也是一种开销
     http_request req;
-    auto parsed_size = sp_ctx->parser_http_context(buf.readble_start(), buf.readable_size(), req); //fixme：这里会从buf拷贝数据...,可否直接使用buf中的数据而避免copy呢?
+    auto parsed_size = sp_ctx->parser_http_context(conn->get_readbuf().readable_start(), conn->get_readbuf().readable_size(), req); // fixme：这里会从buf拷贝数据...,可否直接使用buf中的数据而避免copy呢?
     if (sp_ctx->is_http_complete()) {
         //不能收到一部分数据就解析一部分数据，并且该部分数据被解析完后还存储在http_server对象中(诸如请求方法、协议版本等信息)
         //因为http_server要处理很多的请求，可能同时有多个连接在收发数据，这样子http_server中保存的解析完成的数据就混乱了
@@ -54,6 +56,9 @@ int http_server::_on_msg(tcp_connection &conn, buffer &buf) {
         //完事如果此次接收不完整的话，这一套赋值操作就白费了。
         //
         //还是采用方案1比较好点？自己实现一套http协议的解析即可。
+
+        conn->get_readbuf().clear(); // fixme：因为已经解析完了，所以将buf清空？
+
         _on_request(conn, req);
     } else {
         //收包不完整,继续收
@@ -61,12 +66,12 @@ int http_server::_on_msg(tcp_connection &conn, buffer &buf) {
     return static_cast<int>(parsed_size);
 }
 
-void http_server::_on_request(tcp_connection &conn, const http_request &req) {
+void http_server::_on_request(const sp_tcp_connection_t &conn, const http_request &req) {
     // 将用户要发送的数据转成buffer，然后发送出去
     http_response res;
     res.default_init();
-    user_cb_(req, res); //服务端根据客户端中的数据对res进行填充
+    m_user_cb(req, res); //服务端根据客户端中的数据对res进行填充
 
-    http_response::append_http_to_buf(res, conn.get_writebuf()); //将http_responese对象中的值转char数据进行发送.
-    conn.send_data(conn.get_writebuf().readble_start(), conn.get_writebuf().readable_size());
+    http_response::append_http_to_buf(res, conn->get_writebuf()); //将http_responese对象中的值转char数据进行发送.
+    conn->send_data(conn->get_writebuf().readable_start(), conn->get_writebuf().readable_size());
 }
