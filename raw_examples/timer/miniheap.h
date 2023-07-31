@@ -52,8 +52,8 @@ class miniheap_timer : public timer_policy<std::priority_queue<timer, std::vecto
             if (t.is_expired()) {
                 switch (t.get_type()) {
                     case timer_type::E_EVERY: {
-                        t.get_next_expired_time();
                         t.run_task();
+                        t.get_next_expired_time();
                         m_timers.pop();
                         m_timers.push(t);
                         break;
