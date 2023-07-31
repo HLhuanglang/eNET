@@ -1,7 +1,8 @@
 #include "list.h"
 #include "miniheap.h"
-#include "some_time_func.h"
 #include "timewheel.h"
+
+#include "timer.h"
 
 #include <iostream>
 #include <unistd.h>
@@ -16,7 +17,8 @@ unsigned long long operator"" _ms(unsigned long long ms) {
 }
 
 int main() {
-    list::timer_manager tm;
+    //基于有序链表的定时器
+    timer_manager<miniheap_timer> tm;
 
     tm.run_after(10_s, [](int) {
         std::cout << "10s" << std::endl;
