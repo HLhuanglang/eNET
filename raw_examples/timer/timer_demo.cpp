@@ -26,6 +26,7 @@ int main() {
 
     tm.run_every(1_s, [](int) {
         std::cout << "1s" << std::endl;
+        sleep(2);
     });
 
     tm.run_every(5_s, [](int) {

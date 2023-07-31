@@ -1,5 +1,4 @@
 SUB_DIRS=http_parser\
-			cpp-httplib\
 			epoll\
 			eventfd\
 			timerfd \

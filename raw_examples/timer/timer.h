@@ -80,7 +80,7 @@ class timer {
 
     void run_task() { m_cb(m_interval); }
     int get_interval() const { return m_interval; }
-    int get_expired_time() const { return (m_expried_time.tv_sec - m_current_time.tv_sec) / 1000; }
+    int get_expired_time() const { return (m_expried_time.tv_sec - m_current_time.tv_sec) / 1000 + (m_expried_time.tv_nsec - m_current_time.tv_nsec) / 1000000; }
     void set_type(timer_type type) { m_type = type; }
     timer_type get_type() const { return m_type; }
     int get_id() const { return m_id; }
