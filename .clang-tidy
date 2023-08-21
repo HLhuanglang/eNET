@@ -24,7 +24,7 @@ WarningsAsErrors: "*"
 CheckOptions:
   - { key: readability-identifier-naming.NamespaceCase,            value: lower_case }
   - { key: readability-identifier-naming.ClassCase,                value: lower_case }
-  - { key: readability-identifier-naming.StructCase,               value: lower_case }
+  - { key: readability-identifier-naming.StructCase,               value: CamelCase  }
   - { key: readability-identifier-naming.TemplateParameterCase,    value: CamelCase  }
   - { key: readability-identifier-naming.FunctionCase,             value: lower_case }
   - { key: readability-identifier-naming.VariableCase,             value: lower_case }
@@ -40,6 +40,6 @@ CheckOptions:
   - { key: readability-identifier-naming.MemberConstantCase,       value: lower_case }
   - { key: readability-identifier-naming.MemberConstantPrefix,     value: k_         }
   - { key: readability-identifier-naming.StaticConstantCase,       value: lower_case }
-  - { key: readability-identifier-naming.StaticConstantPrefix,     value: k_         }
+  - { key: readability-identifier-naming.StaticConstantPrefix,     value: s_         }
   - { key: readability-identifier-naming.PrivateMethodPrefix ,     value: _          }
   - { key: readability-identifier-naming.ProtectedMethodPrefix ,   value: _          }

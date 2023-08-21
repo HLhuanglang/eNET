@@ -30,7 +30,7 @@ class timer {
         m_expried_time.tv_nsec = m_current_time.tv_nsec + (m_interval % 1000) * 1000 * 1000;
     }
 
-    //用于remove时进行比较
+    // 用于remove时进行比较
     bool operator==(const timer &rhs) const {
         return m_id == rhs.m_id;
     }
@@ -62,8 +62,8 @@ class timer {
         return ret;
     }
 
-    //使用当前时间更新下一次超时时间,避免超时任务带来的时间误差
-    //例如设置的是run_every(2s,task)
+    // 使用当前时间更新下一次超时时间,避免超时任务带来的时间误差
+    // 例如设置的是run_every(2s,task)
     // 预期：16:00任务开始---->16:02触发,执行完任务16:02----->16:04触发,执行完任务16:06
     // 实际：16:00任务开始---->16:02触发,执行完任务16:03----->16:05触发,执行完任务16:10
     void get_next_expired_time() {
@@ -88,11 +88,11 @@ class timer {
  private:
     int m_id;
     timer_cb m_cb;
-    timespec m_expried_time; //下一次过期的时间戳
-    timespec m_current_time; //当前时间戳
+    timespec m_expried_time; // 下一次过期的时间戳
+    timespec m_current_time; // 当前时间戳
     timer_type m_type;
     int m_timeat;   // run_at
-    int m_interval; //超时时间间隔  单位：ms
+    int m_interval; // 超时时间间隔  单位：ms
 };
 
 template <typename Container>
@@ -134,12 +134,12 @@ class timer_manager {
         struct epoll_event ee[1024];
 
         while (true) {
-            //等待定时器超时
+            // 等待定时器超时
             while (true) {
                 int timeout = m_timer_container.find_timer();
 
-                //可能存在定时任务非常大，导致timeout溢出，这里做一下处理
-                //或者提供一个接口，让用户设定ticks的大小
+                // 可能存在定时任务非常大，导致timeout溢出，这里做一下处理
+                // 或者提供一个接口，让用户设定ticks的大小
                 if (timeout >= g_k_max_timeout) {
                     timeout = g_k_max_timeout;
                 }
@@ -150,7 +150,7 @@ class timer_manager {
                 if (n < 0 && errno == EINTR) {
                     continue;
                 }
-                //如果是在网络编程中，这里还需与处理IO事件
+                // 如果是在网络编程中，这里还需与处理IO事件
                 break;
             }
 

@@ -24,14 +24,14 @@ class list_timer : public timer_policy<std::list<timer>> {
 
     int find_timer() override {
         if (m_timers.empty()) {
-            return 1 * 1000; //默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
+            return 1 * 1000; // 默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
         }
         return m_timers.front().get_interval();
     }
 
     void add_timer(int tm, timer_type type, const timer::timer_cb &cb) override {
         if (m_timers.empty()) {
-            m_timers.emplace_back(timer{_gen_timer_id(), type, cb, tm});
+            m_timers.emplace_back(_gen_timer_id(), type, cb, tm);
         } else {
             for (auto it = m_timers.begin(); it != m_timers.end(); ++it) {
                 if (tm < it->get_interval()) {
@@ -39,7 +39,7 @@ class list_timer : public timer_policy<std::list<timer>> {
                     return;
                 }
             }
-            m_timers.emplace_back(timer{_gen_timer_id(), type, cb, tm});
+            m_timers.emplace_back(_gen_timer_id(), type, cb, tm);
         }
     }
 
