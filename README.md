@@ -10,7 +10,7 @@
 
 ## 3.依赖
 
-- gcc>=4.8.5(支持c++11)
+- gcc>=4.8.1(支持c++11)
 - git(拉取代码)
 - bear(用于生成compile_commands.json)
 
