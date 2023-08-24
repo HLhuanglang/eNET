@@ -43,7 +43,7 @@ CONFIG_DATE=20230213
 
 ### 4.3生成头文件依赖
 ```
-./scripts/header_file.sh
+./scripts/header_file.sh >> header_file.mk
 ```
 
 ### 4.4编译选项
