@@ -2,8 +2,8 @@
 ##自选配置
 include easy_net_compile_config.mk
 
-##makeifle变量
-include makefile.vars
+##makeifle变量, 请手动执行./script/header_file.sh生成
+include header_file.mk
 
 ##封装一些功能
 MAKE  = make --no-print-directory

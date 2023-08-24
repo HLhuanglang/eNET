@@ -41,7 +41,12 @@ CONFIG_DATE=20230213
 
 使用`configure --help`可以查看支持的选项
 
-### 4.3编译选项
+### 4.3生成头文件依赖
+```
+./scripts/header_file.sh
+```
+
+### 4.4编译选项
 
 - `make easy_net`：只编译libeasy_net.a/so
 - `make all`：编译easy_net库、测试程序、一些原始socket接口使用案例
