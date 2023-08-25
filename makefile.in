@@ -113,13 +113,6 @@ ifeq ($(OS), Linux)
 endif
 
 #==============================
-# 获取.o文件
-#==============================
-OBJS = $(addsuffix  .o, $(basename ${SRCS}))
-
-
-
-#==============================
 # 编译动作
 #==============================
 .PHONY:build
@@ -161,7 +154,6 @@ LIB:${OBJS}
 ifneq ($(findstring SHARED, $(LIB_TYPE)), )
 	$(CXX) -shared $^ -o $(OUTDIR)/lib${TARGET_NAME}.so $(LDFLAGS)
 endif
-
 ifneq ($(findstring STATIC, $(LIB_TYPE)), )
 	$(AR) $(ARFLAGS) $(OUTDIR)/lib${TARGET_NAME}.a $^
 endif
@@ -203,5 +195,6 @@ EXE:${OBJS}
 
 
 ####编译规则
-${OBJS}:%.o:%.cpp
-	${CXX} ${CXXFLAGS} -c $^ -o $@ ${LDFLAGS}
+${OBJS_DIR}/%.o:${SRCS_DIR}/%.cpp
+	@mkdir -p $(@D)
+	${CXX} ${CXXFLAGS} -c $^ -o $@

@@ -9,9 +9,10 @@ BUILD_BIN_DIR=${ROOT_DIR}/build/bin
 BUILD_OBJS_DIR=${ROOT_DIR}/build/objs
 
 # 头文件
-NET_PUB_HEADERS=$(find ${ROOT_DIR}/easy_net/inc -name "*.h")
-HTTP_PUB_HEADERS=$(find ${ROOT_DIR}/protocol/http -name "*.h")
-MQTT_PUB_HEADERS=$(find ${ROOT_DIR}/protocol/mqtt -name "*.h")
+BASE_PUB_HEADERS=$(find ${ROOT_DIR}/easy_net/base -name "*.h")
+UTIL_PUB_HEADERS=$(find ${ROOT_DIR}/easy_net/util -name "*.h")
+HTTP_PUB_HEADERS=$(find ${ROOT_DIR}/easy_net/protocol/http -name "*.h")
+MQTT_PUB_HEADERS=$(find ${ROOT_DIR}/easy_net/protocol/mqtt -name "*.h")
 
 echo "# 项目根目录"
 echo "ROOT_DIR=${ROOT_DIR}"
@@ -24,11 +25,15 @@ echo
 
 echo "# 头文件"
 echo
-echo "NET_PUB_HEADERS = \\"
-for header in ${NET_PUB_HEADERS}; do
+echo "BASE_PUB_HEADERS = \\"
+for header in ${BASE_PUB_HEADERS}; do
     echo -e "\t${header} \\"
 done
-
+echo
+echo "UTIL_PUB_HEADERS = \\"
+for header in ${UTIL_PUB_HEADERS}; do
+    echo -e "\t${header} \\"
+done
 echo
 echo "HTTP_PUB_HEADERS = \\"
 for header in ${HTTP_PUB_HEADERS}; do

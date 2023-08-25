@@ -33,27 +33,32 @@ premake:
 # easy_net库编译
 #============================================================
 #源码和头文件
-EASYNET_SRC_DIRS= ${ROOT_DIR}/easy_net
-EASYNET_INC_DIRS =${ROOT_DIR}/easy_net/inc
+EASYNET_SRC_DIRS= ${ROOT_DIR}/easy_net/base \
+				  ${ROOT_DIR}/easy_net/util
+
+EASYNET_INC_DIRS =${ROOT_DIR}/easy_net/base \
+				  ${ROOT_DIR}/easy_net/util
 
 #对外暴露的头文件
-EASYNET_OUT_HEADERS= ${NET_PUB_HEADERS}
+EASYNET_OUT_HEADERS= ${BASE_PUB_HEADERS} ${UTIL_PUB_HEADERS}
 
 #是否添加http模块
 ifeq ($(WITH_HTTP),yes)
-	EASYNET_SRC_DIRS += ${ROOT_DIR}/protocol/http
+	EASYNET_INC_DIRS += ${ROOT_DIR}/easy_net/protocol/http
+	EASYNET_SRC_DIRS += ${ROOT_DIR}/easy_net/protocol/http
 	EASYNET_OUT_HEADERS += ${HTTP_PUB_HEADERS}
 endif
 
 #是否添加mqtt模块
 ifeq ($(WITH_MQTT),yes)
-	EASYNET_SRC_DIRS += ${ROOT_DIR}/protocol/mqtt
+	EASYNET_INC_DIRS += ${ROOT_DIR}/easy_net/protocol/mqtt
+	EASYNET_SRC_DIRS += ${ROOT_DIR}/easy_net/protocol/mqtt
 	EASYNET_OUT_HEADERS += ${MQTT_PUB_HEADERS}
 endif
 
 #提取编译lib所需要的src
 EASYNET_SRCS = $(foreach dir, $(EASYNET_SRC_DIRS), $(wildcard $(dir)/*.cpp))
-EASYNET_OBJS = $(EASYNET_SRCS:$(EASYNET_SRC_DIRS)/%.cpp=$(BUILD_OBJS_DIR)/%.o)
+EASYNET_OBJS = $(EASYNET_SRCS:${ROOT_DIR}/easy_net/%.cpp=$(BUILD_OBJS_DIR)/%.o)
 
 .PHONY: easy_net
 easy_net: premake
@@ -66,7 +71,10 @@ easy_net: premake
 		DEFINES=DEBUG	\
 		OUTDIR=${BUILD_EASYNET_DIR}/lib \
 		SRCS="$(EASYNET_SRCS)" \
+		OBJS="$(EASYNET_OBJS)" \
 		INCDIRS="$(EASYNET_INC_DIRS)" \
+		SRCS_DIR=${ROOT_DIR}/easy_net \
+		OBJS_DIR=${BUILD_OBJS_DIR}
 		
 	@$(CP) $(EASYNET_OUT_HEADERS) ${BUILD_EASYNET_DIR}/include/easy_net
 
