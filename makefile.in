@@ -51,11 +51,9 @@ NM	  = $(CROSS_COMPILE)nm
 STRIP = $(CROSS_COMPILE)strip
 endif
 
-
 #==============================
 #获取编译环境：OS, ARCH
 #==============================
-CC_VERSION=$(shell $(CC) --version 2>&1 | head -n 1)
 TARGET_PLATFORM=$(shell $(CC) -v 2>&1 | grep Target | sed 's/Target: //')
 ifneq ($(findstring mingw, $(TARGET_PLATFORM)), )
 	OS=Windows
@@ -75,33 +73,39 @@ ARCH=$(shell echo $(TARGET_PLATFORM) | awk -F'-' '{print $$1}')
 endif
 
 #==============================
-# CXXFLAGS, ARFLAGS
+# CXXFLAGS：编译参数
 #==============================
 ifneq ($(findstring DEBUG, $(BUILD_TYPE)), )
-	DEFAULT_CFLAGS = -g -O0
+	DEFAULT_CFLAGS = -ggdb -O0
 else
-	DEFAULT_CFLAGS = -O2
+	DEFAULT_CFLAGS = -Wall -Werror -O2
 endif
 
 CXXFLAGS ?= $(DEFAULT_CFLAGS)
-CXXFLAGS += $(addprefix -I, $(INCDIRS))
-CXXFLAGS += $(addprefix -I, $(DEP_INCDIRS))
-CXXFLAGS += $(addprefix -D, $(DEFINES))
 
-CXXFLAGS +=  -Wall -Werror
 ifeq ($(findstring -fPIC, $(CXXFLAGS)), )
-override CXXFLAGS += -fPIC
+	CXXFLAGS += -fPIC
 endif
 
 ifeq ($(findstring -std, $(CXXFLAGS)), )
-override CXXFLAGS += -std=c++11
+	CXXFLAGS += -std=c++11
 endif
 
+
+#==============================
+# ARFLAGS
+#==============================
 ARFLAGS = cr
 
 #==============================
-# LDFLAGS
+# LDFLAGS：链接参数
 #==============================
+LDFLAGS += $(addprefix -I, $(INCDIRS))
+LDFLAGS += $(addprefix -D, $(DEFINES))
+
+ifneq (${DEP_INCDIRS}, )
+	LDFLAGS += $(addprefix -I, $(DEP_INCDIRS))
+endif
 ifneq (${DEP_LIBSDIRS}, )
 	LDFLAGS += $(addprefix -L, $(DEP_LIBSDIRS))
 endif
@@ -121,80 +125,22 @@ build: ${MODE}
 ####编译LIB
 .PHONY: LIB
 LIB:${OBJS}
-	$(info ================================================================)
-	$(info =                      Print infomations                       =)
-	$(info ================================================================)
-	$(info CC_VERSION       = $(CC_VERSION))
-	$(info OS               = $(OS))
-	$(info ARCH             = $(ARCH))
-	$(info MAKE             = $(MAKE))
-	$(info CC               = $(CC))
-	$(info CXX              = $(CXX))
-	$(info CFLAGS           = $(CFLAGS))
-	$(info CXXFLAGS         = $(CXXFLAGS))
-	$(info CPPFLAGS         = $(CPPFLAGS))
-	$(info LDFLAGS          = $(LDFLAGS))
-	$(info MODE             = $(MODE))
-	$(info TARGET_NAME      = $(TARGET_NAME))
-	$(info LIB_TYPE         = $(LIB_TYPE))	
-	$(info BUILD_TYPE       = $(BUILD_TYPE))
-	$(info TARGET_PLATFORM  = $(TARGET_PLATFORM))
-	$(info CROSS_COMPILE    = $(CROSS_COMPILE))
-	$(info DEP_INCDIRS      = $(DEP_INCDIRS))
-	$(info DEP_LIBSDIRS     = $(DEP_LIBSDIRS))
-	$(info DEP_LIBS         = $(DEP_LIBS))
-	$(info DEFINES          = $(DEFINES))
-	$(info OUTDIR           = $(OUTDIR))
-	$(info INCDIRS          = $(INCDIRS))
-	$(info SRCS             = $(notdir $(SRCS)))
-	$(info OBJS             = $(notdir $(OBJS)))
-	$(info ================================================================)
-	$(info =                 Build libeasy_net.[so|a]                     =)
-	$(info ================================================================)
 ifneq ($(findstring SHARED, $(LIB_TYPE)), )
 	$(CXX) -shared $^ -o $(OUTDIR)/lib${TARGET_NAME}.so $(LDFLAGS)
 endif
 ifneq ($(findstring STATIC, $(LIB_TYPE)), )
 	$(AR) $(ARFLAGS) $(OUTDIR)/lib${TARGET_NAME}.a $^
 endif
-	@echo "\n"
 
 ####编译EXE
 .PHONY: EXE
-EXE:${OBJS}
-	$(info ================================================================)
-	$(info =                      Print infomations                       =)
-	$(info ================================================================)
-	$(info CC_VERSION       = $(CC_VERSION))
-	$(info OS               = $(OS))
-	$(info ARCH             = $(ARCH))
-	$(info MAKE             = $(MAKE))
-	$(info CC               = $(CC))
-	$(info CXX              = $(CXX))
-	$(info CFLAGS           = $(CFLAGS))
-	$(info CXXFLAGS         = $(CXXFLAGS))
-	$(info CPPFLAGS         = $(CPPFLAGS))
-	$(info LDFLAGS          = $(LDFLAGS))
-	$(info MODE             = $(MODE))
-	$(info TARGET_NAME      = $(TARGET_NAME))
-	$(info LIB_TYPE         = $(LIB_TYPE))	
-	$(info BUILD_TYPE       = $(BUILD_TYPE))
-	$(info TARGET_PLATFORM  = $(TARGET_PLATFORM))
-	$(info CROSS_COMPILE    = $(CROSS_COMPILE))
-	$(info DEP_INCDIRS      = $(DEP_INCDIRS))
-	$(info DEP_LIBSDIRS     = $(DEP_LIBSDIRS))
-	$(info DEP_LIBS         = $(DEP_LIBS))
-	$(info DEFINES          = $(DEFINES))
-	$(info OUTDIR           = $(OUTDIR))
-	$(info INCDIRS          = $(INCDIRS))
-	$(info SRCS             = $(notdir $(SRCS)))
-	$(info OBJS             = $(notdir $(OBJS)))
-	$(info ================================================================)
-	${CXX} -static ${CXXFLAGS} ${OBJS} -o ${OUTDIR}/${TARGET_NAME} ${LDFLAGS}
-	@echo "\n"
-
+EXE:${TEST_TARGET}
 
 ####编译规则
 ${OBJS_DIR}/%.o:${SRCS_DIR}/%.cpp
 	@mkdir -p $(@D)
-	${CXX} ${CXXFLAGS} -c $^ -o $@
+	${CXX} ${CXXFLAGS} -c $^ -o $@ ${LDFLAGS}
+
+${TEST_TARGET_DIR}/%:${TEST_SRCS_DIR}/%.cpp
+	@mkdir -p $(@D)
+	${CXX} -static ${CXXFLAGS}  $^ -o $@ ${LDFLAGS}

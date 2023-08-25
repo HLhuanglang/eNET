@@ -82,7 +82,8 @@ easy_net: premake
 #============================================================
 # easy_net单元测试
 #============================================================
-TEST_SRCDIRS = ${ROOT_DIR}/test/easy_net_test
+TEST_SRCDIRS = ${ROOT_DIR}/test/base_test\
+			   ${ROOT_DIR}/test/util_test
 
 #是否测试http模块
 ifeq ($(WITH_HTTP),yes)
@@ -95,21 +96,19 @@ ifeq ($(WITH_MQTT),yes)
 endif
 
 #过滤所有的单元测试文件
-TEST_SRCS = $(foreach dir, $(TEST_SRCDIRS), $(wildcard $(dir)/*.c $(dir)/*.cc $(dir)/*.cpp))
+TEST_SRCS = $(foreach dir, $(TEST_SRCDIRS), $(wildcard $(dir)/*.cpp))
+TEST_TARGET = $(TEST_SRCS:${ROOT_DIR}/test/%.cpp=$(BUILD_BIN_DIR)/test/%)
 
 .PHONY: test
 test: easy_net
 	@${MKDIR} ${BUILD_BIN_DIR}/test
-	@for src in ${TEST_SRCS};\
-	do \
-		$(MAKEF) MODE=EXE\
-			TARGET_NAME=`basename $$src .cpp`\
-			SRCS=$$src\
-			OUTDIR=${BUILD_BIN_DIR}/test\
-			DEP_INCDIRS=${BUILD_EASYNET_DIR}/include\
-			DEP_LIBSDIRS=${BUILD_EASYNET_DIR}/lib\
-			DEP_LIBS=easy_net\
-	;done
+	@$(MAKEF) MODE=EXE\
+		DEP_INCDIRS=${BUILD_EASYNET_DIR}/include\
+		DEP_LIBSDIRS=${BUILD_EASYNET_DIR}/lib\
+		DEP_LIBS=easy_net\
+		TEST_SRCS_DIR=${ROOT_DIR}/test\
+		TEST_TARGET_DIR=${BUILD_BIN_DIR}/test\
+		TEST_TARGET="$(TEST_TARGET)"\
 
 #============================================================
 # 编译raw_examples
@@ -138,7 +137,6 @@ uninstall:
 #============================================================
 .PHONY: debug_mk
 debug_mk:
-	@echo "${EASYNET_OBJS}"
 
 #============================================================
 # 清理编译环境
