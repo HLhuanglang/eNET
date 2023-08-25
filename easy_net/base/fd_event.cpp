@@ -5,18 +5,18 @@
 void fd_event::_update_event(epoll_opt_e optflag) {
     std::unique_ptr<poller> &poller = m_ioloop->get_poller();
     switch (optflag) {
-    case epoll_opt_e::ADD_EVENT: {
-        poller->add_fd_event(this);
-        break;
-    }
-    case epoll_opt_e::DEL_EVENT: {
-        poller->del_fd_event(this);
-        break;
-    }
-    case epoll_opt_e::MOD_EVENT: {
-        poller->mod_fd_event(this);
-        break;
-    }
+        case epoll_opt_e::ADD_EVENT: {
+            poller->add_fd_event(this);
+            break;
+        }
+        case epoll_opt_e::DEL_EVENT: {
+            poller->del_fd_event(this);
+            break;
+        }
+        case epoll_opt_e::MOD_EVENT: {
+            poller->mod_fd_event(this);
+            break;
+        }
     }
 }
 

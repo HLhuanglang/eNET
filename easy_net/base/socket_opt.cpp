@@ -17,7 +17,7 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
     vec[1].iov_len = sizeof(extrabuf);
 
     do {
-        //可能被系统调用中断,但是实际并没有调用结束,所以用一层while循环.
+        // 可能被系统调用中断,但是实际并没有调用结束,所以用一层while循环.
         const int iovcnt = (read_size < sizeof extrabuf) ? 2 : 1;
         n = ::readv(fd, vec, iovcnt);
     } while (n == -1 && errno == EINTR);
@@ -28,12 +28,12 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
     } else if (static_cast<size_t>(n) <= read_size) {
         buf.writer_step(read_size);
     } else {
-        //读取的数量超过buf的容量,利用栈上空间.
+        // 读取的数量超过buf的容量,利用栈上空间.
         buf.set_writer_idx(buf.size());
         buf.append(extrabuf, n - read_size);
     }
 
-    //返回0表示对端关闭了连接.
+    // 返回0表示对端关闭了连接.
     return n;
 }
 

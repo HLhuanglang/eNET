@@ -36,7 +36,6 @@ CheckOptions:
   - { key: readability-identifier-naming.ConstexprVariableCase,    value: lower_case }
   - { key: readability-identifier-naming.ConstexprVariablePrefix,  value: k_         }
   - { key: readability-identifier-naming.GlobalConstantCase,       value: lower_case }
-  - { key: readability-identifier-naming.GlobalConstantPrefix,     value: g_         }
   - { key: readability-identifier-naming.MemberConstantCase,       value: lower_case }
   - { key: readability-identifier-naming.MemberConstantPrefix,     value: k_         }
   - { key: readability-identifier-naming.StaticConstantCase,       value: lower_case }

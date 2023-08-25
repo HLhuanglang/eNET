@@ -9,7 +9,6 @@
 
 #include "cb.h"
 #include "def.h"
-#include "event.h"
 #include "poller.h"
 
 class event_loop : public non_copyable {
@@ -38,8 +37,8 @@ class event_loop : public non_copyable {
     bool m_quit;
     bool m_looping;
     bool m_pending_func;
-    poller::active_events_t m_ready_events; //当前loop上就绪的fd
-    std::unique_ptr<poller> m_poller;       //管理IO多路复用
+    poller::active_events_t m_ready_events; // 当前loop上就绪的fd
+    std::unique_ptr<poller> m_poller;       // 管理IO多路复用
 };
 
 #endif

@@ -27,13 +27,13 @@ class buffer {
 
  public:
     // writer
-    char *writeable_start();             //数据开始地址
-    const char *writeable_start() const; //数据开始地址
+    char *writeable_start();             // 数据开始地址
+    const char *writeable_start() const; // 数据开始地址
     size_t get_writer_idx() const;
     void set_writer_idx(size_t idx);
     void writer_step(size_t step);
 
-    void append(const char *data, size_t len); //填充数据(需要注意迭代器失效问题)
+    void append(const char *data, size_t len); // 填充数据(需要注意迭代器失效问题)
     void append(const std::string &str);
 
     // reader
@@ -59,7 +59,7 @@ class buffer {
     char *_begin();
     const char *_begin() const;
     void _make_space(size_t len);
-    void _ensure_writeable_bytes(size_t len); //确保有足够空间写入数据,如果不够则扩容
+    void _ensure_writeable_bytes(size_t len); // 确保有足够空间写入数据,如果不够则扩容
 
  private:
     /*

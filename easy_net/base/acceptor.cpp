@@ -4,7 +4,7 @@
 #include <cerrno>
 
 void acceptor::handle_read() {
-    //先调用accept处理连接请求
+    // 先调用accept处理连接请求
     struct sockaddr addr;
     socklen_t addr_len = sizeof(sockaddr);
     int acceptfd = ::accept(get_fd(), &addr, &addr_len);

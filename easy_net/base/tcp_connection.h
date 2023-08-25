@@ -24,7 +24,7 @@ class tcp_connection : public std::enable_shared_from_this<tcp_connection>, publ
     }
 
     ~tcp_connection() override {
-        //避免释放连接时候内存泄漏
+        // 避免释放连接时候内存泄漏
         delete m_read_buf;
         delete m_write_buf;
     }

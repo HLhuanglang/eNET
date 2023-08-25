@@ -50,7 +50,7 @@ class fd_event : public non_copyable {
     bool is_writing() const { return (m_expect_event & k_write_evnet) != 0; }
     bool is_reading() const { return (m_expect_event & k_read_event) != 0; }
 
-    //获取成员变量值
+    // 获取成员变量值
     int get_fd() const { return m_fd; }
     int get_events() const { return m_expect_event; }
     int get_revents() const { return m_actual_event; }

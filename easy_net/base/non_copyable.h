@@ -4,7 +4,7 @@
 #include <memory>
 #include <utility>
 
-//禁止拷貝
+// 禁止拷貝
 class non_copyable {
  protected:
     non_copyable() = default;

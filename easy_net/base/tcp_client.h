@@ -13,7 +13,7 @@ class tcp_client {
     ~tcp_client();
 
  public:
-    //设置连接建立完成后回调
+    // 设置连接建立完成后回调
     void set_new_connection_cb(new_connection_cb_f cb) {
         m_new_connection_cb = std::move(cb);
     }
@@ -22,12 +22,12 @@ class tcp_client {
         m_del_connection_cb = std::move(cb);
     }
 
-    //设置当接收到客户端数据时回调
+    // 设置当接收到客户端数据时回调
     void set_recv_msg_cb(recv_msg_cb_f cb) {
         m_revc_msg_cb = std::move(cb);
     }
 
-    //设置应用层数据缓冲发送完毕回调
+    // 设置应用层数据缓冲发送完毕回调
     void set_write_complete_cb(write_complete_cb_f cb) {
         m_write_complete_cb = std::move(cb);
     }
@@ -36,7 +36,7 @@ class tcp_client {
         m_high_water_mark_cb = std::move(cb);
     }
 
-    //运行
+    // 运行
     void start() { m_loop->loop(); }
 
  private:

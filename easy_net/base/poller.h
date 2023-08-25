@@ -27,7 +27,7 @@ class poller : public non_copyable {
     virtual void polling(int timeout_ms, active_events_t &events) = 0;
 
  protected:
-    std::map<int, fd_event *> m_fdmp; //继承可用
+    std::map<int, fd_event *> m_fdmp; // 继承可用
 
  private:
     event_loop *m_owner_loop; // poller所属的event_loop

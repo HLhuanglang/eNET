@@ -118,13 +118,13 @@ void buffer::_ensure_writeable_bytes(size_t len) {
 
 void buffer::_make_space(size_t len) {
     if (prependable_size() + writable_size() >= len) {
-        //整个剩余空间还足够存储,则将现有数据全部向前移动.
+        // 整个剩余空间还足够存储,则将现有数据全部向前移动.
         size_t readable = readable_size();
         std::copy(readable_start(), writeable_start(), _begin());
         m_readidx = 0;
         m_writeidx = readable;
     } else {
-        //空间不够了,则直接扩容
+        // 空间不够了,则直接扩容
         m_data.resize(m_writeidx + len);
     }
 }

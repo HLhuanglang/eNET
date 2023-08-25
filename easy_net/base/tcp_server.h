@@ -27,7 +27,7 @@ class tcp_server : public connection_owner {
     tcp_server(event_loop *loop, const char *ip, size_t port);
     ~tcp_server() override = default;
 
-    //框架本身需要关心的接口
+    // 框架本身需要关心的接口
  public:
     void new_connection(int fd, std::string ip, std::string port) override;
     void del_connection(const sp_tcp_connectopn_t &conn) override;
@@ -38,7 +38,7 @@ class tcp_server : public connection_owner {
 
     // tcp_server使用者需要关心的接口
  public:
-    //设置连接建立完成后回调
+    // 设置连接建立完成后回调
     void set_new_connection_cb(new_connection_cb_f cb) {
         m_new_connection_cb = std::move(cb);
     }
@@ -47,12 +47,12 @@ class tcp_server : public connection_owner {
         m_del_connection_cb = std::move(cb);
     }
 
-    //设置当接收到客户端数据时回调
+    // 设置当接收到客户端数据时回调
     void set_recv_msg_cb(recv_msg_cb_f cb) {
         m_revc_msg_cb = std::move(cb);
     }
 
-    //设置应用层数据缓冲发送完毕回调
+    // 设置应用层数据缓冲发送完毕回调
     void set_write_complete_cb(write_complete_cb_f cb) {
         m_write_complete_cb = std::move(cb);
     }
@@ -61,7 +61,7 @@ class tcp_server : public connection_owner {
         m_high_water_mark_cb = std::move(cb);
     }
 
-    //运行tcp server，默认情况下线程数为机器核心的2倍
+    // 运行tcp server，默认情况下线程数为机器核心的2倍
     void start(int thread_cnt = 2 * static_cast<int>(std::thread::hardware_concurrency()));
 
  private:
@@ -72,9 +72,9 @@ class tcp_server : public connection_owner {
     high_water_mark_cb_f m_high_water_mark_cb;
 
  private:
-    event_loop *m_main_loop; //每一个tcp服务器都应该有一个loop,用来处理各种事件
-    acceptor *m_acceptor;    //主线程中负责处理链接请求
-    inet_addr m_addr;        //服务器地址
+    event_loop *m_main_loop; // 每一个tcp服务器都应该有一个loop,用来处理各种事件
+    acceptor *m_acceptor;    // 主线程中负责处理链接请求
+    inet_addr m_addr;        // 服务器地址
     std::map<std::string, std::shared_ptr<connection_owner>> m_connections_map;
 };
 
