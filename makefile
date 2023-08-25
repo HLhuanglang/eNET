@@ -2,7 +2,7 @@
 ##自选配置
 include easy_net_compile_config.mk
 
-##makeifle变量, 请手动执行./script/header_file.sh生成
+##makeifle变量, 请手动执行./script/makefilevars.sh生成
 include makefilevars.mk
 
 ##封装一些功能
@@ -26,6 +26,7 @@ all: raw_examples easy_net test
 premake:
 	@${MKDIR} ${BUILD_BIN_DIR}
 	@${MKDIR} ${BUILD_EASYNET_DIR}
+	@${MKDIR} ${BUILD_OBJS_DIR}
 
 
 #============================================================
@@ -51,7 +52,8 @@ ifeq ($(WITH_MQTT),yes)
 endif
 
 #提取编译lib所需要的src
-EASYNET_SRCS = $(foreach dir, $(EASYNET_SRC_DIRS), $(wildcard $(dir)/*.c $(dir)/*.cc $(dir)/*.cpp))
+EASYNET_SRCS = $(foreach dir, $(EASYNET_SRC_DIRS), $(wildcard $(dir)/*.cpp))
+EASYNET_OBJS = $(EASYNET_SRCS:$(EASYNET_SRC_DIRS)/%.cpp=$(BUILD_OBJS_DIR)/%.o)
 
 .PHONY: easy_net
 easy_net: premake
@@ -128,7 +130,7 @@ uninstall:
 #============================================================
 .PHONY: debug_mk
 debug_mk:
-
+	@echo "${EASYNET_OBJS}"
 
 #============================================================
 # 清理编译环境
