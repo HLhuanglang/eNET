@@ -9,8 +9,8 @@
 #include "http_response.h"
 
 enum http_type_t {
-    HTTP_REQ, //请求
-    HTTP_RSP, //响应
+    HTTP_REQ, // 请求
+    HTTP_RSP, // 响应
 };
 
 class http_context {
@@ -18,22 +18,21 @@ class http_context {
     size_t parser_http_context(const char *data, size_t len, http_request &req);
     size_t parser_http_context(const char *data, size_t len, http_response &rsp);
 
-    bool is_http_complete() { return finish_one_parse_; }
+    bool is_http_complete() const { return m_finish_one_parse; }
 
  public:
-    void
-    _handle_header();
+    void handle_header();
 
  public:
-    http_type_t type_;
-    http_request *req_ = nullptr;
-    http_response *rsp_ = nullptr;
-    std::string header_filed_;
-    std::string header_value_;
-    bool finish_one_parse_ = false;
+    http_type_t m_type;
+    http_request *m_req = nullptr;
+    http_response *m_rsp = nullptr;
+    std::string m_header_filed;
+    std::string m_header_value;
+    bool m_finish_one_parse = false;
 
  private:
-    static http_parser_settings parser_settings_;
-    http_parser parser_;
+    static http_parser_settings s_parser_settings;
+    http_parser m_parser;
 };
 #endif

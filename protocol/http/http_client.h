@@ -13,12 +13,11 @@
 #include "cb.h"
 
 class http_client {
-public:
+ public:
     http_client(const std::string &ip, size_t port);
 
-private:
-    http_request req_;
-    tcp_client::after_connection_cb_f after_conn_cb_;
+ private:
+    http_request m_req;
 };
 
 #endif

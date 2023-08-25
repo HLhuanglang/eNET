@@ -12,17 +12,17 @@
 
 class http_request {
  public:
-    http_request() {}
+    http_request() = default;
 
  public:
     static void append_http_to_buf(const http_request &req, buffer &buf);
 
  public:
-    std::string method_;
-    std::string url_;
-    std::string version_;
-    std::map<std::string, std::string> headers_; // key-val
-    std::string body_;
+    std::string m_method;
+    std::string m_url;
+    std::string m_version;
+    std::map<std::string, std::string> m_headers; // key-val
+    std::string m_body;
 };
 
 #endif
