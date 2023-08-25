@@ -33,7 +33,7 @@
 -include easy_net_compile_config.mk
 
 ##makeifle变量
-include makefile.vars
+include makefilevars.mk
 
 #设定默认值
 BUILD_TYPE ?= [DEBUG]
