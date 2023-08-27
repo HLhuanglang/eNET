@@ -1,34 +1,39 @@
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # makefile.in可以理解成一个编译函数了，根据入参选项执行不同的编译任务
-#+++++++++++++++++++++++++++++++++configure++++++++++++++++++++++++++++++++++++++++
-# []中的表示默认值,没有则无默认值
-#
-# MODE=[]					编译模式：LIB、EXE
-#LIB模式
-#此模式下需要指定LIB_TYPE
-#INCDIRS、SRCS
-
-#EXE模式
-#编译exe时，m个.cpp、n个.h。m,n>=0
-
-
-# TARGET_NAME=[]			生成目标名字
-# LIB_TYPE=[STATIC]			生成目标类型：SHARED,STATIC,SHARED|STATIC
-# BUILD_TYPE=[DEBUG]		是否带有调试：DEBUG,RELEASE
-# CROSS_COMPILE=[]			编译工具链
-# DEP_LIBSDIRS=[]			依赖的第三方库的库目录
-# DEP_LIBS=[]				依赖的第三方库名字
-# DEP_INCDIRS=[]			依赖的第三方库头文件目录
-# DEFINES=[]				编译宏开关
-
-# OUTDIR=[]					编译输出目录
-# INCDIRS=[]				头文件目录
-# SRCS=[]					具体的源码
-#
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # makefile能够直接使用当前终端下的所有环境变量的值，环境变量的值可以通过toochain.sh修改
-# 优先使用上述设置的参数,其次才是使用环境变量值，最后使用makefile内置变量值
+# 优先使用自定义的参数,其次才是使用环境变量值，最后使用makefile内置变量值
+# []中的表示默认值,没有则无默认值
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#通用配置
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# COMM_MODE=[]					编译模式：LIB、EXE
+# COMM_DEFINES=[]				编译宏开关
+# COMM_BUILD_TYPE=[DEBUG]		是否带有调试：DEBUG,RELEASE
+# COMM_INCDIRS=[]				依赖头文件目录
+# COMM_DEP_LIBSDIRS=[]			依赖的第三方库的库目录
+# COMM_DEP_LIBS=[]				依赖的第三方库名字
+# COMM_DEP_INCDIRS=[]			依赖的第三方库头文件目录
+
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# LIB模式配置
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# LIB_TARGET_NAME=[]		生成目标名字
+# LIB_TYPE=[STATIC]			生成目标类型：SHARED,STATIC,SHARED|STATIC
+# LIB_OBJS=[]				依赖目标文件
+# LIB_SRCS_DIR				依赖源文件目录
+# LIB_OBJS_DIR				依赖目标文件目录
+# LIB_OUTDIR=[]				.so|.a的输出目录
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# EXE模式配置
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# EXE_SRCS_DIR
+# EXE_TARGET_DIR
+# EXE_TARGET
+
+
 ##自选配置
 -include easy_net_compile_config.mk
 
@@ -75,7 +80,7 @@ endif
 #==============================
 # CXXFLAGS：编译参数
 #==============================
-ifneq ($(findstring DEBUG, $(BUILD_TYPE)), )
+ifneq ($(findstring DEBUG, $(COMM_BUILD_TYPE)), )
 	DEFAULT_CFLAGS = -ggdb -O0
 else
 	DEFAULT_CFLAGS = -Wall -Werror -O2
@@ -100,17 +105,17 @@ ARFLAGS = cr
 #==============================
 # LDFLAGS：链接参数
 #==============================
-LDFLAGS += $(addprefix -I, $(INCDIRS))
-LDFLAGS += $(addprefix -D, $(DEFINES))
+LDFLAGS += $(addprefix -I, $(COMM_INCDIRS))
+LDFLAGS += $(addprefix -D, $(COMM_DEFINES))
 
-ifneq (${DEP_INCDIRS}, )
-	LDFLAGS += $(addprefix -I, $(DEP_INCDIRS))
+ifneq (${COMM_DEP_INCDIRS}, )
+	LDFLAGS += $(addprefix -I, $(COMM_DEP_INCDIRS))
 endif
-ifneq (${DEP_LIBSDIRS}, )
-	LDFLAGS += $(addprefix -L, $(DEP_LIBSDIRS))
+ifneq (${COMM_DEP_LIBSDIRS}, )
+	LDFLAGS += $(addprefix -L, $(COMM_DEP_LIBSDIRS))
 endif
-ifneq (${DEP_LIBS}, )
-	LDFLAGS += $(addprefix -l, $(DEP_LIBS))
+ifneq (${COMM_DEP_LIBS}, )
+	LDFLAGS += $(addprefix -l, $(COMM_DEP_LIBS))
 endif
 ifeq ($(OS), Linux)
 	LDFLAGS += -lstdc++ -lpthread -lm -ldl
@@ -120,27 +125,27 @@ endif
 # 编译动作
 #==============================
 .PHONY:build
-build: ${MODE}
+build: ${COMM_MODE}
 
 ####编译LIB
 .PHONY: LIB
-LIB:${OBJS}
+LIB:${LIB_OBJS}
 ifneq ($(findstring SHARED, $(LIB_TYPE)), )
-	$(CXX) -shared $^ -o $(OUTDIR)/lib${TARGET_NAME}.so $(LDFLAGS)
+	$(CXX) -shared $^ -o $(LIB_OUTDIR)/lib${LIB_TARGET_NAME}.so $(LDFLAGS)
 endif
 ifneq ($(findstring STATIC, $(LIB_TYPE)), )
-	$(AR) $(ARFLAGS) $(OUTDIR)/lib${TARGET_NAME}.a $^
+	$(AR) $(ARFLAGS) $(LIB_OUTDIR)/lib${LIB_TARGET_NAME}.a $^
 endif
 
 ####编译EXE
 .PHONY: EXE
-EXE:${TEST_TARGET}
+EXE:${EXE_TARGET}
 
 ####编译规则
-${OBJS_DIR}/%.o:${SRCS_DIR}/%.cpp
+${LIB_OBJS_DIR}/%.o:${LIB_SRCS_DIR}/%.cpp
 	@mkdir -p $(@D)
 	${CXX} ${CXXFLAGS} -c $^ -o $@ ${LDFLAGS}
 
-${TEST_TARGET_DIR}/%:${TEST_SRCS_DIR}/%.cpp
+${EXE_TARGET_DIR}/%:${EXE_SRCS_DIR}/%.cpp
 	@mkdir -p $(@D)
 	${CXX} -static ${CXXFLAGS}  $^ -o $@ ${LDFLAGS}
