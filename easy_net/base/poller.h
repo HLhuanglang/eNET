@@ -20,7 +20,7 @@ class poller : public non_copyable {
     poller(event_loop *loop);
 
  public:
-    virtual ~poller() = 0;
+    virtual ~poller() = default;
     virtual void add_fd_event(fd_event *ev) = 0;
     virtual void del_fd_event(fd_event *ev) = 0;
     virtual void mod_fd_event(fd_event *ev) = 0;

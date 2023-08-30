@@ -20,5 +20,23 @@ class socket_opt {
     //  n=0：由于发送缓冲区满了,只发送了部分数据,还需要再调用
     //  n<0：发送错误
     static size_t write_buf_to_fd(buffer &buf, int fd);
+
+    // 将fd设置成SO_REUSEPORT
+    // 返回值：
+    //  true：设置成功
+    //  falase：设置失败
+    static bool set_reuseport(int fd);
+
+    // 将fd设置成SO_REUSEADDR
+    // 返回值：
+    //  true：设置成功
+    //  falase：设置失败
+    static bool set_reuseaddr(int fd);
+
+    // 将fd设置成非阻塞的
+    // 返回值：
+    //  true：设置成功
+    //  falase：设置失败
+    static bool set_noblocking(int fd);
 };
 #endif

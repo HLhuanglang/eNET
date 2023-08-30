@@ -8,15 +8,15 @@ class async_logger {
 };
 
 #ifdef DEBUG
-#    define LOG_DEBUG(fmt, args...) fprintf(stdout, "[DEBUG]" fmt "\n", ##args)
-#    define LOG_INFO(fmt, args...) fprintf(stdout, "[INFO]" fmt "\n", ##args)
-#    define LOG_ERROR(fmt, args...) fprintf(stdout, "[ERROR]" fmt "\n", ##args)
-#    define LOG_FATAL(fmt, args...) fprintf(stdout, "[FATAL]" fmt "\n", ##args)
+#    define LOG_DEBUG(fmt, args...) fprintf(stdout, "[DEBUG] %s:%d " fmt "\n", __FUNCTION__, __LINE__, ##args)
+#    define LOG_INFO(fmt, args...) fprintf(stdout, "[INFO] %s:%d" fmt "\n", __FUNCTION__, __LINE__, ##args)
+#    define LOG_ERROR(fmt, args...) fprintf(stdout, "[ERROR] %s:%d" fmt "\n", __FUNCTION__, __LINE__, ##args)
+#    define LOG_FATAL(fmt, args...) fprintf(stdout, "[FATAL] %s:%d" fmt "\n", __FUNCTION__, __LINE__, ##args)
 #elif
-#    define LOG_DEBUG(fmt, args...) fprintf(stdout, "[DEBUG]" fmt "\n", ##args)
-#    define LOG_INFO(fmt, args...) fprintf(stdout, "[INFO]" fmt "\n", ##args)
-#    define LOG_ERROR(fmt, args...) fprintf(stdout, "[ERROR]" fmt "\n", ##args)
-#    define LOG_FATAL(fmt, args...) fprintf(stdout, "[FATAL]" fmt "\n", ##args)
+#    define LOG_DEBUG(fmt, args...)
+#    define LOG_INFO(fmt, args...)
+#    define LOG_ERROR(fmt, args...)
+#    define LOG_FATAL(fmt, args...)
 #endif
 
 #endif

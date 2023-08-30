@@ -6,10 +6,11 @@
 #include "tcp_server.h"
 
 #include "buffer.h"
-#include "cb.h"
 #include "time_stemp.h"
 
 class http_server {
+    using http_cb_f = std::function<void(const http_request &, http_response &)>;
+
  public:
     http_server(event_loop *loop, const std::string &ip, size_t port);
 

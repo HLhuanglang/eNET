@@ -3,16 +3,21 @@
 
 #include <cstddef>
 #include <functional>
+#include <memory>
 #include <string>
 
 #include "buffer.h"
-#include "cb.h"
 #include "time_stemp.h"
 
+class tcp_connection;
+class event_loop;
+using sp_tcp_connectopn_t = std::shared_ptr<tcp_connection>;
+
 class connection_owner {
+
  public:
     connection_owner() = default;
-    virtual ~connection_owner() = 0;
+    virtual ~connection_owner() = default;
 
  public:
     // 新建连接

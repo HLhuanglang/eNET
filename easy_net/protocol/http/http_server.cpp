@@ -12,7 +12,7 @@ http_server::http_server(event_loop *loop, const std::string &ip, size_t port)
     : m_server(loop, ip.c_str(), port),
       m_user_cb([](const http_request &req, http_response &res) {
           // 默认情况下的响应
-          res.set_status_code("404");
+          res.set_status_code(404);
           res.set_status_code_msg("Not Found");
           res.set_close_connection(true);
       }) {

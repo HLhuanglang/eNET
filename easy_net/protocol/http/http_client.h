@@ -10,8 +10,6 @@
 #include "http_response.h"
 #include "tcp_client.h"
 
-#include "cb.h"
-
 class http_client {
  public:
     http_client(const std::string &ip, size_t port);

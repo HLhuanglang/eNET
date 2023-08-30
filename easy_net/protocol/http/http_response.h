@@ -14,8 +14,13 @@
 
 class http_response {
  public:
+    enum status_code_e {
+        OK = 200,
+        NOT_FOUND = 404,
+    };
+
  public:
-    void set_status_code(const std::string &code) { m_status_code = code; }
+    void set_status_code(size_t code) { m_status_code = std::to_string(code); }
     void set_status_code_msg(const std::string &msg) { m_status_code_msg = msg; }
     void set_close_connection(bool f) { m_close_connection = f; };
 

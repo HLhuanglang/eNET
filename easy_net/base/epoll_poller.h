@@ -1,12 +1,12 @@
 #ifndef __EASYNET_EPOLL_POLLER_H
 #define __EASYNET_EPOLL_POLLER_H
 
-#include "cb.h"
 #include "poller.h"
 
 class epoll_poller : public poller {
  public:
     epoll_poller(event_loop *loop);
+    ~epoll_poller() override = default;
 
  public:
     void add_fd_event(fd_event *ev) override;

@@ -1,7 +1,5 @@
 #include "poll_poller.h"
 
-#include "cb.h"
-
 poll_poller::poll_poller(event_loop *loop) : poller(loop) {
     // todo
 }

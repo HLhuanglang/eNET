@@ -3,7 +3,8 @@ SUB_DIRS=http_parser\
 			eventfd\
 			timerfd \
 			async_http \
-			timer
+			timer\
+			reuseport
 
 #for debug
 #SUB_DIRS = timer

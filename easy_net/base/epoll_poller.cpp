@@ -5,7 +5,6 @@
 
 #include "fd_event.h"
 
-#include "cb.h"
 #include "log.h"
 
 // epoll、poll使用一样的值

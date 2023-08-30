@@ -5,16 +5,16 @@
 #include <memory>
 #include <sys/epoll.h>
 
-#include "non_copyable.h"
-
-#include "cb.h"
 #include "def.h"
+#include "non_copyable.h"
 #include "poller.h"
 
 class event_loop : public non_copyable {
+    using event_cb_f = std::function<void(event_loop *loop, int fd, void *args)>;
+
  public:
     event_loop();
-    virtual ~event_loop();
+    ~event_loop() = default;
 
     using pending_func_t = std::function<void()>;
 

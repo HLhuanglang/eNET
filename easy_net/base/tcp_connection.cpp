@@ -9,7 +9,6 @@
 #include "socket_opt.h"
 
 #include "buffer.h"
-#include "cb.h"
 #include "log.h"
 
 void tcp_connection::send_data(const char *data, size_t data_size) {

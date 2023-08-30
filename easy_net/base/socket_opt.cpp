@@ -1,6 +1,9 @@
 #include "socket_opt.h"
+#include <asm-generic/socket.h>
 #include <cerrno> // errno
 #include <cstddef>
+#include <fcntl.h>
+#include <sys/socket.h>
 #include <sys/uio.h> // readv
 #include <unistd.h>  // read
 
@@ -50,4 +53,24 @@ size_t socket_opt::write_buf_to_fd(buffer &buf, int fd) {
     }
 
     return n;
+}
+
+bool socket_opt::set_reuseport(int fd) {
+    int optval = 1;
+    return static_cast<bool>(setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval)) >= 0);
+}
+
+bool socket_opt::set_reuseaddr(int fd) {
+    int optval = 1;
+    return static_cast<bool>(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) >= 0);
+}
+
+bool socket_opt::set_noblocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) {
+        return false;
+    }
+
+    int r = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+    return r >= 0;
 }

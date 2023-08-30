@@ -10,7 +10,7 @@
 class tcp_client {
  public:
     tcp_client(event_loop *loop, const inet_addr &addr);
-    ~tcp_client();
+    ~tcp_client() = default;
 
  public:
     // 设置连接建立完成后回调

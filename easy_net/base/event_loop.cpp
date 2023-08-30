@@ -4,8 +4,6 @@
 
 #include "fd_event.h"
 
-#include "cb.h"
-
 event_loop::event_loop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)) {
 }
 

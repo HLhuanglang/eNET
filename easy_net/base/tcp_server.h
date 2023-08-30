@@ -18,7 +18,6 @@
 #include "tcp_connection.h"
 
 #include "buffer.h"
-#include "cb.h"
 
 class tcp_connection;
 class acceptor;

@@ -13,10 +13,10 @@
 #include "fd_event.h"
 
 #include "buffer.h"
-#include "cb.h"
 
 class event_loop;
 class tcp_connection : public std::enable_shared_from_this<tcp_connection>, public fd_event {
+
  public:
     tcp_connection(connection_owner *owner, int fd) : fd_event(owner->get_loop(), fd), m_owner(owner) {
         m_read_buf = new buffer();
