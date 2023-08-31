@@ -41,7 +41,7 @@
 include makefilevars.mk
 
 #设定默认值
-BUILD_TYPE ?= [DEBUG]
+COMM_BUILD_TYPE ?= [DEBUG]
 LIB_TYPE ?= [STATIC]
 
 #设定编译工具链

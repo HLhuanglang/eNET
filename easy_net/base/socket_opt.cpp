@@ -47,7 +47,7 @@ size_t socket_opt::write_buf_to_fd(buffer &buf, int fd) {
     } while (n == -1 && errno == EINTR);
 
     if (n > 0) {
-        buf.reader_step(n);
+        buf.reader_step(n); // 因为write可能并不能一次全部发送完,所以需要记录实际发送的数据
     } else if (n == -1 && errno == EAGAIN) {
         return 0;
     }

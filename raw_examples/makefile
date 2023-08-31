@@ -4,7 +4,10 @@ SUB_DIRS=http_parser\
 			timerfd \
 			async_http \
 			timer\
-			reuseport
+			reuseport\
+			noblocking_connect\
+			pipe_notifier
+
 
 #for debug
 #SUB_DIRS = timer

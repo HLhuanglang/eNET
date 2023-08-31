@@ -6,8 +6,6 @@
 
 #include "non_copyable.h"
 
-#include "event_loop.h"
-
 #ifdef __linux__
 #    include <sys/poll.h>
 #endif
@@ -22,6 +20,7 @@ enum epoll_opt_e {
     MOD_EVENT
 };
 
+class event_loop;
 class fd_event : public non_copyable {
  public:
     fd_event(event_loop *loop, int fd)
