@@ -51,6 +51,7 @@ class fd_event : public non_copyable {
 
     // 获取成员变量值
     int get_fd() const { return m_fd; }
+    void set_fd(int fd) { m_fd = fd; }
     int get_events() const { return m_expect_event; }
     int get_revents() const { return m_actual_event; }
     void set_revents(int revt) { m_actual_event = revt; }
