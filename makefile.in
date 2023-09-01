@@ -146,6 +146,10 @@ ${LIB_OBJS_DIR}/%.o:${LIB_SRCS_DIR}/%.cpp
 	@mkdir -p $(@D)
 	${CXX} ${CXXFLAGS} -c $^ -o $@ ${LDFLAGS}
 
+# 使用静态库的时候会报错
+# 参考：
+# 代码使用std::thread，使用-static -lpthread静态编译后，运行段错误的问题？ - 蓝色的回答 - 知乎
+# https://www.zhihu.com/question/263630790/answer/271262912
 ${EXE_TARGET_DIR}/%:${EXE_SRCS_DIR}/%.cpp
 	@mkdir -p $(@D)
-	${CXX} -static ${CXXFLAGS}  $^ -o $@ ${LDFLAGS}
+	${CXX} ${CXXFLAGS}  $^ -o $@ ${LDFLAGS} -Wl,-rpath=${COMM_DEP_LIBSDIRS}

@@ -12,6 +12,7 @@
 class notify : public fd_event {
  public:
     notify(event_loop *loop);
+    ~notify() override;
     void wakeup();
 
  public:

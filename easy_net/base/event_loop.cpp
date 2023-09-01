@@ -5,13 +5,19 @@
 
 #include "fd_event.h"
 
-event_loop::event_loop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)), m_pending_func(false), m_notifyer(this) {
+event_loop::event_loop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)), m_pending_func(false), m_notifyer(this), m_quit(false) {
 }
 
 void event_loop::loop() {
-    m_poller->polling(10000, m_ready_events); // fixme：超时时间从定时器中获取
+    if (m_looping) {
+        return;
+    }
+
     m_quit = false;
+
     while (!m_quit) {
+        m_ready_events.clear();
+        m_poller->polling(10000, m_ready_events); // fixme：超时时间从定时器中获取
         // 1,处理当前处于活动状态的fd上的事件
         for (auto &it : m_ready_events) {
             it->handle_event();
@@ -26,6 +32,18 @@ void event_loop::loop() {
         // 当我们需要处理其他任务的时候，向这个唤醒fd上随便写入1个字节的，这样这个fd立即就变成可读的了，epoll_wait() / poll() / select() 函数立即被唤醒，并返回,接下来马上就能执行_do_pending_functions()，其他任务得到处理。
         _do_pending_functions();
     }
+}
+
+void event_loop::run_in_loop(const pending_func_t &cb) {
+#ifdef DEBUG
+    m_pending_func_list.push_back(cb);
+#else
+#endif
+}
+
+void event_loop::quit() {
+    // event_loop一定是卡在loop中的while循环
+    m_quit = true;
 }
 
 void event_loop::_do_pending_functions() {

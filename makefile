@@ -146,6 +146,10 @@ clean:
 	@find . -name "*.o" | xargs rm -rf
 	@find . -name "*.d" | xargs rm -rf
 
+.PHONY: clean_bin
+clean_bin:
+	@${RM} ${BUILD_BIN_DIR}
+
 .PHONY: clean_all
 clean_all:clean
 	@${RM} build

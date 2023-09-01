@@ -37,6 +37,8 @@ class event_loop : public non_copyable {
         m_notifyer.wakeup();
     }
 
+    void quit();
+
     std::unique_ptr<poller> &get_poller() { return m_poller; }
 
  private:

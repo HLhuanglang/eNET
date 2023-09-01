@@ -61,7 +61,7 @@ class fd_event : public non_copyable {
  private:
     void _update_event(epoll_opt_e optflag);
 
- private:
+ protected:
     event_loop *m_ioloop; // 负责处理本描述符的IO线程
     int m_fd;             // 被监控的文件描述符
     int m_expect_event{}; // 用户设置期望监听的事件

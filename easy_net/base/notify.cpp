@@ -1,8 +1,10 @@
 #include "notify.h"
 #include "event_loop.h"
 #include "fd_event.h"
+#include "log.h"
 #include <cassert>
 #include <cstdint>
+#include <sys/eventfd.h>
 #include <unistd.h>
 
 notify::notify(event_loop *loop) : fd_event(loop, 0) {
@@ -19,16 +21,48 @@ notify::notify(event_loop *loop) : fd_event(loop, 0) {
     this->enable_reading(epoll_opt_e::ADD_EVENT);
 }
 
+notify::~notify() {
+    if (this->m_fd >= 0) {
+        close(this->m_fd);
+    }
+    this->m_fd = -1;
+#ifndef HAVE_EVENTFD
+    if (this->m_notifier >= 0) {
+        close(this->m_notifier);
+    }
+    this->m_notifier = -1;
+#endif
+}
+
 void notify::handle_read() {
-    uint64_t msg;
-    ::read(this->get_fd(), &msg, sizeof(uint64_t));
+#ifdef HAVE_EVENTFD
+    eventfd_t tmp;
+    eventfd_read(this->m_fd, &tmp);
+#else
+    char buf[128];
+    ssize_t r;
+    while ((r = ::read(this->get_fd(), buf, sizeof(buf))) != 0) {
+        if (r > 0) {
+            continue;
+        }
+        switch (errno) {
+            case EAGAIN:
+                return;
+            case EINTR:
+                continue;
+            default:
+                return;
+        }
+    }
+#endif
 }
 
 void notify::wakeup() {
-    uint64_t msg;
 #ifdef HAVE_EVENTFD
-    ::write(this->get_fd(), &msg, sizeof(uint64_t));
+    eventfd_write(this->get_fd(), 1);
 #else
-    ::write(m_notifier, &msg, sizeof(uint64_t));
+    char c = 0;
+    while (::write(m_notifier, &c, 1) != 1 && errno == EINTR) {
+    }
 #endif
 }
