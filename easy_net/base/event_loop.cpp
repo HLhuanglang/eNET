@@ -5,7 +5,11 @@
 
 #include "fd_event.h"
 
-event_loop::event_loop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)), m_pending_func(false), m_notifyer(this), m_quit(false) {
+event_loop::event_loop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)),
+                           m_pending_func(false),
+                           m_notifyer(this),
+                           m_quit(false),
+                           m_looping(false) {
 }
 
 void event_loop::loop() {

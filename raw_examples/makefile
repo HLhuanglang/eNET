@@ -6,7 +6,8 @@ SUB_DIRS=http_parser\
 			timer\
 			reuseport\
 			noblocking_connect\
-			pipe_notifier
+			pipe_notifier\
+			thread_pool
 
 
 #for debug
