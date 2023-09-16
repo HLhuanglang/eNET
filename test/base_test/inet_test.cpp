@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main() {
-    inet_addr addr_v6(true, "fe80::5054:ff:fedd:d80d", 12345);
+    inet_addr addr_v6(inet_addr::IPV6, "fe80::5054:ff:fedd:d80d", 12345);
     if (addr_v6.get_family() == inet_addr::IPV4) {
         std::cout << "ipv4" << std::endl;
     } else if (addr_v6.get_family() == inet_addr::IPV6) {

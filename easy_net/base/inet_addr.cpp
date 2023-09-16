@@ -22,21 +22,25 @@
 //     }
 // }
 
-inet_addr::inet_addr(bool ipv6, const char *ip, uint16_t port) {
-    if (ipv6) {
-        bzero(&m_addr6, sizeof m_addr6);
-        m_addr6.sin6_family = AF_INET6;
-        m_addr6.sin6_port = htobe16(port);
-        if (::inet_pton(AF_INET6, ip, &m_addr6.sin6_addr) <= 0) {
-            LOG_FATAL("IPaddress Error");
-        }
-    } else {
-        bzero(&m_addr, sizeof m_addr);
-        m_addr.sin_family = AF_INET;
-        m_addr.sin_port = htobe16(port);
-        if (::inet_pton(AF_INET, ip, &m_addr.sin_addr) <= 0) {
-            LOG_FATAL("IPaddress Error");
-        }
+inet_addr::inet_addr(inet_family_e type, const char *ip, uint16_t port) {
+    switch (type) {
+        case IPV4: {
+            bzero(&m_addr, sizeof m_addr);
+            m_addr.sin_family = AF_INET;
+            m_addr.sin_port = htobe16(port);
+            if (::inet_pton(AF_INET, ip, &m_addr.sin_addr) <= 0) {
+                LOG_FATAL("IPaddress Error");
+            }
+        } break;
+
+        case IPV6: {
+            bzero(&m_addr6, sizeof m_addr6);
+            m_addr6.sin6_family = AF_INET6;
+            m_addr6.sin6_port = htobe16(port);
+            if (::inet_pton(AF_INET6, ip, &m_addr6.sin6_addr) <= 0) {
+                LOG_FATAL("IPaddress Error");
+            }
+        } break;
     }
 }
 

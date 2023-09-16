@@ -24,7 +24,7 @@ class inet_addr {
 
     // 如果是ipv6，ip的格式为"fe80::5054:ff:fedd:d80d"
     // 如果是ipv4，ip的格式为"192.168.0.1“
-    inet_addr(bool ipv6 = false, const char *ip = "", uint16_t port = 0);
+    inet_addr(inet_family_e type, const char *ip = "", uint16_t port = 0);
 
     explicit inet_addr(const struct sockaddr_in &addr) : m_addr(addr) {}
     explicit inet_addr(const struct sockaddr_in6 &addr) : m_addr6(addr) {}

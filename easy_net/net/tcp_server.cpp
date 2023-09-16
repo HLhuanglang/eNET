@@ -1,7 +1,8 @@
 #include "tcp_server.h"
+#include "inet_addr.h"
 
 tcp_server::tcp_server(event_loop *loop, const char *ip, size_t port)
-    : m_main_loop(loop), m_addr(false, ip, port) {
+    : m_main_loop(loop), m_addr(inet_addr::IPV4, ip, port) {
     // todo
 }
 

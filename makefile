@@ -34,13 +34,15 @@ premake:
 #============================================================
 #源码和头文件
 EASYNET_SRC_DIRS= ${ROOT_DIR}/easy_net/base \
-				  ${ROOT_DIR}/easy_net/util
+				  ${ROOT_DIR}/easy_net/util \
+				  ${ROOT_DIR}/easy_net/net
 
 EASYNET_INC_DIRS =${ROOT_DIR}/easy_net/base \
-				  ${ROOT_DIR}/easy_net/util
+				  ${ROOT_DIR}/easy_net/util \
+				  ${ROOT_DIR}/easy_net/net
 
 #对外暴露的头文件
-EASYNET_OUT_HEADERS= ${BASE_PUB_HEADERS} ${UTIL_PUB_HEADERS}
+EASYNET_OUT_HEADERS= ${BASE_PUB_HEADERS} ${UTIL_PUB_HEADERS} ${NET_PUB_HEADERS}
 
 #是否添加http模块
 ifeq ($(WITH_HTTP),yes)
@@ -61,7 +63,7 @@ EASYNET_SRCS = $(foreach dir, $(EASYNET_SRC_DIRS), $(wildcard $(dir)/*.cpp))
 EASYNET_OBJS = $(EASYNET_SRCS:${ROOT_DIR}/easy_net/%.cpp=$(BUILD_OBJS_DIR)/%.o)
 
 .PHONY: easy_net
-easy_net: premake
+easy_net: premake ${EASYNET_OUT_HEADERS}
 	@$(MKDIR) ${BUILD_EASYNET_DIR}/include/easy_net
 	@$(MKDIR) ${BUILD_EASYNET_DIR}/lib
 	@$(MAKEF) COMM_MODE=LIB \
@@ -103,6 +105,7 @@ test: easy_net
 	@${MKDIR} ${BUILD_BIN_DIR}/test
 	@$(MAKEF) COMM_MODE=EXE\
 		COMM_BUILD_TYPE=DEBUG\
+		COMM_DEFINES=DEBUG	\
 		COMM_DEP_INCDIRS=${BUILD_EASYNET_DIR}/include\
 		COMM_DEP_LIBSDIRS=${BUILD_EASYNET_DIR}/lib\
 		COMM_DEP_LIBS=easy_net\

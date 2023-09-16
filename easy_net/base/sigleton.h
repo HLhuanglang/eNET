@@ -8,12 +8,12 @@ template <typename T>
 class sigleton {
  public:
     static T *get_instance() {
-        if (nullptr == instance_) {
-            std::call_once(once_f_, [&]() {
-                sigleton::instance_.reset(new T());
+        if (nullptr == instance) {
+            std::call_once(once_f, [&]() {
+                sigleton::instance.reset(new T());
             });
         }
-        return instance_.get();
+        return instance.get();
     }
 
  public:
@@ -22,14 +22,14 @@ class sigleton {
     sigleton &operator=(const sigleton &rhs) = delete;
 
  private:
-    static std::unique_ptr<T> instance_;
-    static std::once_flag once_f_;
+    static std::unique_ptr<T> instance;
+    static std::once_flag once_f;
 };
 
 template <typename T>
-std::unique_ptr<T> sigleton<T>::instance_ = nullptr;
+std::unique_ptr<T> sigleton<T>::instance = nullptr;
 
 template <typename T>
-std::once_flag sigleton<T>::once_f_;
+std::once_flag sigleton<T>::once_f;
 
 #endif

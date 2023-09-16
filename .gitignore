@@ -8,3 +8,5 @@ build
 tmp
 easy_net_compile_config.mk
 makefilevars.mk
+make_build
+cmake_build

@@ -33,5 +33,6 @@
         "--pch-storage=memory",
         // clang-tidy功能
         "--clang-tidy",
-    ]
+    ],
+    "cmake.buildDirectory": "${workspaceFolder}/cmake_build"
 }
