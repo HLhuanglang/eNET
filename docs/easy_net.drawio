@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="QyFkRlclYH_Wge8nbu0W" name="拆包图">
-        <mxGraphModel dx="1111" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1931" dy="874" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="UaKJABe7PAXAUNxV_94r-0"/>
                 <mxCell id="UaKJABe7PAXAUNxV_94r-1" parent="UaKJABe7PAXAUNxV_94r-0"/>
@@ -89,7 +89,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="Biu67a_eYHCAKZCPrpXr" name="Model-1">
-        <mxGraphModel dx="2188" dy="442" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2331" dy="474" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="wnQJwDpq4NG_0scp0d9E-0"/>
                 <mxCell id="wnQJwDpq4NG_0scp0d9E-1" parent="wnQJwDpq4NG_0scp0d9E-0"/>
@@ -178,7 +178,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="PvpKgmDp-BPa8ZGQhezf" name="Model-2">
-        <mxGraphModel dx="2188" dy="1242" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2331" dy="1274" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -216,7 +216,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="60ihpKsAWhAbs5bGcW4B" name="时序图">
-        <mxGraphModel dx="2713" dy="946" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2731" dy="874" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -329,7 +329,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="MBLGiJVqjJ7YH5IteMPV" name="UML">
-        <mxGraphModel dx="2157" dy="1152" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1931" dy="874" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -637,22 +637,22 @@
                 <mxCell id="EZIf0_M4YcTIekYlz1Jt-6" value="主线程中被单独创建" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="809" y="927" width="114" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="kP1iAUKmejxGbXAozvne-1" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;" edge="1" parent="1" source="GEJJUc_A0SpWcczu4vo1-1" target="GEJJUc_A0SpWcczu4vo1-15">
+                <mxCell id="kP1iAUKmejxGbXAozvne-1" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;" parent="1" source="GEJJUc_A0SpWcczu4vo1-1" target="GEJJUc_A0SpWcczu4vo1-15" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="627" y="659" as="sourcePoint"/>
                         <mxPoint x="1061" y="559" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="kP1iAUKmejxGbXAozvne-2" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="U5lcVpvxC29hos7KZ2_h-1" target="GEJJUc_A0SpWcczu4vo1-15">
+                <mxCell id="kP1iAUKmejxGbXAozvne-2" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="U5lcVpvxC29hos7KZ2_h-1" target="GEJJUc_A0SpWcczu4vo1-15" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="406" y="595" as="sourcePoint"/>
                         <mxPoint x="976" y="473" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="kP1iAUKmejxGbXAozvne-3" value="event_loop创建poller，同时poller指向event_loop" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                <mxCell id="kP1iAUKmejxGbXAozvne-3" value="event_loop创建poller，同时poller指向event_loop" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="1607" y="614" width="297" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="kP1iAUKmejxGbXAozvne-4" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;" edge="1" parent="1" source="GEJJUc_A0SpWcczu4vo1-10" target="GEJJUc_A0SpWcczu4vo1-44">
+                <mxCell id="kP1iAUKmejxGbXAozvne-4" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;" parent="1" source="GEJJUc_A0SpWcczu4vo1-10" target="GEJJUc_A0SpWcczu4vo1-44" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="1263" y="695" as="sourcePoint"/>
                         <mxPoint x="1423" y="695" as="targetPoint"/>
@@ -661,10 +661,10 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="kP1iAUKmejxGbXAozvne-5" value="event_loop创建后注册到tcp_server中，tcp_server持有一个指向event_loop的指针" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                <mxCell id="kP1iAUKmejxGbXAozvne-5" value="event_loop创建后注册到tcp_server中，tcp_server持有一个指向event_loop的指针" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="1386" y="915" width="469" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="kP1iAUKmejxGbXAozvne-8" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;" edge="1" parent="1" source="GEJJUc_A0SpWcczu4vo1-29" target="GEJJUc_A0SpWcczu4vo1-21">
+                <mxCell id="kP1iAUKmejxGbXAozvne-8" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;" parent="1" source="GEJJUc_A0SpWcczu4vo1-29" target="GEJJUc_A0SpWcczu4vo1-21" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="1232" y="546" as="sourcePoint"/>
                         <mxPoint x="1392" y="546" as="targetPoint"/>
@@ -677,7 +677,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="eVjxRtyccAp2PWj6nh6i" name="定时器">
-        <mxGraphModel dx="1511" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2331" dy="874" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>

@@ -155,5 +155,6 @@ clean_bin:
 
 .PHONY: clean_all
 clean_all:clean
-	@${RM} build
+	@${RM} cmake_build
+	@${RM} make_build
 	@echo "Clean All done."

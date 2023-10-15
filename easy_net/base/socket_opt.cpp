@@ -19,6 +19,7 @@ size_t socket_opt::read_fd_to_buf(buffer &buf, int fd, int &err) {
     vec[1].iov_base = extrabuf;
     vec[1].iov_len = sizeof(extrabuf);
 
+    // 默认的LT模式可以不用while循环抱住读
     do {
         // 可能被系统调用中断,但是实际并没有调用结束,所以用一层while循环.
         const int iovcnt = (read_size < sizeof extrabuf) ? 2 : 1;

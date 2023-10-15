@@ -8,7 +8,9 @@ SUB_DIRS=http_parser\
 			noblocking_connect\
 			pipe_notifier\
 			thread_pool\
-			unix_domain
+			unix_domain\
+			signalfd\
+			self-pipe-trick
 
 
 #for debug

@@ -34,5 +34,6 @@
         // clang-tidy功能
         "--clang-tidy",
     ],
-    "cmake.buildDirectory": "${workspaceFolder}/cmake_build"
+    "cmake.buildDirectory": "${workspaceFolder}/cmake_build",
+    "cmake.configureOnOpen": true
 }
