@@ -11,7 +11,7 @@ ini_datatype_e ini::_parse_line(std::string line, parse_data_t &data) {
         return ini_datatype_e::DATA_NONE;
     }
     char first_ch = line[0];
-    if (first_ch == ';') {
+    if (first_ch == ';' || first_ch == '#') {
         return ini_datatype_e::DATA_COMMENT;
     }
     if (first_ch == '[') {
@@ -52,27 +52,6 @@ std::string ini::_covert_inifile_to_string(const inifile &ini) {
     return data;
 }
 
-bool ini::read(inifile &inifile) {
-    char buf[1024] = {0};
-    std::string section;
-    parse_data_t parse_data;
-    while (feof(inifile.m_fp) == 0) {
-        fgets(buf, 1024, inifile.m_fp);
-        auto parse_ret = ini::_parse_line(buf, parse_data);
-        if (parse_ret == ini_datatype_e::DATA_SECTION) {
-            section = parse_data.first;
-            inifile.m_data[section];
-        }
-        if (parse_ret == ini_datatype_e::DATA_KEY_VAL) {
-            inifile.m_data[section][parse_data.first] = parse_data.second;
-        }
-        if (parse_ret == ini_datatype_e::DATA_UNKNOWN) {
-            return false;
-        }
-    }
-    return true;
-}
-
 bool ini::write(inifile &inifile) {
     auto data = ini::_covert_inifile_to_string(inifile);
     fclose(inifile.m_fp);
@@ -85,10 +64,30 @@ bool ini::write(inifile &inifile) {
     return true;
 }
 
-bool inifile::load(const char *path) {
-    m_file_name = path;
-    m_fp = fopen(m_file_name, "r");
-    return m_fp != nullptr;
+bool ini::read(inifile &inifile, const char *path) {
+    inifile.m_file_name = path;
+    inifile.m_fp = fopen(inifile.m_file_name, "r");
+    if (inifile.m_fp != nullptr) {
+        char buf[1024] = {0};
+        std::string section;
+        parse_data_t parse_data;
+        while (feof(inifile.m_fp) == 0) {
+            fgets(buf, 1024, inifile.m_fp);
+            auto parse_ret = ini::_parse_line(buf, parse_data);
+            if (parse_ret == ini_datatype_e::DATA_SECTION) {
+                section = parse_data.first;
+                inifile.m_data[section];
+            }
+            if (parse_ret == ini_datatype_e::DATA_KEY_VAL) {
+                inifile.m_data[section][parse_data.first] = parse_data.second;
+            }
+            if (parse_ret == ini_datatype_e::DATA_UNKNOWN) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 std::string inifile::get_val(const char *section, const char *key) {

@@ -1,6 +1,13 @@
+;内部日志配置
 [log]
+log_dir=/tmp
 log_name=easynet.log
 log_level=debug
 
+;启动线程数
 [thread]
 thread_num=4
+
+;epoll接口参数
+[epoll]
+timeout=1000

@@ -1,9 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <unistd.h>
+
+#include <cstdio>
+#include <cstdlib>
 
 #define SOCKET_NAME "/tmp/my_socket"
 
@@ -27,7 +28,7 @@ int main() {
     }
 
     // 发送消息给服务端
-    char *msg = "Hello, server!";
+    const char *msg = "Hello, server!";
     ssize_t n = write(client_fd, msg, strlen(msg));
     if (n == -1) {
         perror("write");

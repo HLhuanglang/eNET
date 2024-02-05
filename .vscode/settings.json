@@ -15,7 +15,7 @@
     "clangd.checkUpdates": false,
     "clangd.arguments": [
         //bear编译后会产出一个compile_commands.json
-        "--compile-commands-dir=${workspaceFolder}",
+        "--compile-commands-dir=${workspaceFolder}/build",
         //
         "--query-driver=/usr/bin/g++",
         // 在后台自动分析文件（基于complie_commands)
@@ -33,7 +33,9 @@
         "--pch-storage=memory",
         // clang-tidy功能
         "--clang-tidy",
+        // clangd只输出error级别日志
+        "--log=error",
     ],
-    "cmake.buildDirectory": "${workspaceFolder}/cmake_build",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
     "cmake.configureOnOpen": true
 }
