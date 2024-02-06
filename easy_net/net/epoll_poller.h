@@ -3,20 +3,22 @@
 
 #include "poller.h"
 
-class epoll_poller : public poller {
+namespace EasyNet {
+class EpollPoller : public Poller {
  public:
-    epoll_poller(event_loop *loop);
-    ~epoll_poller() override = default;
+    EpollPoller(EventLoop *loop);
+    ~EpollPoller() override = default;
 
  public:
-    void add_fd_event(fd_event *ev) override;
-    void del_fd_event(fd_event *ev) override;
-    void mod_fd_event(fd_event *ev) override;
+    void AddEvent(IOEvent *ev) override;
+    void DelEvent(IOEvent *ev) override;
+    void ModEvent(IOEvent *ev) override;
 
-    void polling(int timeout_ms, active_events_t &events) override;
+    void Polling(int timeout_ms, active_events_t &events) override;
 
  private:
     int m_epollfd;
 };
+} // namespace EasyNet
 
 #endif

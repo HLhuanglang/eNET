@@ -5,21 +5,21 @@
 #include <mutex>
 
 template <typename T>
-class sigleton {
+class Singleton {
  public:
-    static T *get_instance() {
+    static T *GetInstance() {
         if (nullptr == instance) {
             std::call_once(once_f, [&]() {
-                sigleton::instance.reset(new T());
+                Singleton::instance.reset(new T());
             });
         }
         return instance.get();
     }
 
  public:
-    sigleton() = delete;
-    sigleton(const sigleton &rhs) = delete;
-    sigleton &operator=(const sigleton &rhs) = delete;
+    Singleton() = delete;
+    Singleton(const Singleton &rhs) = delete;
+    Singleton &operator=(const Singleton &rhs) = delete;
 
  private:
     static std::unique_ptr<T> instance;
@@ -27,9 +27,9 @@ class sigleton {
 };
 
 template <typename T>
-std::unique_ptr<T> sigleton<T>::instance = nullptr;
+std::unique_ptr<T> Singleton<T>::instance = nullptr;
 
 template <typename T>
-std::once_flag sigleton<T>::once_f;
+std::once_flag Singleton<T>::once_f;
 
 #endif

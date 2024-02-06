@@ -1,7 +1,7 @@
 #ifndef __EASYNET_NOTIFY_H
 #define __EASYNET_NOTIFY_H
 
-#include "fd_event.h"
+#include "io_event.h"
 #include <features.h>
 
 #if defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 9)
@@ -9,19 +9,22 @@
 #    include <sys/eventfd.h>
 #endif
 
-class notify : public fd_event {
+namespace EasyNet {
+class Notify : public IOEvent {
  public:
-    notify(event_loop *loop);
-    ~notify() override;
-    void wakeup();
+    Notify(EventLoop *loop);
+    ~Notify() override;
+
+    void WakeUp();
 
  public:
-    void handle_read() override;
+    void ProcessReadEvent() override;
 
  private:
 #ifndef HAVE_EVENTFD
     int m_notifier; // 使用pipe时
 #endif
 };
+} // namespace EasyNet
 
 #endif // !__EASYNET_NOTIFY_H

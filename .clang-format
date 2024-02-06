@@ -13,12 +13,3 @@ FixNamespaceComments: true
 SpaceBeforeInheritanceColon: true
 BreakInheritanceList: AfterColon
 IndentPPDirectives: AfterHash
-IncludeBlocks: Regroup
-IncludeIsMainRegex: "([-_](test|unittest))?$"
-IncludeCategories:
-  - Regex: '^<.*\.h>'
-    Priority: 1
-  - Regex: "^<.*"
-    Priority: 2
-  - Regex: ".*"
-    Priority: 3

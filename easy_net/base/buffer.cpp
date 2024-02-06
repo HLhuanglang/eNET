@@ -1,130 +1,108 @@
-#include "buffer.h"
-#include <cassert>
-#include <cerrno>
+
+#include <algorithm>
 #include <cstddef>
-#include <cstring>
-#include <sys/ioctl.h>
-#include <sys/uio.h> // readv
-#include <unistd.h>
-#include <vector>
+#include <iostream>
+#include <string>
 
-#include "def.h"
+#include "buffer.h"
 
-buffer::buffer() : m_writeidx(0), m_readidx(0) {
-    m_data.resize(k_default_buffer_size);
+using namespace EasyNet;
+
+void Buffer::Clear() {
+    m_data.clear();
+    m_writeidx = 0;
+    m_readidx = 0;
 }
 
-buffer::buffer(size_t init_size) : m_writeidx(0), m_readidx(0) {
-    m_data.resize(init_size);
+Buffer::Buffer(size_t initialSize) : m_readidx(0), m_writeidx(0) {
+    m_data.resize(initialSize);
 }
 
-// writer
-
-char *buffer::writeable_start() {
-    return _begin() + m_writeidx;
+void Buffer::Append(const std::string &data) {
+    Append(data.c_str(), data.size());
 }
 
-const char *buffer::writeable_start() const {
-    return _begin() + m_writeidx;
+void Buffer::Append(const char *data, size_t sz) {
+    ensureEnoughBytes(sz);
+    std::copy(data, data + sz, GetWriteableAddr());
+    AdvanceWriter(sz);
 }
 
-void buffer::append(const char *data, size_t len) {
-    _ensure_writeable_bytes(len);
-    std::copy(data, data + len, writeable_start());
-    writer_step(len);
+std::string Buffer::RetriveAsString(size_t sz) {
+    std::string retStr;
+    retStr.assign(GetReadableAddr(), sz);
+    AdvanceReader(sz);
+    return retStr;
 }
 
-void buffer::append(const std::string &str) {
-    append(str.c_str(), str.length());
+std::string Buffer::RetriveAllAsString() {
+    std::string retStr;
+    auto contentLen = GetReadableSize();
+    retStr.assign(GetReadableAddr(), contentLen);
+    reset();
+    return retStr;
 }
 
-size_t buffer::get_writer_idx() const {
-    return m_writeidx;
-}
-
-void buffer::set_writer_idx(size_t idx) {
-    m_writeidx = idx;
-}
-
-void buffer::writer_step(size_t step) {
-    m_writeidx += step;
-}
-
-// reader
-
-char *buffer::readable_start() {
-    return _begin() + m_readidx;
-}
-
-const char *buffer::readable_start() const {
-    return _begin() + m_readidx;
-}
-
-size_t buffer::get_reader_idx() const {
+size_t Buffer::GetPrependableSize() const {
     return m_readidx;
 }
 
-void buffer::set_reader_idx(size_t idx) {
-    m_readidx = idx;
-}
-
-void buffer::reader_step(size_t step) {
-    m_readidx += step;
-}
-
-// 获取大小
-size_t buffer::readable_size() const {
+size_t Buffer::GetReadableSize() const {
     return m_writeidx - m_readidx;
 }
 
-size_t buffer::writable_size() const {
+size_t Buffer::GetWriteableSize() const {
     return m_data.size() - m_writeidx;
 }
 
-size_t buffer::prependable_size() const {
-    return m_readidx;
-}
-
-size_t buffer::size() {
+size_t Buffer::GetBufferSize() const {
     return m_data.size();
 }
 
-// 获取原始数据
-const std::vector<char> &buffer::get_data() {
-    return m_data;
+char *Buffer::GetReadableAddr() {
+    return begin() + m_readidx;
 }
 
-// 清空(让readidx_和writeidx_指向k_prepend_size)
-void buffer::clear() {
-    m_writeidx = 0;
+char *Buffer::GetWriteableAddr() {
+    return begin() + m_writeidx;
+}
+
+void Buffer::SetReaderAddr(int idx) {
+    m_readidx = idx;
+}
+
+void Buffer::SetWriterAddr(int idx) {
+    m_writeidx = idx;
+}
+
+void Buffer::AdvanceReader(int setp) {
+    m_readidx += setp;
+}
+
+void Buffer::AdvanceWriter(int setp) {
+    m_writeidx += setp;
+}
+
+void Buffer::ensureEnoughBytes(int needsz) {
+    if (needsz > GetWriteableSize()) {
+        if (GetPrependableSize() + GetWriteableSize() >= needsz) {
+            // 整个剩余空间还足够存储,则将现有数据全部向前移动.
+            auto contentlen = GetReadableSize();
+            std::copy(GetReadableAddr(), GetWriteableAddr(), m_data.begin());
+            m_readidx = 0;
+            m_writeidx = contentlen;
+        } else {
+            // 不够空间了，则直接扩容
+            m_data.resize((m_writeidx << 1) + needsz);
+        }
+    }
+}
+
+char *Buffer::begin() {
+    return &*m_data.begin();
+}
+
+void Buffer::reset() {
     m_readidx = 0;
-    m_data.clear();
-}
-
-// 辅助函数
-char *buffer::_begin() {
-    return &*m_data.begin();
-}
-
-const char *buffer::_begin() const {
-    return &*m_data.begin();
-}
-
-void buffer::_ensure_writeable_bytes(size_t len) {
-    if (writable_size() < len) {
-        _make_space(len);
-    }
-}
-
-void buffer::_make_space(size_t len) {
-    if (prependable_size() + writable_size() >= len) {
-        // 整个剩余空间还足够存储,则将现有数据全部向前移动.
-        size_t readable = readable_size();
-        std::copy(readable_start(), writeable_start(), _begin());
-        m_readidx = 0;
-        m_writeidx = readable;
-    } else {
-        // 空间不够了,则直接扩容
-        m_data.resize(m_writeidx + len);
-    }
+    m_writeidx = 0;
 }

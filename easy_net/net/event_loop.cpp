@@ -3,16 +3,18 @@
 #include <sys/epoll.h>
 #include <vector>
 
-#include "fd_event.h"
+#include "io_event.h"
 
-event_loop::event_loop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)),
-                           m_pending_func(false),
-                           m_notifyer(this),
-                           m_quit(false),
-                           m_looping(false) {
+using namespace EasyNet;
+
+EventLoop::EventLoop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)),
+                         m_pending_func(false),
+                         m_notifyer(this),
+                         m_quit(false),
+                         m_looping(false) {
 }
 
-void event_loop::loop() {
+void EventLoop::Loop() {
     if (m_looping) {
         return;
     }
@@ -21,12 +23,17 @@ void event_loop::loop() {
 
     while (!m_quit) {
         m_ready_events.clear();
-        m_poller->polling(10000, m_ready_events); // fixme：超时时间从定时器中获取
-        // 1,处理当前处于活动状态的fd上的事件
+        m_poller->Polling(10000, m_ready_events); // fixme：超时时间从定时器中获取
+
+        // 1,处理到期事件
+        // todo
+
+        // 2,处理当前处于活动状态的fd上的事件
         for (auto &it : m_ready_events) {
-            it->handle_event();
+            it->DispatchEvent();
         }
-        // 2,处理外部线程注入的回调函数队列(eg：定时任务)
+
+        // 3,处理外部线程注入的回调函数队列(eg：定时任务)
         // 对于polling函数来说
         // 如果设置超时时间为0，那么在没有任何网络IO时间和其他任务处理的情况下，这些工作线程实际上会空转，白白地浪费cpu时间片。
         // 如果设置的超时时间大于0，在没有网络IO时间的情况，epoll_wait/poll/select仍然要挂起指定时间才能返回
@@ -38,19 +45,20 @@ void event_loop::loop() {
     }
 }
 
-void event_loop::run_in_loop(const pending_func_t &cb) {
-#ifdef DEBUG
-    m_pending_func_list.push_back(cb);
-#else
-#endif
+void EventLoop::RunInLoop(const pending_func_t &cb) {
+    // todo
 }
 
-void event_loop::quit() {
+void EventLoop::QueueInLoop(const pending_func_t &cb) {
+    // todo
+}
+
+void EventLoop::Quit() {
     // event_loop一定是卡在loop中的while循环
     m_quit = true;
 }
 
-void event_loop::_do_pending_functions() {
+void EventLoop::_do_pending_functions() {
     std::vector<pending_func_t> functors;
     m_pending_func = true;
     {

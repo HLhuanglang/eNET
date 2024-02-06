@@ -1,6 +1,8 @@
 #include "tcp_client.h"
 
-tcp_client::tcp_client(event_loop *loop, const inet_addr &addr)
+using namespace EasyNet;
+
+tcp_client::tcp_client(EventLoop *loop, const InetAddress &addr)
     : m_loop(loop) {
     // todo
 }

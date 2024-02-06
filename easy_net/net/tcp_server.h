@@ -19,21 +19,31 @@
 
 #include "buffer.h"
 
-class tcp_connection;
-class acceptor;
-class tcp_server : public connection_owner {
+namespace EasyNet {
+
+// 前置声明
+class TcpConn;
+class Acceptor;
+
+class TcpServer : public ConnOwner {
  public:
-    tcp_server(event_loop *loop, const char *ip, size_t port);
-    ~tcp_server() override = default;
+    /// numEventThreads:需要创建的IO线程数量
+    /// 如果numEventThreads = 0, 则要求pMainLoop != NULL
+    /// 如果numEventThreads > 0, 则启动n个线程并用多个套接字并发监听同一个端口
+    TcpServer(unsigned int numEventThreads, const InetAddress &listenAddr,
+              const std::string &nameArg, bool isReusePort,
+              EventLoop *pMainLoop);
+
+    ~TcpServer() override = default;
 
     // 框架本身需要关心的接口
  public:
-    void new_connection(int fd, std::string ip, std::string port) override;
-    void del_connection(const sp_tcp_connectopn_t &conn) override;
-    void recv_msg(const sp_tcp_connectopn_t &conn) override;
-    void write_complete(const sp_tcp_connectopn_t &conn) override;
-    void high_water_mark(const sp_tcp_connectopn_t &conn, size_t mark) override;
-    event_loop *get_loop() const override;
+    void NewConn(int fd, const InetAddress &peerAddr) override;
+    void DelConn(const sp_tcp_connectopn_t &conn) override;
+    void RecvMsg(const sp_tcp_connectopn_t &conn) override;
+    void WriteComplete(const sp_tcp_connectopn_t &conn) override;
+    void HighWaterMark(const sp_tcp_connectopn_t &conn, size_t mark) override;
+    EventLoop *GetEventLoop() const override;
 
     // tcp_server使用者需要关心的接口
  public:
@@ -71,10 +81,13 @@ class tcp_server : public connection_owner {
     high_water_mark_cb_f m_high_water_mark_cb;
 
  private:
-    event_loop *m_main_loop; // 每一个tcp服务器都应该有一个loop,用来处理各种事件
-    acceptor *m_acceptor;    // 主线程中负责处理链接请求
-    inet_addr m_addr;        // 服务器地址
-    std::map<std::string, std::shared_ptr<connection_owner>> m_connections_map;
+    EventLoop *m_main_loop;               // 每一个tcp服务器都应该有一个loop,用来处理各种事件
+    std::unique_ptr<Acceptor> m_acceptor; // 主线程中负责处理链接请求
+    InetAddress m_addr;                   // 服务器监听的地址
+    std::string m_name;                   // 服务器名称
+    unsigned int m_thread_cnt;            // 服务器启动的线程数量
+    std::map<std::string, std::shared_ptr<TcpConn>> m_connections_map;
 };
+} // namespace EasyNet
 
 #endif

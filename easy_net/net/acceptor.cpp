@@ -1,18 +1,32 @@
 #include "acceptor.h"
+#include "socket_opt.h"
 #include "tcp_server.h"
+#include <arpa/inet.h>
 #include <asm-generic/errno-base.h>
 #include <cerrno>
+#include <netinet/in.h>
 
-void acceptor::handle_read() {
-    // 先调用accept处理连接请求
-    struct sockaddr addr;
-    socklen_t addr_len = sizeof(sockaddr);
-    int acceptfd = ::accept(get_fd(), &addr, &addr_len);
+using namespace EasyNet;
+
+void Acceptor::ProcessReadEvent() {
+    InetAddress peerAddr;
+    int acceptfd = SocketOpt::Accept(m_fd, peerAddr);
     if (acceptfd < 0) {
         if (errno == EMFILE) {
-            m_idle->use(get_fd());
+            m_idle->ReAccept(m_fd);
         }
     } else {
-        m_server->new_connection(acceptfd, "", "");
+        m_server->NewConn(acceptfd, peerAddr);
     }
+}
+
+void Acceptor::StartListen() {
+    // SOMAXCONN定义了系统中每一个端口最大的监听队列的长度
+    // cat /proc/sys/net/core/somaxconn 也可以查看
+    int ret = ::listen(m_fd, SOMAXCONN);
+    if (ret < 0) {
+        LOG_FATAL("listen error!");
+    }
+
+    EnableRead();
 }

@@ -4,35 +4,35 @@
 #include <map>
 #include <vector>
 
+#include "io_event.h"
 #include "non_copyable.h"
 
-class event_loop;
-class fd_event;
+namespace EasyNet {
+
+class EventLoop;
+class IOEvent;
 
 enum class poller_type_e {
     TYPE_EPOLL,
     TYPE_POLL
 };
 
-class poller : public non_copyable {
+class Poller : public NonCopyable {
  public:
-    using active_events_t = std::vector<fd_event *>;
-    poller(event_loop *loop);
+    Poller(EventLoop *loop);
 
  public:
-    virtual ~poller() = default;
-    virtual void add_fd_event(fd_event *ev) = 0;
-    virtual void del_fd_event(fd_event *ev) = 0;
-    virtual void mod_fd_event(fd_event *ev) = 0;
-    virtual void polling(int timeout_ms, active_events_t &events) = 0;
-
- protected:
-    std::map<int, fd_event *> m_fdmp; // 继承可用
+    virtual ~Poller() = default;
+    virtual void AddEvent(IOEvent *ev) = 0;
+    virtual void DelEvent(IOEvent *ev) = 0;
+    virtual void ModEvent(IOEvent *ev) = 0;
+    virtual void Polling(int timeout_ms, active_events_t &events) = 0;
 
  private:
-    event_loop *m_owner_loop; // poller所属的event_loop
+    EventLoop *m_owner_loop; // poller所属的event_loop，不由poller控制生命周期
 };
 
-extern "C" poller *create_poller(poller_type_e type, event_loop *loop);
+extern "C" Poller *create_poller(poller_type_e type, EventLoop *loop);
+} // namespace EasyNet
 
 #endif

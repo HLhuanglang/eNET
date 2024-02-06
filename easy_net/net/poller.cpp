@@ -3,19 +3,21 @@
 #include "epoll_poller.h"
 #include "poll_poller.h"
 
-poller::poller(event_loop *loop) : m_owner_loop(loop) {
+using namespace EasyNet;
+
+Poller::Poller(EventLoop *loop) : m_owner_loop(loop) {
     // nothing todo
 }
 
-poller *create_poller(poller_type_e type, event_loop *loop) {
-    poller *p = nullptr;
+Poller *create_poller(poller_type_e type, EventLoop *loop) {
+    Poller *p = nullptr;
     switch (type) {
         case poller_type_e::TYPE_EPOLL: {
-            p = new epoll_poller(loop);
+            p = new EpollPoller(loop);
             break;
         }
         case poller_type_e::TYPE_POLL: {
-            p = new poll_poller(loop);
+            p = new PollPoller(loop);
             break;
         }
     }

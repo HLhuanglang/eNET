@@ -16,11 +16,13 @@
 #    define __FILENAME__ (strrchr(DIR_SEPARATOR_STR __FILE__, DIR_SEPARATOR) + 1)
 #endif
 
-#ifdef DEBUG
-#    define LOG_DEBUG(fmt, args...) fprintf(stdout, "[DEBUG][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args)
-#    define LOG_INFO(fmt, args...) fprintf(stdout, "[INFO][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args)
-#    define LOG_ERROR(fmt, args...) fprintf(stdout, "[ERROR][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args)
-#    define LOG_FATAL(fmt, args...) fprintf(stdout, "[FATAL][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args)
+#ifdef EASYNET_DEBUG
+#    define LOG_DEBUG(fmt, args...) fprintf(stdout, "[D][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args)
+#    define LOG_INFO(fmt, args...) fprintf(stdout, "[I][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args)
+#    define LOG_ERROR(fmt, args...) fprintf(stdout, "[E][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args)
+#    define LOG_FATAL(fmt, args...)                                                              \
+        fprintf(stdout, "[F][%s:%d:%s]" fmt "\n", __FILENAME__, __LINE__, __FUNCTION__, ##args); \
+        abort()
 #else
 #    define LOG_DEBUG(fmt, args...)
 #    define LOG_INFO(fmt, args...)

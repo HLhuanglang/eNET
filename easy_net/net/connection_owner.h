@@ -7,36 +7,40 @@
 #include <string>
 
 #include "buffer.h"
-#include "time_stemp.h"
+#include "inet_addr.h"
 
-class tcp_connection;
-class event_loop;
-using sp_tcp_connectopn_t = std::shared_ptr<tcp_connection>;
+namespace EasyNet {
 
-class connection_owner {
+// 前置声明
+class TcpConn;
+class EventLoop;
 
+using sp_tcp_connectopn_t = std::shared_ptr<TcpConn>;
+
+class ConnOwner {
  public:
-    connection_owner() = default;
-    virtual ~connection_owner() = default;
+    ConnOwner() = default;
+    virtual ~ConnOwner() = default;
 
  public:
     // 新建连接
-    virtual void new_connection(int fd, std::string ip, std::string port) = 0;
+    virtual void NewConn(int fd, const InetAddress &peerAddr) = 0;
 
     // 断开连接
-    virtual void del_connection(const sp_tcp_connectopn_t &conn) = 0;
+    virtual void DelConn(const sp_tcp_connectopn_t &conn) = 0;
 
     // 收到消息
-    virtual void recv_msg(const sp_tcp_connectopn_t &conn) = 0;
+    virtual void RecvMsg(const sp_tcp_connectopn_t &conn) = 0;
 
     // 发送缓冲区数据已写入内核(不一定发送到对端)
-    virtual void write_complete(const sp_tcp_connectopn_t &conn) = 0;
+    virtual void WriteComplete(const sp_tcp_connectopn_t &conn) = 0;
 
     // 发送缓冲区高水位
-    virtual void high_water_mark(const sp_tcp_connectopn_t &conn, size_t mark) = 0;
+    virtual void HighWaterMark(const sp_tcp_connectopn_t &conn, size_t mark) = 0;
 
     // 获取当前连接属于哪个loop
-    virtual event_loop *get_loop() const = 0;
+    virtual EventLoop *GetEventLoop() const = 0;
 };
+} // namespace EasyNet
 
 #endif

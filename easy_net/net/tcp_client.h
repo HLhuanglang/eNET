@@ -7,9 +7,10 @@
 #include "inet_addr.h"
 #include "tcp_connection.h"
 
+namespace EasyNet {
 class tcp_client {
  public:
-    tcp_client(event_loop *loop, const inet_addr &addr);
+    tcp_client(EventLoop *loop, const InetAddress &addr);
     ~tcp_client() = default;
 
  public:
@@ -37,7 +38,7 @@ class tcp_client {
     }
 
     // 运行
-    void start() { m_loop->loop(); }
+    void start() { m_loop->Loop(); }
 
  private:
     new_connection_cb_f m_new_connection_cb;
@@ -47,7 +48,8 @@ class tcp_client {
     high_water_mark_cb_f m_high_water_mark_cb;
 
  private:
-    event_loop *m_loop;
+    EventLoop *m_loop;
 };
+} // namespace EasyNet
 
 #endif

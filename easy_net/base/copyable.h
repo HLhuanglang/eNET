@@ -1,11 +1,13 @@
 #ifndef __EASYNET_COPYABLE_H
 #define __EASYNET_COPYABLE_H
 
+namespace EasyNet {
 // 允许拷贝
-class copyable {
+class Copyable {
  public:
-    copyable() = default;
-    ~copyable() = default;
+    Copyable() = default;
+    ~Copyable() = default;
 };
+} // namespace EasyNet
 
 #endif

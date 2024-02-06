@@ -8,25 +8,28 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "fd_event.h"
+#include "io_event.h"
 #include "log.h"
+#include "socket_opt.h"
 #include "tcp_server.h"
 
-class idle_fd {
+namespace EasyNet {
+class IdleFD {
  public:
-    idle_fd() {
+    IdleFD() {
         m_idlefd = ::open("/tmp/easy_net_idle", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
         if (m_idlefd < 0) {
             LOG_FATAL("create idlefd failed!");
         }
     }
 
-    ~idle_fd() {
+    ~IdleFD() {
         ::close(m_idlefd);
     }
 
-    void use(int fd) {
-        std::lock_guard<std::mutex> lg(m_mtx);
+    // 基于one thread perr loop模型,一个tcp_server就是一个单线程,不存在竞争问题
+    // 并且重复打开同一个文件会得到不同的fd
+    void ReAccept(int fd) {
         // 1,释放fd用于处理新的链接
         ::close(m_idlefd);
         // 2,处理链接
@@ -35,28 +38,52 @@ class idle_fd {
         ::close(m_idlefd);
         m_idlefd = ::open("/tmp/easy_net_idlefd", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
         if (m_idlefd < 0) {
-            // LOGO_FATAL("create idlefd failed!");
+            LOG_FATAL("create idlefd failed!");
         }
     }
 
  private:
-    std::mutex m_mtx;
     int m_idlefd;
 };
 
-class acceptor : public fd_event {
+class Acceptor : public IOEvent {
  public:
     // fd为listenfd
-    acceptor(tcp_server *svr, event_loop *loop, int fd) : fd_event(loop, fd), m_server(svr) {
-        m_idle = new idle_fd();
+    Acceptor(TcpServer *svr, const InetAddress &listenAddr, bool isReusePort)
+        : IOEvent(svr->GetEventLoop(), SocketOpt::CreateNonBlockSocket(listenAddr.family())),
+          m_server(svr) {
+        m_idle = new IdleFD();
+
+        // 1,socket：初始化时候已经创建完成
+        SocketOpt::SetReuseAddr(m_fd);
+        SocketOpt::SetReusePort(m_fd);
+
+        // 2,bind
+        int ret = ::bind(m_fd, listenAddr.GetAddr(), listenAddr.GetAddrSize());
+        if (ret < 0) {
+            LOG_FATAL("bindAddress error!");
+        }
+
+        // 3,StartListen，由tcp_server来控制开启时机
+    }
+
+    ~Acceptor() {
+        if (m_idle != nullptr) {
+            delete m_idle;
+        }
+        DisableRead();
     }
 
  public:
-    void handle_read() override;
+    void StartListen();
+
+ public:
+    void ProcessReadEvent() override;
 
  private:
-    idle_fd *m_idle;
-    tcp_server *m_server;
+    IdleFD *m_idle;
+    TcpServer *m_server; // 当前acceptor属于哪一个tcp_server
 };
+} // namespace EasyNet
 
 #endif

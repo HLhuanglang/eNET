@@ -1,69 +1,94 @@
 #include "inet_addr.h"
+#include "log.h"
 #include <arpa/inet.h>
+#include <assert.h>
 #include <cstdint>
+#include <cstdio>
 #include <endian.h>
 #include <string>
 #include <strings.h>
 
-#include "log.h"
+using namespace EasyNet;
 
-// inet_addr::inet_addr(bool ipv6, bool loopback_only, uint16_t port) {
-//     if (ipv6) {
-//         bzero(&m_addr6, sizeof(m_addr6));
-//         m_addr6.sin6_family = AF_INET6;
-//         m_addr6.sin6_addr = loopback_only ? in6addr_loopback : in6addr_any;
-//         m_addr6.sin6_port = htobe16(port);
-//     } else {
-//         bzero(&m_addr, sizeof(m_addr));
-//         m_addr.sin_family = AF_INET;
-//         in_addr_t ip = loopback_only ? INADDR_LOOPBACK : INADDR_ANY;
-//         m_addr.sin_addr.s_addr = htobe32(ip);
-//         m_addr.sin_port = htobe16(port);
-//     }
-// }
-
-inet_addr::inet_addr(inet_family_e type, const char *ip, uint16_t port) {
-    switch (type) {
-        case IPV4: {
-            bzero(&m_addr, sizeof m_addr);
-            m_addr.sin_family = AF_INET;
-            m_addr.sin_port = htobe16(port);
-            if (::inet_pton(AF_INET, ip, &m_addr.sin_addr) <= 0) {
-                LOG_FATAL("IPaddress Error");
-            }
-        } break;
-
-        case IPV6: {
-            bzero(&m_addr6, sizeof m_addr6);
-            m_addr6.sin6_family = AF_INET6;
-            m_addr6.sin6_port = htobe16(port);
-            if (::inet_pton(AF_INET6, ip, &m_addr6.sin6_addr) <= 0) {
-                LOG_FATAL("IPaddress Error");
-            }
-        } break;
+InetAddress::InetAddress(const char *ip, uint16_t port, bool ipv6) : m_ipv6(ipv6) {
+    if (ipv6) {
+        bzero(&m_addr6, sizeof m_addr6);
+        m_addr6.sin6_family = AF_INET6;
+        m_addr6.sin6_port = htobe16(port);
+        if (::inet_pton(AF_INET6, ip, &m_addr6.sin6_addr) <= 0) {
+            LOG_FATAL("IPaddress Error");
+        }
+    } else {
+        bzero(&m_addr, sizeof m_addr);
+        m_addr.sin_family = AF_INET;
+        m_addr.sin_port = htobe16(port);
+        if (::inet_pton(AF_INET, ip, &m_addr.sin_addr) <= 0) {
+            LOG_FATAL("IPaddress Error");
+        }
     }
 }
 
-inet_addr::inet_family_e inet_addr::get_family() const {
-    return m_addr.sin_family == AF_INET ? IPV4 : IPV6;
+InetAddress::InetAddress(uint16_t port, bool loopbackOnly, bool ipv6) : m_ipv6(ipv6) {
+    if (ipv6) {
+        bzero(&m_addr6, sizeof m_addr6);
+        m_addr6.sin6_family = AF_INET6;
+        in6_addr ip = loopbackOnly ? in6addr_loopback : in6addr_any;
+        m_addr6.sin6_addr = ip;
+        m_addr6.sin6_port = htobe16(port);
+    } else {
+        bzero(&m_addr, sizeof m_addr);
+        m_addr.sin_family = AF_INET;
+        in_addr_t ip = loopbackOnly ? INADDR_LOOPBACK : INADDR_ANY;
+        m_addr.sin_addr.s_addr = htobe32(ip);
+        m_addr.sin_port = htobe16(port);
+    }
 }
 
-std::string inet_addr::get_ip() const {
+std::string InetAddress::SerializationToIpPort() const {
     char buf[64] = "";
-    if (m_addr.sin_family == AF_INET) {
-        ::inet_ntop(AF_INET, &m_addr.sin_addr, buf, sizeof buf);
-    } else if (m_addr.sin_family == AF_INET6) {
-        ::inet_ntop(AF_INET6, &m_addr6.sin6_addr, buf, sizeof buf);
+    size_t size = sizeof(buf);
+    uint16_t port;
+
+    if (m_ipv6) {
+        assert(size >= INET6_ADDRSTRLEN);
+        port = be16toh(m_addr6.sin6_port);
+        ::inet_ntop(AF_INET6, &m_addr6.sin6_addr, buf, static_cast<socklen_t>(size));
+    } else {
+        assert(size >= INET_ADDRSTRLEN);
+        port = be16toh(m_addr.sin_port);
+        ::inet_ntop(AF_INET, &m_addr.sin_addr, buf, static_cast<socklen_t>(size));
+    }
+    size_t end = ::strlen(buf);
+    assert(size > end);
+    snprintf(buf + end, size - end, ":%u", port);
+
+    return buf;
+}
+
+std::string InetAddress::SerializationToIP() const {
+    char buf[64] = "";
+    size_t size = sizeof(buf);
+    if (m_ipv6) {
+        assert(size >= INET6_ADDRSTRLEN);
+        ::inet_ntop(AF_INET6, &m_addr6.sin6_addr, buf, static_cast<socklen_t>(size));
+    } else {
+        assert(size >= INET_ADDRSTRLEN);
+        ::inet_ntop(AF_INET, &m_addr.sin_addr, buf, static_cast<socklen_t>(size));
     }
     return buf;
 }
 
-uint16_t inet_addr::get_port() const {
-    uint16_t port = 0;
-    if (m_addr.sin_family == AF_INET) {
-        port = be16toh(m_addr.sin_port);
-    } else if (m_addr.sin_family == AF_INET6) {
+std::string InetAddress::SerializationToPort() const {
+    char buf[64] = "";
+    size_t size = sizeof(buf);
+    uint16_t port;
+    if (m_ipv6) {
+        assert(size >= INET6_ADDRSTRLEN);
         port = be16toh(m_addr6.sin6_port);
+    } else {
+        assert(size >= INET_ADDRSTRLEN);
+        port = be16toh(m_addr.sin_port);
     }
-    return port;
+    snprintf(buf, size, "%u", port);
+    return buf;
 }
