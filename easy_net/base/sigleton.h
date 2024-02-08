@@ -4,6 +4,8 @@
 #include <memory>
 #include <mutex>
 
+namespace EasyNet {
+
 template <typename T>
 class Singleton {
  public:
@@ -31,5 +33,7 @@ std::unique_ptr<T> Singleton<T>::instance = nullptr;
 
 template <typename T>
 std::once_flag Singleton<T>::once_f;
+
+} // namespace EasyNet
 
 #endif
