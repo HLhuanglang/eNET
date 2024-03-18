@@ -49,13 +49,11 @@ if(BUILD_WITH_HTTP)
 endif()
 file(GLOB_RECURSE BASE_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/base/*.cpp")
 file(GLOB_RECURSE NET_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/net/*.cpp")
-file(GLOB_RECURSE UTIL_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/util/*.cpp")
 list(APPEND EASYNET_SOURCES ${BASE_SOURCES} ${NET_SOURCES} ${UTIL_SOURCES})
 add_library(${EASYNET_LIB_NAME} STATIC ${EASYNET_SOURCES})
 target_include_directories(${EASYNET_LIB_NAME}
   PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/base
-  PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/net
-  PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/util)
+  PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/net)
 if(BUILD_WITH_HTTP)
 target_include_directories(${EASYNET_LIB_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/protocol/http)
