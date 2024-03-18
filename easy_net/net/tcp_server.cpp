@@ -1,9 +1,9 @@
 #include "tcp_server.h"
 #include "acceptor.h"
 #include "inet_addr.h"
-#include "log.h"
 #include "non_copyable.h"
 #include "socket_opt.h"
+#include "spdlog/spdlog.h"
 #include "tcp_connection.h"
 #include <memory>
 #include <string>
@@ -40,7 +40,7 @@ void TcpServer::start(int thread_cnt) {
 }
 
 void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {
-    LOG_DEBUG("New Conn, ip:port=%s", peerAddr.SerializationToIpPort().c_str());
+    spdlog::debug("New Conn, ip:port={}", peerAddr.SerializationToIpPort().c_str());
     auto tcp_conn = std::make_shared<TcpConn>(this, fd, peerAddr);
     m_connections_map[tcp_conn->GetConnName()] = tcp_conn;
     tcp_conn->EnableRead();

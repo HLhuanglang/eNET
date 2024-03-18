@@ -6,7 +6,7 @@
 
 #include "io_event.h"
 
-#include "log.h"
+#include "spdlog/spdlog.h"
 
 using namespace EasyNet;
 
@@ -42,9 +42,9 @@ static_assert(EPOLLHUP == POLLHUP, "EPOLLHUPEPOLLHUP");
 EpollPoller::EpollPoller(EventLoop *loop) : Poller(loop) {
     m_epollfd = ::epoll_create1(0);
     if (m_epollfd < 0) {
-        LOG_FATAL("epoll_create1 fail");
+        spdlog::critical("epoll_create1 fail");
     }
-    LOG_DEBUG("epollfd=%d", m_epollfd);
+    spdlog::debug("epollfd={}", m_epollfd);
 }
 
 EpollPoller::~EpollPoller() {
@@ -70,7 +70,7 @@ void EpollPoller::Polling(int timeout_ms, active_events_t &events) {
     struct epoll_event epoll_events[1024];
     int nfds = ::epoll_wait(m_epollfd, epoll_events, 1024, timeout_ms);
     if (nfds < 0) {
-        LOG_FATAL("epoll_wait fail");
+        spdlog::critical("epoll_wait fail");
     }
 
     // 2,处理IO事件
@@ -101,9 +101,9 @@ void EpollPoller::AddEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &event) < 0) {
-        LOG_FATAL("add fd = %d events = %d fail", fd, events);
+        spdlog::critical("add fd = {} events = {} fail", fd, events);
     } else {
-        LOG_DEBUG("add %d events = %d", fd, events);
+        spdlog::debug("add {} events = {}", fd, events);
     }
 }
 
@@ -117,9 +117,9 @@ void EpollPoller::DelEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, &event) < 0) {
-        LOG_FATAL("del fd = %d events = %d fail", fd, events);
+        spdlog::critical("del fd = {} events = {} fail", fd, events);
     } else {
-        LOG_DEBUG("del %d events = %d", fd, events);
+        spdlog::debug("del {} events = {}", fd, events);
     }
 }
 
@@ -133,8 +133,8 @@ void EpollPoller::ModEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &event) < 0) {
-        LOG_FATAL("mod fd = %d events = %d fail", fd, events);
+        spdlog::critical("mod fd = {} events = {} fail", fd, events);
     } else {
-        LOG_DEBUG("mod %d events = %d", fd, events);
+        spdlog::debug("mod {} events = {}", fd, events);
     }
 }

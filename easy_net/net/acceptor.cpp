@@ -1,6 +1,6 @@
 #include "acceptor.h"
-#include "log.h"
 #include "socket_opt.h"
+#include "spdlog/spdlog.h"
 #include "tcp_server.h"
 #include <arpa/inet.h>
 #include <asm-generic/errno-base.h>
@@ -13,7 +13,7 @@ using namespace EasyNet;
 void Acceptor::ProcessReadEvent() {
     InetAddress peerAddr;
     int acceptfd = SocketOpt::Accept(m_fd, peerAddr);
-    LOG_DEBUG("acceptfd=%d", acceptfd);
+    spdlog::debug("acceptfd={}", acceptfd);
     if (acceptfd < 0) {
         if (errno == EMFILE) {
             m_idle->ReAccept(m_fd);
@@ -29,7 +29,7 @@ void Acceptor::StartListen() {
     // cat /proc/sys/net/core/somaxconn 也可以查看
     int ret = SocketOpt::Listen(m_fd, SOMAXCONN);
     if (ret < 0) {
-        LOG_FATAL("listen error!");
+        spdlog::critical("listen error!");
     }
 
     EnableRead();

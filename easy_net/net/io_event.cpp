@@ -1,7 +1,8 @@
 #include "io_event.h"
 
 #include "event_loop.h"
-#include "log.h"
+#include "spdlog/spdlog.h"
+#include <string>
 
 using namespace EasyNet;
 
@@ -51,6 +52,26 @@ void IOEvent::RemoveEvent() {
     update_event_status(update_opt_e::REMOVE);
 }
 
+std::string IOEvent::cover_opt_to_string(update_opt_e opt) {
+    std::string type;
+    switch (opt) {
+        case update_opt_e::DISABLE: {
+            type = "DISABLE";
+            break;
+        }
+        case update_opt_e::ENABLE: {
+            type = "ENABLE";
+            break;
+        }
+        case update_opt_e::REMOVE:
+            type = "REMOVE";
+            break;
+        default:
+            type = "Unkonw Type";
+    }
+    return type;
+}
+
 void IOEvent::update_event_status(update_opt_e opt) {
     std::unique_ptr<Poller> &Poller = m_ioloop->get_poller();
     // 1,已经添加过监控,那么只能做更新(启动或者不启动)或者删除操作
@@ -68,7 +89,7 @@ void IOEvent::update_event_status(update_opt_e opt) {
                 break;
             }
             default:
-                LOG_ERROR("Unkown type: %d", static_cast<int>(opt));
+                spdlog::error("Unkown type: {}", cover_opt_to_string(opt));
         }
 
     } else {

@@ -9,6 +9,7 @@
 #define __EASYNET_FD_EVENT_H
 
 #include "non_copyable.h"
+#include <string>
 #include <vector>
 
 #ifdef __linux__
@@ -66,6 +67,7 @@ class IOEvent : public EasyNet::NonCopyable {
         REMOVE,
     };
     void update_event_status(update_opt_e opt);
+    std::string cover_opt_to_string(update_opt_e opt);
 
  protected:
     EventLoop *m_ioloop;  // 负责处理本描述符的IO线程

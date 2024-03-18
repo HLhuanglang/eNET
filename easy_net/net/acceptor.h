@@ -10,9 +10,9 @@
 #include <unistd.h>
 
 #include "io_event.h"
-#include "log.h"
 #include "non_copyable.h"
 #include "socket_opt.h"
+#include "spdlog/spdlog.h"
 #include "tcp_server.h"
 
 namespace EasyNet {
@@ -21,9 +21,9 @@ class IdleFD {
     IdleFD() {
         m_idlefd = ::open("/tmp/easy_net_idle", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
         if (m_idlefd < 0) {
-            LOG_FATAL("create idlefd failed!");
+            spdlog::critical("create idlefd failed!");
         }
-        LOG_DEBUG("idlefd=%d", m_idlefd);
+        spdlog::debug("idlefd={}", m_idlefd);
     }
 
     ~IdleFD() {
@@ -41,7 +41,7 @@ class IdleFD {
         ::close(m_idlefd);
         m_idlefd = ::open("/tmp/easy_net_idlefd", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
         if (m_idlefd < 0) {
-            LOG_FATAL("create idlefd failed!");
+            spdlog::critical("create idlefd failed!");
         }
     }
 
@@ -66,7 +66,7 @@ class Acceptor : public IOEvent {
         // 2,bind
         int ret = ::bind(m_fd, listenAddr.GetAddr(), listenAddr.GetAddrSize());
         if (ret < 0) {
-            LOG_FATAL("bindAddress error!");
+            spdlog::critical("bindAddress error!");
         }
 
         // 3,StartListen，由tcp_server来控制开启时机

@@ -1,21 +1,37 @@
 #include "event_loop.h"
 #include <cstdio>
+#include <mutex>
+#include <sstream>
 #include <sys/epoll.h>
+#include <thread>
 #include <vector>
 
 #include "io_event.h"
 #include "non_copyable.h"
 #include "notify.h"
 #include "poller.h"
+#include "spdlog/spdlog.h"
 
 using namespace EasyNet;
+
+thread_local EventLoop *t_loopInThread = nullptr;
 
 EventLoop::EventLoop() : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL, this)),
                          m_pending_func(false),
                          m_quit(false),
-                         m_looping(false) {
+                         m_looping(false),
+                         m_threadid(std::this_thread::get_id()) {
     // nothing todo
     m_notifyer = new Notify(this);
+
+    std::stringstream ss;
+    ss << m_threadid;
+    if (t_loopInThread) {
+        spdlog::critical("Another Loop bind in this thread:{}", ss.str());
+    } else {
+        t_loopInThread = this;
+        spdlog::info("EventLoop bind in this thread:{}", ss.str());
+    }
 }
 
 void EventLoop::Loop() {
@@ -47,19 +63,39 @@ void EventLoop::Loop() {
         // 当我们需要处理其他任务的时候，向这个唤醒fd上随便写入1个字节的，这样这个fd立即就变成可读的了，epoll_wait() / poll() / select() 函数立即被唤醒，并返回,接下来马上就能执行_do_pending_functions()，其他任务得到处理。
         _do_pending_functions();
     }
+
+    m_looping = false;
+}
+
+bool EventLoop::IsThreadInLoop() {
+    return m_threadid == std::this_thread::get_id();
 }
 
 void EventLoop::RunInLoop(const pending_func_t &cb) {
-    // todo
+    if (IsThreadInLoop()) {
+        cb();
+    } else {
+        QueueInLoop(std::move(cb));
+    }
 }
 
 void EventLoop::QueueInLoop(const pending_func_t &cb) {
-    // todo
+    {
+        std::lock_guard<std::mutex> lgmtx(m_mtx);
+        m_pending_func_list.push_back(cb);
+    }
+
+    if (!IsThreadInLoop() || m_pending_func) {
+        m_notifyer->WakeUp();
+    }
 }
 
 void EventLoop::Quit() {
     // event_loop一定是卡在loop中的while循环
     m_quit = true;
+    if (!IsThreadInLoop()) {
+        m_notifyer->WakeUp();
+    }
 }
 
 void EventLoop::_do_pending_functions() {

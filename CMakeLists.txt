@@ -60,7 +60,7 @@ if(BUILD_WITH_HTTP)
 target_include_directories(${EASYNET_LIB_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/protocol/http)
 endif()
-target_link_libraries(${EASYNET_LIB_NAME} PRIVATE spdlog::spdlog)
+target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 
 # ---------------------------------------------------------------------------------------
 # EasyNet库单元测试

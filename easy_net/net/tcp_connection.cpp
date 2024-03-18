@@ -11,7 +11,7 @@
 #include "socket_opt.h"
 
 #include "buffer.h"
-#include "log.h"
+#include "spdlog/spdlog.h"
 
 using namespace EasyNet;
 
@@ -55,7 +55,7 @@ void TcpConn::ProcessWriteEvent() {
     while (m_write_buf->GetReadableSize() != 0U) {
         auto ret = SocketOpt::WriteBufferToFd(*m_write_buf, this->GetFD());
         if (ret < 0) {
-            LOG_FATAL("WriteBufferToFd err");
+            spdlog::error("WriteBufferToFd err");
         }
         if (ret == 0) {
             // 当前写缓冲区已经满了,再次尝试写入
