@@ -27,12 +27,12 @@ cmake --build build
 | 目录         | 作用                                               |
 | ------------ | -------------------------------------------------- |
 | .vscode      | vscode开发环境配置                                 |
-| config       | 项目配置文件                                       |
 | docs         | 开发文档                                           |
 | easy_net     | 网络库底层，目前主要支持tcp协议，udp暂未考虑       |
+| examples     | 使用easynet编写的demo       |
 | raw_examples | socket系列接口的原生使用方法、优秀的网络库使用案例 |
 | test         | 测试代码                                           |
-| build        | libeasy_net.so/.a 编译的中间产物、可执行程序等     |
+| build        | 编译的中间产物、可执行程序等     |
 | third_party      | 依赖使用的第三方库                                 |
 
 ## 6.参考项目/文章/论文
