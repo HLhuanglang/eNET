@@ -1,4 +1,3 @@
-#include "config.h"
 #include "event_loop.h"
 #include "inet_addr.h"
 #include "spdlog/common.h"
