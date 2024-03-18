@@ -72,6 +72,14 @@ target_link_libraries(EasyNetUnitTest ${EASYNET_LIB_NAME})
 target_link_libraries(EasyNetUnitTest gtest gtest_main)
 
 # ---------------------------------------------------------------------------------------
+# EasyNet使用案例
+# ---------------------------------------------------------------------------------------
+option(BUILD_WITH_EXAMPLES "是否编译examples" OFF)
+if (BUILD_WITH_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+
+# ---------------------------------------------------------------------------------------
 # compile raw_examples
 # ---------------------------------------------------------------------------------------
 option(BUILD_WITH_RAWEXAMPLES "是否编译raw_examples" OFF)

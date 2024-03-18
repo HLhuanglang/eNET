@@ -4,12 +4,14 @@
 #include <asm-generic/errno-base.h>
 #include <cerrno>
 #include <fcntl.h>
+#include <memory>
 #include <mutex>
 #include <sys/socket.h>
 #include <unistd.h>
 
 #include "io_event.h"
 #include "log.h"
+#include "non_copyable.h"
 #include "socket_opt.h"
 #include "tcp_server.h"
 
@@ -21,6 +23,7 @@ class IdleFD {
         if (m_idlefd < 0) {
             LOG_FATAL("create idlefd failed!");
         }
+        LOG_DEBUG("idlefd=%d", m_idlefd);
     }
 
     ~IdleFD() {
@@ -52,11 +55,13 @@ class Acceptor : public IOEvent {
     Acceptor(TcpServer *svr, const InetAddress &listenAddr, bool isReusePort)
         : IOEvent(svr->GetEventLoop(), SocketOpt::CreateNonBlockSocket(listenAddr.family())),
           m_server(svr) {
-        m_idle = new IdleFD();
+        m_idle = make_unique<IdleFD>();
 
         // 1,socket：初始化时候已经创建完成
         SocketOpt::SetReuseAddr(m_fd);
-        SocketOpt::SetReusePort(m_fd);
+        if (isReusePort) {
+            SocketOpt::SetReusePort(m_fd);
+        }
 
         // 2,bind
         int ret = ::bind(m_fd, listenAddr.GetAddr(), listenAddr.GetAddrSize());
@@ -67,22 +72,16 @@ class Acceptor : public IOEvent {
         // 3,StartListen，由tcp_server来控制开启时机
     }
 
-    ~Acceptor() {
-        if (m_idle != nullptr) {
-            delete m_idle;
-        }
-        DisableRead();
-    }
-
  public:
     void StartListen();
 
  public:
+    /// @brief 处理新连接
     void ProcessReadEvent() override;
 
  private:
-    IdleFD *m_idle;
-    TcpServer *m_server; // 当前acceptor属于哪一个tcp_server
+    std::unique_ptr<IdleFD> m_idle;
+    TcpServer *m_server; // 当前acceptor属于哪一个TcpServer,生命周期由TcpServer控制
 };
 } // namespace EasyNet
 

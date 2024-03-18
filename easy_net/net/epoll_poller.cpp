@@ -2,6 +2,7 @@
 #include <array>
 #include <strings.h>
 #include <sys/epoll.h>
+#include <unistd.h>
 
 #include "io_event.h"
 
@@ -43,6 +44,11 @@ EpollPoller::EpollPoller(EventLoop *loop) : Poller(loop) {
     if (m_epollfd < 0) {
         LOG_FATAL("epoll_create1 fail");
     }
+    LOG_DEBUG("epollfd=%d", m_epollfd);
+}
+
+EpollPoller::~EpollPoller() {
+    ::close(m_epollfd);
 }
 
 // typedef union epoll_data
@@ -97,7 +103,7 @@ void EpollPoller::AddEvent(IOEvent *ev) {
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &event) < 0) {
         LOG_FATAL("add fd = %d events = %d fail", fd, events);
     } else {
-        LOG_DEBUG("add %d", fd);
+        LOG_DEBUG("add %d events = %d", fd, events);
     }
 }
 
@@ -112,6 +118,8 @@ void EpollPoller::DelEvent(IOEvent *ev) {
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, &event) < 0) {
         LOG_FATAL("del fd = %d events = %d fail", fd, events);
+    } else {
+        LOG_DEBUG("del %d events = %d", fd, events);
     }
 }
 
@@ -126,5 +134,7 @@ void EpollPoller::ModEvent(IOEvent *ev) {
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &event) < 0) {
         LOG_FATAL("mod fd = %d events = %d fail", fd, events);
+    } else {
+        LOG_DEBUG("mod %d events = %d", fd, events);
     }
 }

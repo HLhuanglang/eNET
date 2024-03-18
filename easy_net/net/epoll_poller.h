@@ -7,7 +7,7 @@ namespace EasyNet {
 class EpollPoller : public Poller {
  public:
     EpollPoller(EventLoop *loop);
-    ~EpollPoller() override = default;
+    ~EpollPoller();
 
  public:
     void AddEvent(IOEvent *ev) override;

@@ -4,14 +4,18 @@
 #include <vector>
 
 #include "io_event.h"
+#include "non_copyable.h"
+#include "notify.h"
+#include "poller.h"
 
 using namespace EasyNet;
 
-EventLoop::EventLoop() : m_poller(create_poller(poller_type_e::TYPE_EPOLL, this)),
+EventLoop::EventLoop() : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL, this)),
                          m_pending_func(false),
-                         m_notifyer(this),
                          m_quit(false),
                          m_looping(false) {
+    // nothing todo
+    m_notifyer = new Notify(this);
 }
 
 void EventLoop::Loop() {

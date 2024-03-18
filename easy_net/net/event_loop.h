@@ -31,7 +31,7 @@ class EventLoop : public NonCopyable {
 
     // 当向event_loop中添加了任务后，可立即唤醒event_loop
     void WakeUp() {
-        m_notifyer.WakeUp();
+        m_notifyer->WakeUp();
     }
 
     // 退出当前循环
@@ -60,7 +60,7 @@ class EventLoop : public NonCopyable {
     std::unique_ptr<Poller> m_poller;                // 管理IO多路复用
     bool m_pending_func;                             // 是否正在执行
     std::vector<pending_func_t> m_pending_func_list; // 待处理的任务列表
-    Notify m_notifyer;                               // 使用eventfd或者pipe来唤醒event_loop
+    Notify *m_notifyer;                              // 使用eventfd或者pipe来唤醒event_loop
     std::unordered_set<int> m_registered_events;     // 当前loop上已注册监听的fd
 };
 } // namespace EasyNet

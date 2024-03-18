@@ -15,7 +15,8 @@ namespace EasyNet {
 class TcpConn;
 class EventLoop;
 
-using sp_tcp_connectopn_t = std::shared_ptr<TcpConn>;
+// 回调声明
+using tcp_connection_t = std::shared_ptr<TcpConn>;
 
 class ConnOwner {
  public:
@@ -27,16 +28,13 @@ class ConnOwner {
     virtual void NewConn(int fd, const InetAddress &peerAddr) = 0;
 
     // 断开连接
-    virtual void DelConn(const sp_tcp_connectopn_t &conn) = 0;
+    virtual void DelConn(const tcp_connection_t &conn) = 0;
 
     // 收到消息
-    virtual void RecvMsg(const sp_tcp_connectopn_t &conn) = 0;
+    virtual void RecvMsg(const tcp_connection_t &conn) = 0;
 
     // 发送缓冲区数据已写入内核(不一定发送到对端)
-    virtual void WriteComplete(const sp_tcp_connectopn_t &conn) = 0;
-
-    // 发送缓冲区高水位
-    virtual void HighWaterMark(const sp_tcp_connectopn_t &conn, size_t mark) = 0;
+    virtual void WriteComplete(const tcp_connection_t &conn) = 0;
 
     // 获取当前连接属于哪个loop
     virtual EventLoop *GetEventLoop() const = 0;

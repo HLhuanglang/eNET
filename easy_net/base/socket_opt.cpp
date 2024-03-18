@@ -140,7 +140,12 @@ int SocketOpt::CreateNonBlockSocket(sa_family_t family) {
     if (sockfd < 0) {
         LOG_FATAL("createSocket fail, errno=%d", errno);
     }
+    LOG_DEBUG("createSocket fd=%d", sockfd);
     return sockfd;
+}
+
+int SocketOpt::Listen(int fd, size_t queue_size) {
+    return ::listen(fd, queue_size);
 }
 
 int SocketOpt::Connect(int sockfd, const struct sockaddr *addr) {

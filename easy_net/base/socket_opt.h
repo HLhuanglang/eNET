@@ -78,6 +78,8 @@ class SocketOpt {
     ///@note 使用strerror可以获取到错误信息
     static int GetSocketError(int fd);
 
+    static int Listen(int fd, size_t queue_size);
+
     static bool IsSelfConnect(int fd);
 
     static int Connect(int fd, const struct sockaddr *addr);

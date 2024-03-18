@@ -12,6 +12,7 @@ using namespace EasyNet;
 Notify::Notify(EventLoop *loop) : IOEvent(loop, 0) {
 #ifdef HAVE_EVENTFD
     int event_fd = ::eventfd(0, EFD_NONBLOCK);
+    LOG_DEBUG("eventfd=%d", event_fd);
     this->SetFD(event_fd);
 #else
     int fd[2];
@@ -24,6 +25,7 @@ Notify::Notify(EventLoop *loop) : IOEvent(loop, 0) {
 }
 
 Notify::~Notify() {
+    this->RemoveEvent();
     if (this->m_fd >= 0) {
         close(this->m_fd);
     }

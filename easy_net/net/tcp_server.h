@@ -34,59 +34,57 @@ class TcpServer : public ConnOwner {
               const std::string &nameArg, bool isReusePort,
               EventLoop *pMainLoop);
 
-    ~TcpServer() override = default;
+    ~TcpServer();
 
     // 框架本身需要关心的接口
  public:
     void NewConn(int fd, const InetAddress &peerAddr) override;
-    void DelConn(const sp_tcp_connectopn_t &conn) override;
-    void RecvMsg(const sp_tcp_connectopn_t &conn) override;
-    void WriteComplete(const sp_tcp_connectopn_t &conn) override;
-    void HighWaterMark(const sp_tcp_connectopn_t &conn, size_t mark) override;
+    void DelConn(const tcp_connection_t &conn) override;
+    void RecvMsg(const tcp_connection_t &conn) override;
+    void WriteComplete(const tcp_connection_t &conn) override;
     EventLoop *GetEventLoop() const override;
 
-    // tcp_server使用者需要关心的接口
+    // tcp_server使用者需要关心的接口，由框架回调
  public:
     // 设置连接建立完成后回调
-    void set_new_connection_cb(new_connection_cb_f cb) {
+    void set_new_connection_cb(CallBack cb) {
         m_new_connection_cb = std::move(cb);
     }
 
-    void set_del_connection_cb(del_connection_cb_f cb) {
+    // 设置连接被删除通知回调
+    void set_del_connection_cb(CallBack cb) {
         m_del_connection_cb = std::move(cb);
     }
 
     // 设置当接收到客户端数据时回调
-    void set_recv_msg_cb(recv_msg_cb_f cb) {
+    void set_recv_msg_cb(CallBack cb) {
         m_revc_msg_cb = std::move(cb);
     }
 
     // 设置应用层数据缓冲发送完毕回调
-    void set_write_complete_cb(write_complete_cb_f cb) {
+    void set_write_complete_cb(CallBack cb) {
         m_write_complete_cb = std::move(cb);
-    }
-
-    void set_high_water_mark_cb(high_water_mark_cb_f cb) {
-        m_high_water_mark_cb = std::move(cb);
     }
 
     // 运行tcp server，默认情况下线程数为机器核心的2倍
     void start(int thread_cnt = 2 * static_cast<int>(std::thread::hardware_concurrency()));
 
  private:
-    new_connection_cb_f m_new_connection_cb;
-    del_connection_cb_f m_del_connection_cb;
-    recv_msg_cb_f m_revc_msg_cb;
-    write_complete_cb_f m_write_complete_cb;
-    high_water_mark_cb_f m_high_water_mark_cb;
+    void startThreadPool();
 
  private:
-    EventLoop *m_main_loop;               // 每一个tcp服务器都应该有一个loop,用来处理各种事件
-    std::unique_ptr<Acceptor> m_acceptor; // 主线程中负责处理链接请求
-    InetAddress m_addr;                   // 服务器监听的地址
-    std::string m_name;                   // 服务器名称
-    unsigned int m_thread_cnt;            // 服务器启动的线程数量
-    std::map<std::string, std::shared_ptr<TcpConn>> m_connections_map;
+    CallBack m_new_connection_cb;
+    CallBack m_del_connection_cb;
+    CallBack m_revc_msg_cb;
+    CallBack m_write_complete_cb;
+
+ private:
+    EventLoop *m_main_loop;                                            // 每一个tcp服务器都应该有一个loop,用来处理各种事件
+    std::unique_ptr<Acceptor> m_acceptor;                              // 主线程中负责处理链接请求
+    InetAddress m_addr;                                                // 服务器监听的地址
+    std::string m_name;                                                // 服务器名称
+    unsigned int m_thread_cnt;                                         // 服务器启动的线程数量
+    std::map<std::string, std::shared_ptr<TcpConn>> m_connections_map; // 当前持有的tcp链接
 };
 } // namespace EasyNet
 

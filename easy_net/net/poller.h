@@ -19,9 +19,10 @@ enum class poller_type_e {
 
 class Poller : public NonCopyable {
  public:
-    Poller(EventLoop *loop);
+    static Poller *CreatePoller(poller_type_e type, EventLoop *loop);
 
  public:
+    Poller(EventLoop *loop);
     virtual ~Poller() = default;
     virtual void AddEvent(IOEvent *ev) = 0;
     virtual void DelEvent(IOEvent *ev) = 0;
@@ -32,7 +33,6 @@ class Poller : public NonCopyable {
     EventLoop *m_owner_loop; // poller所属的event_loop，不由poller控制生命周期
 };
 
-extern "C" Poller *create_poller(poller_type_e type, EventLoop *loop);
 } // namespace EasyNet
 
 #endif

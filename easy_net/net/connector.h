@@ -1,0 +1,4 @@
+#ifndef __EASYNET_CONNECTOR_H
+#define __EASYNET_CONNECTOR_H
+
+#endif // !__EASYNET_CONNECTOR_H

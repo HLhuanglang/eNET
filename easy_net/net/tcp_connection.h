@@ -4,12 +4,14 @@
 #ifndef __EASYNET_TCP_CONNECTION_H
 #define __EASYNET_TCP_CONNECTION_H
 
+#include <chrono>
 #include <cstddef>
 #include <memory>
 #include <vector>
 
 #include "connection_owner.h"
 #include "event_loop.h"
+#include "inet_addr.h"
 #include "io_event.h"
 
 #include "buffer.h"
@@ -19,12 +21,21 @@ namespace EasyNet {
 // 前置声明
 class EventLoop;
 
-class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
+using CallBack = std::function<void(const tcp_connection_t &)>;
 
+class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
  public:
-    TcpConn(ConnOwner *owner, int fd) : IOEvent(owner->GetEventLoop(), fd), m_owner(owner) {
+    TcpConn(ConnOwner *owner, int fd, const InetAddress &perrAddr) : IOEvent(owner->GetEventLoop(), fd), m_owner(owner) {
+        // 1,初始化buffer
         m_read_buf = new Buffer();
         m_write_buf = new Buffer();
+
+        // 2,初始化链接名称
+        auto ip_port = perrAddr.SerializationToIpPort();
+        auto now = std::chrono::system_clock::now();
+        auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+        auto conn_name = std::to_string(timestamp) + "_" + ip_port;
+        m_name = conn_name;
     }
 
     ~TcpConn() override {
@@ -35,8 +46,10 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
 
  public:
     void SendData(const char *data, size_t data_size);
+    void SendData(const std::string &data);
     Buffer &GetReadBuf() { return *m_read_buf; }
     Buffer &GetWriteBuf() { return *m_write_buf; }
+    std::string GetConnName() { return m_name; }
 
  public:
     void ProcessWriteEvent() override;
@@ -46,14 +59,9 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
     ConnOwner *m_owner; // tcpclient或tcpserver会传入this指针，此时owner_指向tcpclient或tcpserver
     Buffer *m_read_buf;
     Buffer *m_write_buf;
+    std::string m_name; // 连接的name
 };
 
-using sp_tcp_connection_t = std::shared_ptr<TcpConn>;
-using new_connection_cb_f = std::function<void(const sp_tcp_connection_t &)>;
-using del_connection_cb_f = std::function<void(const sp_tcp_connection_t &)>;
-using recv_msg_cb_f = std::function<void(const sp_tcp_connection_t &)>;
-using write_complete_cb_f = std::function<void(const sp_tcp_connection_t &)>;
-using high_water_mark_cb_f = std::function<void(const sp_tcp_connection_t &, size_t mark)>;
 } // namespace EasyNet
 
 #endif

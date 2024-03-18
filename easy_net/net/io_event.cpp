@@ -75,5 +75,4 @@ void IOEvent::update_event_status(update_opt_e opt) {
         Poller->AddEvent(this);
         m_ioloop->Register(m_fd);
     }
-    Poller->DelEvent(this);
 }

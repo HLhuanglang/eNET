@@ -9,7 +9,7 @@ Poller::Poller(EventLoop *loop) : m_owner_loop(loop) {
     // nothing todo
 }
 
-Poller *create_poller(poller_type_e type, EventLoop *loop) {
+Poller *Poller::CreatePoller(poller_type_e type, EventLoop *loop) {
     Poller *p = nullptr;
     switch (type) {
         case poller_type_e::TYPE_EPOLL: {
