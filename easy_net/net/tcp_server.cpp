@@ -41,6 +41,11 @@ TcpServer::~TcpServer() {
 }
 
 void TcpServer::start() {
+    if (m_started) {
+        return;
+    }
+    m_started = true;
+
     // 1,开启子线程
     startThreadPool();
 

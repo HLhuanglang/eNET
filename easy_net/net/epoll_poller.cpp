@@ -68,6 +68,8 @@ EpollPoller::~EpollPoller() {
 void EpollPoller::Polling(int timeout_ms, active_events_t &events) {
     // 1,获取激活的IO事件
     struct epoll_event epoll_events[1024];
+    // timeout -1：阻塞, 会一直等待IO事件到达，如果没有就一直阻塞在这里。
+    // timeout 0：不阻塞，立即返回，如果没有IO事件到达，就返回0
     int nfds = ::epoll_wait(m_epollfd, epoll_events, 1024, timeout_ms);
     if (nfds < 0) {
         spdlog::critical("epoll_wait fail");

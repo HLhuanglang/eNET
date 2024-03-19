@@ -21,7 +21,6 @@ EventLoop::EventLoop() : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL
                          m_quit(false),
                          m_looping(false),
                          m_threadid(std::this_thread::get_id()) {
-    // nothing todo
     m_notifyer = new Notify(this);
 
     std::stringstream ss;
@@ -42,11 +41,12 @@ void EventLoop::Loop() {
     m_quit = false;
 
     while (!m_quit) {
+        auto tm = m_timer.next_timeout();
         m_ready_events.clear();
-        m_poller->Polling(10000, m_ready_events); // fixme：超时时间从定时器中获取
+        m_poller->Polling(tm, m_ready_events);
 
         // 1,处理到期事件
-        // todo
+        m_timer.handle_expired_timer();
 
         // 2,处理当前处于活动状态的fd上的事件
         for (auto &it : m_ready_events) {

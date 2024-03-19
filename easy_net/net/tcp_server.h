@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "connection_owner.h"
+#include "def.h"
 #include "event_loop.h"
 #include "inet_addr.h"
 #include "tcp_connection.h"
@@ -92,6 +93,7 @@ class TcpServer : public ConnOwner {
     std::map<std::string, std::shared_ptr<TcpConn>> m_connections_map; // 当前持有的tcp链接
     std::vector<std::unique_ptr<ServerThread>> m_child_svr_vec;        // 子线程
     std::vector<EventLoop *> m_child_loop_vec;                         // 子线程的loop
+    bool m_started;                                                    // 是否启动
 };
 } // namespace EasyNet
 

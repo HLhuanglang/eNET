@@ -13,6 +13,8 @@
 #include "non_copyable.h"
 #include "notify.h"
 #include "poller.h"
+#include "timer.h"
+#include "timer_miniheap.h"
 
 namespace EasyNet {
 
@@ -33,6 +35,9 @@ class EventLoop : public NonCopyable {
     // 提供将函数注入loop的接口
     void RunInLoop(const pending_func_t &cb);
     void QueueInLoop(const pending_func_t &cb);
+
+    // 提供定时任务
+    // TODO
 
     // 当向event_loop中添加了任务后，可立即唤醒event_loop
     void WakeUp() {
@@ -69,6 +74,7 @@ class EventLoop : public NonCopyable {
     Notify *m_notifyer;                              // 使用eventfd或者pipe来唤醒event_loop
     std::unordered_set<int> m_registered_events;     // 当前loop上已注册监听的fd
     std::mutex m_mtx;
+    TimerManager<MiniHeapTimer> m_timer; //定时器
 };
 } // namespace EasyNet
 
