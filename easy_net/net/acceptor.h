@@ -43,6 +43,7 @@ class IdleFD {
         if (m_idlefd < 0) {
             spdlog::critical("create idlefd failed!");
         }
+        spdlog::info("ReAccept new idlefd={}", m_idlefd);
     }
 
  private:

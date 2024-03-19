@@ -12,7 +12,7 @@ int main() {
 
     EasyNet::EventLoop loop; // 1，创建epollfd、eventfd
     EasyNet::InetAddress addr("127.0.0.1", 8888);
-    EasyNet::TcpServer svr(4, addr, "tcpsvr-demo", true, &loop); // 2，创建socketfd、idlefd
+    EasyNet::TcpServer svr(1, addr, "tcpsvr-demo", true, &loop); // 2，创建socketfd、idlefd
 
     svr.set_new_connection_cb([](const EasyNet::tcp_connection_t &conn) {
         spdlog::debug("Get New Conn");
@@ -21,7 +21,7 @@ int main() {
     svr.set_recv_msg_cb([](const EasyNet::tcp_connection_t &conn) {
         auto msg = conn->GetReadBuf().RetriveAllAsString();
         spdlog::debug("recvMsg={}", msg);
-        conn->SendData(msg);
+        conn->SendData("svr:" + msg);
     });
 
     svr.set_del_connection_cb([](const EasyNet::tcp_connection_t &conn) {

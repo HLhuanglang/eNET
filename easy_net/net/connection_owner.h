@@ -7,16 +7,13 @@
 #include <string>
 
 #include "buffer.h"
+#include "def.h"
 #include "inet_addr.h"
 
 namespace EasyNet {
 
 // 前置声明
-class TcpConn;
 class EventLoop;
-
-// 回调声明
-using tcp_connection_t = std::shared_ptr<TcpConn>;
 
 class ConnOwner {
  public:

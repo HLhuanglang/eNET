@@ -10,7 +10,7 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <thread>
+#include <vector>
 
 #include "connection_owner.h"
 #include "event_loop.h"
@@ -24,6 +24,7 @@ namespace EasyNet {
 // 前置声明
 class TcpConn;
 class Acceptor;
+class ServerThread;
 
 class TcpServer : public ConnOwner {
  public:
@@ -48,35 +49,39 @@ class TcpServer : public ConnOwner {
  public:
     // 设置连接建立完成后回调
     void set_new_connection_cb(CallBack cb) {
-        m_new_connection_cb = std::move(cb);
+        m_new_connection_cb = cb;
     }
 
     // 设置连接被删除通知回调
     void set_del_connection_cb(CallBack cb) {
-        m_del_connection_cb = std::move(cb);
+        m_del_connection_cb = cb;
     }
 
     // 设置当接收到客户端数据时回调
     void set_recv_msg_cb(CallBack cb) {
-        m_revc_msg_cb = std::move(cb);
+        m_revc_msg_cb = cb;
     }
 
     // 设置应用层数据缓冲发送完毕回调
     void set_write_complete_cb(CallBack cb) {
-        m_write_complete_cb = std::move(cb);
+        m_write_complete_cb = cb;
     }
 
-    // 运行tcp server，默认情况下线程数为机器核心的2倍
-    void start(int thread_cnt = 2 * static_cast<int>(std::thread::hardware_concurrency()));
+    // 运行tcp server
+    void start();
+
+    // join/detach 子线程
+    void join_thread();
+    void detach_thread();
 
  private:
     void startThreadPool();
 
- private:
-    CallBack m_new_connection_cb;
-    CallBack m_del_connection_cb;
-    CallBack m_revc_msg_cb;
-    CallBack m_write_complete_cb;
+ public:
+    static CallBack m_new_connection_cb;
+    static CallBack m_del_connection_cb;
+    static CallBack m_revc_msg_cb;
+    static CallBack m_write_complete_cb;
 
  private:
     EventLoop *m_main_loop;                                            // 每一个tcp服务器都应该有一个loop,用来处理各种事件
@@ -85,6 +90,8 @@ class TcpServer : public ConnOwner {
     std::string m_name;                                                // 服务器名称
     unsigned int m_thread_cnt;                                         // 服务器启动的线程数量
     std::map<std::string, std::shared_ptr<TcpConn>> m_connections_map; // 当前持有的tcp链接
+    std::vector<std::unique_ptr<ServerThread>> m_child_svr_vec;        // 子线程
+    std::vector<EventLoop *> m_child_loop_vec;                         // 子线程的loop
 };
 } // namespace EasyNet
 

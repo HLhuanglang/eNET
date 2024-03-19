@@ -140,7 +140,7 @@ int SocketOpt::CreateNonBlockSocket(sa_family_t family) {
     if (sockfd < 0) {
         spdlog::critical("createSocket fail, errno={}", errno);
     }
-    spdlog::debug("createSocket fd=%d", sockfd);
+    spdlog::debug("createSocket fd={}", sockfd);
     return sockfd;
 }
 

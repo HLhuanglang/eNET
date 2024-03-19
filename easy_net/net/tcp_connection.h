@@ -21,8 +21,6 @@ namespace EasyNet {
 // 前置声明
 class EventLoop;
 
-using CallBack = std::function<void(const tcp_connection_t &)>;
-
 class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
  public:
     TcpConn(ConnOwner *owner, int fd, const InetAddress &perrAddr) : IOEvent(owner->GetEventLoop(), fd), m_owner(owner) {

@@ -101,9 +101,9 @@ void EpollPoller::AddEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &event) < 0) {
-        spdlog::critical("add fd = {} events = {} fail", fd, events);
+        spdlog::critical("epollfd={} add fd = {} events = {} fail", m_epollfd, fd, events);
     } else {
-        spdlog::debug("add {} events = {}", fd, events);
+        spdlog::debug("epollfd={} add {} events = {}", m_epollfd, fd, events);
     }
 }
 
@@ -117,9 +117,9 @@ void EpollPoller::DelEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, &event) < 0) {
-        spdlog::critical("del fd = {} events = {} fail", fd, events);
+        spdlog::critical("epollfd={} del fd = {} events = {} fail", m_epollfd, fd, events);
     } else {
-        spdlog::debug("del {} events = {}", fd, events);
+        spdlog::debug("epollfd={} del {} events = {}", m_epollfd, fd, events);
     }
 }
 
@@ -133,8 +133,8 @@ void EpollPoller::ModEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &event) < 0) {
-        spdlog::critical("mod fd = {} events = {} fail", fd, events);
+        spdlog::critical("epollfd={} mod fd = {} events = {} fail", m_epollfd, fd, events);
     } else {
-        spdlog::debug("mod {} events = {}", fd, events);
+        spdlog::debug("epollfd={} mod {} events = {}", m_epollfd, fd, events);
     }
 }
