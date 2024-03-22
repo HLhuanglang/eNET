@@ -74,7 +74,7 @@ class EventLoop : public NonCopyable {
     Notify *m_notifyer;                              // 使用eventfd或者pipe来唤醒event_loop
     std::unordered_set<int> m_registered_events;     // 当前loop上已注册监听的fd
     std::mutex m_mtx;
-    TimerManager<MiniHeapTimer> m_timer; //定时器
+    MiniHeapTimer *m_timer_queue; // 定时器队列
 };
 } // namespace EasyNet
 

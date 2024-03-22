@@ -50,7 +50,8 @@ void ServerThread::threadEntry(ServerThread *self) {
         self->m_cv.notify_all();
     }
     spdlog::debug("ChildServer {} Run", m_name);
-    svr.start(); // ps：子线程在这里loop
+    svr.start();
+    loop.Loop();
 
     // 出现错误了
     spdlog::error("ChildServer {} err!", m_name);

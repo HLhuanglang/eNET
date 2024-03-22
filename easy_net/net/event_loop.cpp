@@ -11,6 +11,7 @@
 #include "notify.h"
 #include "poller.h"
 #include "spdlog/spdlog.h"
+#include "timer_miniheap.h"
 
 using namespace EasyNet;
 
@@ -22,6 +23,7 @@ EventLoop::EventLoop() : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL
                          m_looping(false),
                          m_threadid(std::this_thread::get_id()) {
     m_notifyer = new Notify(this);
+    m_timer_queue = new MiniHeapTimer();
 
     std::stringstream ss;
     ss << m_threadid;
@@ -41,12 +43,12 @@ void EventLoop::Loop() {
     m_quit = false;
 
     while (!m_quit) {
-        auto tm = m_timer.next_timeout();
+        auto tm = m_timer_queue->find_timer();
         m_ready_events.clear();
         m_poller->Polling(tm, m_ready_events);
 
         // 1,处理到期事件
-        m_timer.handle_expired_timer();
+        m_timer_queue->handle_expired_timer();
 
         // 2,处理当前处于活动状态的fd上的事件
         for (auto &it : m_ready_events) {

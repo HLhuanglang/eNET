@@ -24,7 +24,7 @@ TcpServer::TcpServer(unsigned int numEventThreads,
                      const InetAddress &listenAddr,
                      const std::string &nameArg,
                      bool isReusePort, EventLoop *pMainLoop)
-    : m_main_loop(pMainLoop),
+    : m_loop(pMainLoop),
       m_addr(listenAddr),
       m_name(nameArg),
       m_thread_cnt(numEventThreads) {
@@ -41,19 +41,13 @@ TcpServer::~TcpServer() {
 }
 
 void TcpServer::start() {
-    if (m_started) {
-        return;
-    }
-    m_started = true;
-
-    // 1,开启子线程
+    // 1,开启子线程(如果是子线程,这里直接跳过)
     startThreadPool();
 
     // 2,开启主线程
     if (m_acceptor) {
         m_acceptor->StartListen();
     }
-    m_main_loop->Loop();
 }
 
 void TcpServer::join_thread() {
@@ -99,7 +93,7 @@ void TcpServer::WriteComplete(const tcp_connection_t &conn) {
 }
 
 EventLoop *TcpServer::GetEventLoop() const {
-    return m_main_loop;
+    return m_loop;
 }
 
 void TcpServer::startThreadPool() {

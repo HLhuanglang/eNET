@@ -9,8 +9,6 @@
 #include <sys/epoll.h>
 #include <utility>
 
-#include <iostream>
-
 #include "def.h"
 
 namespace EasyNet {
@@ -24,7 +22,6 @@ enum TimerType {
 };
 
 class Timer {
- public:
  public:
     Timer(uint64_t id, TimerType type, TimerCallBack cb, int interval)
         : m_id(id), m_type(type), m_interval(interval), m_cb(std::move(cb)) {
@@ -86,10 +83,10 @@ class Timer {
     int get_expired_time() const { return (m_expried_time.tv_sec - m_current_time.tv_sec) / 1000 + (m_expried_time.tv_nsec - m_current_time.tv_nsec) / 1000000; }
     void set_type(TimerType type) { m_type = type; }
     TimerType get_type() const { return m_type; }
-    int get_id() const { return m_id; }
+    uint64_t get_id() const { return m_id; }
 
  private:
-    int m_id;
+    uint64_t m_id;
     TimerCallBack m_cb;
     timespec m_expried_time; // 下一次过期的时间戳
     timespec m_current_time; // 当前时间戳
@@ -117,31 +114,6 @@ class TimerPolicy {
     Container m_timers;
 };
 
-template <typename Policy>
-class TimerManager {
- public:
-    void run_at(unsigned long long tm, const TimerCallBack &cb) {
-        m_timer_container.add_timer(tm, TimerType::E_AT, cb);
-    }
-    void run_after(unsigned long long tm, const TimerCallBack &cb) {
-        m_timer_container.add_timer(tm, TimerType::E_AFTER, cb);
-    }
-
-    void run_every(unsigned long long tm, const TimerCallBack &cb) {
-        m_timer_container.add_timer(tm, TimerType::E_EVERY, cb);
-    }
-
-    int next_timeout() {
-        return m_timer_container.find_timer();
-    }
-
-    void handle_expired_timer() {
-        m_timer_container.handle_expired_timer();
-    }
-
- private:
-    Policy m_timer_container;
-};
 } // namespace EasyNet
 
 #endif // !__EASYNET_TIMER_H
