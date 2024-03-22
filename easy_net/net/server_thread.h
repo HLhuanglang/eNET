@@ -21,7 +21,7 @@ class ServerThread {
     void Detach();
 
  private:
-    void threadEntry(ServerThread *self);
+    void threadEntry();
 
  private:
     EventLoop *m_loop;
