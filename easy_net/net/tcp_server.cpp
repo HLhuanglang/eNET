@@ -63,7 +63,6 @@ void TcpServer::detach_thread() {
 }
 
 void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {
-    spdlog::debug("New Conn, ip:port={}", peerAddr.SerializationToIpPort().c_str());
     auto tcp_conn = std::make_shared<TcpConn>(this, fd, peerAddr);
     m_connections_map[tcp_conn->GetConnName()] = tcp_conn;
     tcp_conn->EnableRead();

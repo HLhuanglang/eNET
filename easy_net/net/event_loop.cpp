@@ -1,4 +1,5 @@
 #include "event_loop.h"
+#include <csignal>
 #include <cstdio>
 #include <mutex>
 #include <sstream>
@@ -13,6 +14,16 @@
 #include "spdlog/spdlog.h"
 #include "timer_miniheap.h"
 
+namespace EasyNet {
+class IgnoreSigPipe {
+ public:
+    IgnoreSigPipe() {
+        ::signal(SIGPIPE, SIG_IGN);
+    }
+};
+IgnoreSigPipe initObj;
+} // namespace EasyNet
+
 using namespace EasyNet;
 
 thread_local EventLoop *t_loopInThread = nullptr;
@@ -22,8 +33,8 @@ EventLoop::EventLoop() : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL
                          m_quit(false),
                          m_looping(false),
                          m_threadid(std::this_thread::get_id()) {
-    m_notifyer = new Notify(this);
-    m_timer_queue = new MiniHeapTimer();
+    m_notifyer = make_unique<Notify>(this);
+    m_timer_queue = make_unique<MiniHeapTimer>();
 
     std::stringstream ss;
     ss << m_threadid;
