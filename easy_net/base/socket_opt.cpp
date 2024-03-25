@@ -115,6 +115,20 @@ bool SocketOpt::SetReusePort(int fd) {
     return static_cast<bool>(setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval)) >= 0);
 }
 
+void SocketOpt::SetKeepAlive(int fd, bool on) {
+#ifdef _WIN32
+    char optval = on ? 1 : 0;
+#else
+    int optval = on ? 1 : 0;
+#endif
+    ::setsockopt(fd,
+                 SOL_SOCKET,
+                 SO_KEEPALIVE,
+                 &optval,
+                 static_cast<socklen_t>(sizeof optval));
+    // TODO CHECK
+}
+
 struct sockaddr_in6 SocketOpt::GetLocalAddr(int sockfd) {
     struct sockaddr_in6 localaddr;
     bzero(&localaddr, sizeof localaddr);

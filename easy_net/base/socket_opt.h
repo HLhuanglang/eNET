@@ -59,6 +59,11 @@ class SocketOpt {
     /// @note 解决多进程下accept负载不均衡的问题
     static bool SetReusePort(int fd);
 
+    ///@brief 设置tcp的keep-alive状态
+    ///@param on 是否开启keep-alive
+    ///@param fd 待操作的套接字
+    static void SetKeepAlive(int fd, bool on);
+
     ///@brief 获取本机地址
     ///@return 网络地址结构体
     static struct sockaddr_in6 GetLocalAddr(int fd);

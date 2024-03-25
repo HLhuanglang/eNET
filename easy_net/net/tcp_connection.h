@@ -15,6 +15,7 @@
 #include "io_event.h"
 
 #include "buffer.h"
+#include "socket_opt.h"
 
 namespace EasyNet {
 
@@ -34,6 +35,9 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
         auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
         auto conn_name = std::to_string(timestamp) + "_" + ip_port;
         m_name = conn_name;
+
+        // 3,设置状态
+        SocketOpt::SetKeepAlive(fd, true);
     }
 
     ~TcpConn() override {
