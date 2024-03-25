@@ -33,17 +33,23 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
         auto ip_port = perrAddr.SerializationToIpPort();
         auto now = std::chrono::system_clock::now();
         auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-        auto conn_name = std::to_string(timestamp) + "_" + ip_port;
-        m_name = conn_name;
+        m_name = std::to_string(timestamp) + "_" + ip_port;
 
         // 3,设置状态
         SocketOpt::SetKeepAlive(fd, true);
     }
 
     ~TcpConn() override {
-        // 避免释放连接时候内存泄漏
-        delete m_read_buf;
-        delete m_write_buf;
+        // 1,链接删除时,将其从epoll中删掉
+        this->RemoveEvent();
+
+        // 2,避免释放连接时候内存泄漏
+        if (m_read_buf) {
+            delete m_read_buf;
+        }
+        if (m_write_buf) {
+            delete m_write_buf;
+        }
     }
 
  public:

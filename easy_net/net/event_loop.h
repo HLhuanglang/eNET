@@ -71,10 +71,10 @@ class EventLoop : public NonCopyable {
     std::unique_ptr<Poller> m_poller;                // 管理IO多路复用
     bool m_pending_func;                             // 是否正在执行
     std::vector<pending_func_t> m_pending_func_list; // 待处理的任务列表
-    Notify *m_notifyer;                              // 使用eventfd或者pipe来唤醒event_loop
+    std::unique_ptr<Notify> m_notifyer;              // 使用eventfd或者pipe来唤醒event_loop
     std::unordered_set<int> m_registered_events;     // 当前loop上已注册监听的fd
     std::mutex m_mtx;
-    MiniHeapTimer *m_timer_queue; // 定时器队列
+    std::unique_ptr<MiniHeapTimer> m_timer_queue; // 定时器队列
 };
 } // namespace EasyNet
 
