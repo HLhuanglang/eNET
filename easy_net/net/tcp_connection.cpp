@@ -48,6 +48,8 @@ void TcpConn::ProcessReadEvent() {
             // 对端没有数据可读
             return;
         }
+        // 连接出现错误错误,删除链接
+        m_owner->DelConn(shared_from_this());
     }
 }
 
@@ -55,7 +57,9 @@ void TcpConn::ProcessWriteEvent() {
     while (m_write_buf->GetReadableSize() != 0U) {
         auto ret = SocketOpt::WriteBufferToFd(*m_write_buf, this->GetFD());
         if (ret < 0) {
+            // 写入失败,表示当前连接出现问题了，直接断开
             spdlog::error("WriteBufferToFd err");
+            m_owner->DelConn(shared_from_this());
         }
         if (ret == 0) {
             // 当前写缓冲区已经满了,再次尝试写入

@@ -35,7 +35,7 @@ TcpServer::TcpServer(unsigned int numEventThreads,
 
 TcpServer::~TcpServer() {
     for (auto &conn : m_connections_map) {
-        conn.second->RemoveEvent();
+        conn->RemoveEvent();
     }
     m_connections_map.clear();
 }
@@ -64,7 +64,7 @@ void TcpServer::detach_thread() {
 
 void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {
     auto tcp_conn = std::make_shared<TcpConn>(this, fd, peerAddr);
-    m_connections_map[tcp_conn->GetConnName()] = tcp_conn;
+    m_connections_map.insert(tcp_conn);
     tcp_conn->EnableRead();
     if (m_new_connection_cb != nullptr) {
         m_new_connection_cb(tcp_conn);
@@ -75,8 +75,11 @@ void TcpServer::DelConn(const tcp_connection_t &conn) {
     if (m_del_connection_cb != nullptr) {
         m_del_connection_cb(conn);
     }
+
     conn->RemoveEvent();
-    m_connections_map.erase(conn->GetConnName());
+    size_t n = m_connections_map.erase(conn);
+    (void)n;
+    assert(n == 1);
 }
 
 void TcpServer::RecvMsg(const tcp_connection_t &conn) {

@@ -91,9 +91,19 @@ void IOEvent::update_event_status(update_opt_e opt) {
             default:
                 spdlog::error("Unkown type: {}", cover_opt_to_string(opt));
         }
-
     } else {
-        Poller->AddEvent(this);
-        m_ioloop->Register(m_fd);
+        switch (opt) {
+            case update_opt_e::ENABLE:
+            case update_opt_e::DISABLE: {
+                Poller->AddEvent(this);
+                m_ioloop->Register(m_fd);
+                break;
+            }
+            case update_opt_e::REMOVE: {
+                break;
+            }
+            default:
+                spdlog::error("Unkown type: {}", cover_opt_to_string(opt));
+        }
     }
 }

@@ -24,6 +24,14 @@ class EventLoop;
 
 class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
  public:
+    enum class ConnStatus {
+        Disconnected,
+        Connecting,
+        Connected,
+        Disconnecting
+    };
+
+ public:
     TcpConn(ConnOwner *owner, int fd, const InetAddress &perrAddr) : IOEvent(owner->GetEventLoop(), fd), m_owner(owner) {
         // 1,初始化buffer
         m_read_buf = new Buffer();
@@ -40,10 +48,7 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
     }
 
     ~TcpConn() override {
-        // 1,链接删除时,将其从epoll中删掉
-        this->RemoveEvent();
-
-        // 2,避免释放连接时候内存泄漏
+        // 避免释放连接时候内存泄漏
         if (m_read_buf) {
             delete m_read_buf;
         }

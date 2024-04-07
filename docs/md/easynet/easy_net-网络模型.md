@@ -2,6 +2,7 @@
 
 不同的网络模型分析见：[服务端架构设计](./../generic/网络模型设计讨论.md)
 
-easy_net一开始就使用了one loop peer thread模式，只是实现的非常简陋，缺少封装。
+easynet：多线程svr模式，一个服务有N个tcpsvr，每个tcpsvr都有一个acceptor和eventloop，使用reuseport监听同一个ip和port，由操作系统决定唤醒某一个阻塞在acceptor的进程上(避免惊群问题)，缺点就是不能使用其他空闲的eventloop。
 
-主线程负责监听，subreactor服务处理具体业务。主线程loop循环，当epoll_wait返回后，通过sub_reactor_pool[就是线程池] 获取一个子线程，通过eventfd唤醒该子线程。子线程loop返回，然后将主线程返回的acceptfd添加到自己的epoll中进行监听。
+
+muduo/tantor：多线程eventloop模式，只有一个tcpsver和acceptor，但是有一个eventloop的线程池。

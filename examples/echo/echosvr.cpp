@@ -4,6 +4,7 @@
 #include "spdlog/spdlog.h"
 #include "tcp_connection.h"
 #include "tcp_server.h"
+#include <atomic>
 #include <iostream>
 #include <thread>
 
@@ -15,6 +16,8 @@ unsigned long long operator"" _s(unsigned long long s) {
 unsigned long long operator"" _ms(unsigned long long ms) {
     return ms;
 }
+
+std::atomic<int> global_counter(0);
 
 int main() {
     // 设置日志
@@ -34,9 +37,15 @@ int main() {
     });
 
     svr.set_recv_msg_cb([](const EasyNet::tcp_connection_t &conn) {
+        // fixme-hl：出现回包为空的情况
         auto msg = conn->GetReadBuf().RetriveAllAsString();
-        spdlog::debug("recvMsg={}", msg);
-        conn->SendData("svr:" + msg);
+        if (msg.empty()) {
+            global_counter.fetch_add(1, std::memory_order_relaxed);
+            spdlog::debug("global_counter ={}", global_counter);
+        } else {
+            spdlog::debug("msg={}", msg);
+            conn->SendData("svr:" + msg);
+        }
     });
 
     svr.set_del_connection_cb([](const EasyNet::tcp_connection_t &conn) {
