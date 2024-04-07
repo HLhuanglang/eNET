@@ -6,6 +6,7 @@
 #include "tcp_server.h"
 #include <atomic>
 #include <iostream>
+#include <signal.h>
 #include <thread>
 
 // 后缀的参数只能是unsigned long long、long double、const char*或者const char* + size_t
@@ -19,7 +20,15 @@ unsigned long long operator"" _ms(unsigned long long ms) {
 
 std::atomic<int> global_counter(0);
 
+void sighandler(int signum) {
+    printf("\nCaught signal %d, coming out...\n", signum);
+    std::cout << "global_counter=" << global_counter << std::endl;
+    exit(1);
+}
+
 int main() {
+    signal(SIGINT, sighandler);
+
     // 设置日志
     spdlog::set_level(spdlog::level::debug);
     spdlog::set_pattern("[%D %H:%M:%S.%e][%L][pid %t] %^%v%$");
@@ -41,10 +50,9 @@ int main() {
         auto msg = conn->GetReadBuf().RetriveAllAsString();
         if (msg.empty()) {
             global_counter.fetch_add(1, std::memory_order_relaxed);
-            spdlog::debug("global_counter ={}", global_counter);
         } else {
             spdlog::debug("msg={}", msg);
-            conn->SendData("svr:" + msg);
+            conn->SendData(msg);
         }
     });
 
