@@ -1,6 +1,6 @@
 #include "server_thread.h"
 #include "event_loop.h"
-#include "spdlog/spdlog.h"
+#include "log.h"
 #include "tcp_server.h"
 #include <mutex>
 #include <thread>
@@ -37,23 +37,19 @@ void ServerThread::Detach() {
 }
 
 void ServerThread::threadEntry() {
-    // 1,创建EventLoop
-    EventLoop loop;
-    // 2,创建TcpServer
-    TcpServer svr(0, m_addr, m_name, true, &loop);
+    // 创建TcpServer ps：如果callback要做成成员变量,那么这里就要设置一堆回调,因此使用static来和类绑定而非对象
+    TcpServer svr(m_name, 0, m_addr);
 
     // 3,运行server
     {
         std::unique_lock<std::mutex> uqlk(m_mtx);
-        m_loop = &loop;
+        m_loop = svr.GetEventLoop();
         m_ready = true;
         m_cv.notify_all();
     }
-    spdlog::debug("ChildServer {} Run", m_name);
+    LOG_INFO("ChildServer {} Run", m_name);
     svr.start();
-    loop.Loop();
 
     // 出现错误了
-    spdlog::error("ChildServer {} err!", m_name);
     m_loop = nullptr;
 }

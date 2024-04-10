@@ -1,7 +1,7 @@
 #include "notify.h"
 #include "event_loop.h"
 #include "io_event.h"
-#include "spdlog/spdlog.h"
+#include "log.h"
 #include <cassert>
 #include <cstdint>
 #include <sys/eventfd.h>
@@ -12,7 +12,7 @@ using namespace EasyNet;
 Notify::Notify(EventLoop *loop) : IOEvent(loop, 0) {
 #ifdef HAVE_EVENTFD
     int event_fd = ::eventfd(0, EFD_NONBLOCK);
-    spdlog::debug("eventfd={}", event_fd);
+    LOG_TRACE("eventfd={}", event_fd);
     this->SetFD(event_fd);
 #else
     int fd[2];
@@ -26,10 +26,6 @@ Notify::Notify(EventLoop *loop) : IOEvent(loop, 0) {
 
 Notify::~Notify() {
     this->RemoveEvent();
-    if (this->m_fd >= 0) {
-        close(this->m_fd);
-    }
-    this->m_fd = -1;
 #ifndef HAVE_EVENTFD
     if (this->m_notifier >= 0) {
         close(this->m_notifier);

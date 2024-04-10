@@ -1,5 +1,5 @@
 #include "socket_opt.h"
-#include "spdlog/spdlog.h"
+#include "log.h"
 #include <asm-generic/socket.h>
 #include <cerrno> // errno
 #include <cstddef>
@@ -134,7 +134,7 @@ struct sockaddr_in6 SocketOpt::GetLocalAddr(int sockfd) {
     bzero(&localaddr, sizeof localaddr);
     socklen_t addrlen = static_cast<socklen_t>(sizeof localaddr);
     if (::getsockname(sockfd, (sockaddr *)(&localaddr), &addrlen) < 0) {
-        spdlog::critical("getsockname fial");
+        LOG_ERROR("getsockname fial");
     }
     return localaddr;
 }
@@ -144,7 +144,7 @@ struct sockaddr_in6 SocketOpt::GetPeerAddr(int sockfd) {
     bzero(&peeraddr, sizeof peeraddr);
     socklen_t addrlen = static_cast<socklen_t>(sizeof peeraddr);
     if (::getpeername(sockfd, (sockaddr *)(&peeraddr), &addrlen) < 0) {
-        spdlog::critical("getpeername fial");
+        LOG_ERROR("getpeername fial");
     }
     return peeraddr;
 }
@@ -152,9 +152,9 @@ struct sockaddr_in6 SocketOpt::GetPeerAddr(int sockfd) {
 int SocketOpt::CreateNonBlockSocket(sa_family_t family) {
     int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (sockfd < 0) {
-        spdlog::critical("createSocket fail, errno={}", errno);
+        LOG_ERROR("createSocket fail, errno={}", errno);
     }
-    spdlog::debug("createSocket fd={}", sockfd);
+    LOG_TRACE("createSocket fd={}", sockfd);
     return sockfd;
 }
 
@@ -173,7 +173,7 @@ int SocketOpt::Accept(int fd, InetAddress &perrAddr) {
 
     int connfd = ::accept(fd, (struct sockaddr *)&addr, &addrlen);
     if (connfd < 0) {
-        spdlog::critical("accept error={}", errno);
+        LOG_ERROR("accept error={}", errno);
     }
     perrAddr.setSockAddrInet6(addr);
     SetFdNonblock(connfd);
@@ -183,8 +183,9 @@ int SocketOpt::Accept(int fd, InetAddress &perrAddr) {
 
 void SocketOpt::Close(int sockfd) {
     if (::close(sockfd) < 0) {
-        spdlog::error("close fd={} fail", sockfd);
+        LOG_ERROR("close fd={} fail", sockfd);
     }
+    LOG_TRACE("close fd={}", sockfd);
 }
 
 int SocketOpt::GetSocketError(int sockfd) {
@@ -214,6 +215,6 @@ bool SocketOpt::IsSelfConnect(int sockfd) {
 
 void SocketOpt::ShutDownWrite(int sockfd) {
     if (::shutdown(sockfd, SHUT_WR) < 0) {
-        spdlog::error("shutdownWrite error");
+        LOG_ERROR("shutdownWrite error");
     }
 }
