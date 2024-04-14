@@ -16,31 +16,31 @@ class tcp_client {
  public:
     // 设置连接建立完成后回调
     void set_new_connection_cb(CallBack cb) {
-        m_new_connection_cb = std::move(cb);
+        m_new_connection_cb = cb;
     }
 
     void set_del_connection_cb(CallBack cb) {
-        m_del_connection_cb = std::move(cb);
+        m_del_connection_cb = cb;
     }
 
     // 设置当接收到客户端数据时回调
     void set_recv_msg_cb(CallBack cb) {
-        m_revc_msg_cb = std::move(cb);
+        m_revc_msg_cb = cb;
     }
 
     // 设置应用层数据缓冲发送完毕回调
     void set_write_complete_cb(CallBack cb) {
-        m_write_complete_cb = std::move(cb);
+        m_write_complete_cb = cb;
     }
 
     // 运行
     void start() { m_loop->Loop(); }
 
  private:
-    CallBack m_new_connection_cb;
-    CallBack m_del_connection_cb;
-    CallBack m_revc_msg_cb;
-    CallBack m_write_complete_cb;
+    static CallBack m_new_connection_cb;
+    static CallBack m_del_connection_cb;
+    static CallBack m_revc_msg_cb;
+    static CallBack m_write_complete_cb;
 
  private:
     EventLoop *m_loop;

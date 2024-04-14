@@ -6,7 +6,6 @@
 #include "non_copyable.h"
 #include "server_thread.h"
 #include "socket_opt.h"
-#include "spdlog/spdlog.h"
 #include "tcp_connection.h"
 #include <memory>
 #include <string>
@@ -20,17 +19,13 @@ CallBack TcpServer::m_del_connection_cb;
 CallBack TcpServer::m_revc_msg_cb;
 CallBack TcpServer::m_write_complete_cb;
 
-TcpServer::TcpServer(unsigned int numEventThreads,
-                     const InetAddress &listenAddr,
-                     const std::string &nameArg,
-                     bool isReusePort, EventLoop *pMainLoop)
-    : m_loop(pMainLoop),
+TcpServer::TcpServer(const std::string &nameArg, unsigned int numEventThreads,
+                     const InetAddress &listenAddr)
+    : m_loop(new EventLoop()),
       m_addr(listenAddr),
       m_name(nameArg),
       m_thread_cnt(numEventThreads) {
-    if (pMainLoop != NULL) {
-        m_acceptor = make_unique<Acceptor>(this, listenAddr, isReusePort);
-    }
+    m_acceptor = make_unique<Acceptor>(this, listenAddr, true);
 }
 
 TcpServer::~TcpServer() {
@@ -40,6 +35,7 @@ TcpServer::~TcpServer() {
     m_connections_map.clear();
 }
 
+//应该先loop，然后再acceptor
 void TcpServer::start() {
     // 1,开启子线程(如果是子线程,这里直接跳过)
     startThreadPool();
@@ -48,6 +44,10 @@ void TcpServer::start() {
     if (m_acceptor) {
         m_acceptor->StartListen();
     }
+    m_loop->Loop();
+
+    // 3,发生错误
+    LOG_ERROR("Svr {} error, quit", m_name);
 }
 
 void TcpServer::join_thread() {

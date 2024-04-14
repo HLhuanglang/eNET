@@ -1,7 +1,7 @@
 #include "io_event.h"
 
 #include "event_loop.h"
-#include "spdlog/spdlog.h"
+#include "log.h"
 #include <string>
 
 using namespace EasyNet;
@@ -89,21 +89,21 @@ void IOEvent::update_event_status(update_opt_e opt) {
                 break;
             }
             default:
-                spdlog::error("Unkown type: {}", cover_opt_to_string(opt));
+                LOG_ERROR("Unkown type: {}", cover_opt_to_string(opt));
         }
     } else {
         switch (opt) {
-            case update_opt_e::ENABLE:
-            case update_opt_e::DISABLE: {
+            case update_opt_e::ENABLE: {
                 Poller->AddEvent(this);
                 m_ioloop->Register(m_fd);
                 break;
             }
+            case update_opt_e::DISABLE:
             case update_opt_e::REMOVE: {
                 break;
             }
             default:
-                spdlog::error("Unkown type: {}", cover_opt_to_string(opt));
+                LOG_ERROR("Unkown type: {}", cover_opt_to_string(opt));
         }
     }
 }

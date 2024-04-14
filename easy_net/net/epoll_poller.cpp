@@ -6,7 +6,7 @@
 
 #include "io_event.h"
 
-#include "spdlog/spdlog.h"
+#include "log.h"
 
 using namespace EasyNet;
 
@@ -42,9 +42,9 @@ static_assert(EPOLLHUP == POLLHUP, "EPOLLHUPEPOLLHUP");
 EpollPoller::EpollPoller(EventLoop *loop) : Poller(loop) {
     m_epollfd = ::epoll_create1(0);
     if (m_epollfd < 0) {
-        spdlog::critical("epoll_create1 fail");
+        LOG_ERROR("epoll_create1 fail");
     }
-    spdlog::debug("epollfd={}", m_epollfd);
+    LOG_TRACE("epollfd={}", m_epollfd);
 }
 
 EpollPoller::~EpollPoller() {
@@ -72,7 +72,7 @@ void EpollPoller::Polling(int timeout_ms, active_events_t &events) {
     // timeout 0：不阻塞，立即返回，如果没有IO事件到达，就返回0
     int nfds = ::epoll_wait(m_epollfd, epoll_events, 1024, timeout_ms);
     if (nfds < 0) {
-        spdlog::critical("epoll_wait fail");
+        LOG_ERROR("epoll_wait fail");
     }
 
     // 2,处理IO事件
@@ -103,9 +103,9 @@ void EpollPoller::AddEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &event) < 0) {
-        spdlog::critical("epollfd={} add fd = {} events = {} fail", m_epollfd, fd, events);
+        LOG_ERROR("epollfd={} add fd = {} events = {} fail", m_epollfd, fd, events);
     } else {
-        spdlog::debug("epollfd={} add {} events = {}", m_epollfd, fd, events);
+        LOG_TRACE("epollfd={} add {} events = {}", m_epollfd, fd, events);
     }
 }
 
@@ -119,9 +119,9 @@ void EpollPoller::DelEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, &event) < 0) {
-        spdlog::critical("epollfd={} del fd = {} events = {} fail", m_epollfd, fd, events);
+        LOG_ERROR("epollfd={} del fd = {} events = {} fail", m_epollfd, fd, events);
     } else {
-        spdlog::debug("epollfd={} del {} events = {}", m_epollfd, fd, events);
+        LOG_TRACE("epollfd={} del {} events = {}", m_epollfd, fd, events);
     }
 }
 
@@ -135,8 +135,8 @@ void EpollPoller::ModEvent(IOEvent *ev) {
     event.data.ptr = ev;
 
     if (::epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &event) < 0) {
-        spdlog::critical("epollfd={} mod fd = {} events = {} fail", m_epollfd, fd, events);
+        LOG_ERROR("epollfd={} mod fd = {} events = {} fail", m_epollfd, fd, events);
     } else {
-        spdlog::debug("epollfd={} mod {} events = {}", m_epollfd, fd, events);
+        LOG_TRACE("epollfd={} mod {} events = {}", m_epollfd, fd, events);
     }
 }

@@ -9,6 +9,8 @@
 #include <signal.h>
 #include <thread>
 
+#include "log.h"
+
 // 后缀的参数只能是unsigned long long、long double、const char*或者const char* + size_t
 unsigned long long operator"" _s(unsigned long long s) {
     return s * 1000;
@@ -30,19 +32,15 @@ int main() {
     signal(SIGINT, sighandler);
 
     // 设置日志
-    spdlog::set_level(spdlog::level::debug);
-    spdlog::set_pattern("[%D %H:%M:%S.%e][%L][pid %t] %^%v%$");
+    EasyNet::LogInit(spdlog::level::debug);
 
-    // 1，创建epollfd、eventfd
-    EasyNet::EventLoop main_loop;
-
-    // 2，创建socketfd、idlefd
+    // 创建tcpsvr
     EasyNet::InetAddress addr("127.0.0.1", 8888);
-    EasyNet::TcpServer svr(2 * std::thread::hardware_concurrency(), addr, "tcpsvr-demo", true, &main_loop);
+    EasyNet::TcpServer svr("tcpsvr-demo", 2 * std::thread::hardware_concurrency(), addr);
 
-    // 3，设置业务回调
+    // 设置业务回调
     svr.set_new_connection_cb([](const EasyNet::tcp_connection_t &conn) {
-        spdlog::debug("Get New Conn");
+        LOG_DEBUG("Get New Conn");
     });
 
     svr.set_recv_msg_cb([](const EasyNet::tcp_connection_t &conn) {
@@ -51,24 +49,19 @@ int main() {
         if (msg.empty()) {
             global_counter.fetch_add(1, std::memory_order_relaxed);
         } else {
-            spdlog::debug("msg={}", msg);
+            LOG_DEBUG("msg={}", msg);
             conn->SendData(msg);
         }
     });
 
     svr.set_del_connection_cb([](const EasyNet::tcp_connection_t &conn) {
-        spdlog::debug("Remove Conn:{}", conn->GetConnName());
+        LOG_DEBUG("Remove Conn:{}", conn->GetConnName());
     });
 
     svr.set_write_complete_cb([](const EasyNet::tcp_connection_t &conn) {
-        spdlog::debug("Sent Complete: {}", conn->GetConnName());
+        LOG_DEBUG("Sent Complete: {}", conn->GetConnName());
     });
 
-    // 4，由此开启子线程
-    //  a.主线程开启监听
-    //  b.子线程开启监听+lopp
+    // 启动服务
     svr.start();
-
-    // 5，主线程loop
-    main_loop.Loop();
 }

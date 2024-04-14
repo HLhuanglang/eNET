@@ -30,13 +30,7 @@ class ServerThread;
 
 class TcpServer : public ConnOwner {
  public:
-    /// numEventThreads:需要创建的IO线程数量
-    /// 如果numEventThreads = 0, 则要求pMainLoop != NULL
-    /// 如果numEventThreads > 0, 则启动n个线程并用多个套接字并发监听同一个端口
-    TcpServer(unsigned int numEventThreads, const InetAddress &listenAddr,
-              const std::string &nameArg, bool isReusePort,
-              EventLoop *pMainLoop);
-
+    TcpServer(const std::string &svrname, unsigned int numEventThreads, const InetAddress &listenAddr);
     ~TcpServer();
 
     // 框架本身需要关心的接口
@@ -79,7 +73,7 @@ class TcpServer : public ConnOwner {
  private:
     void startThreadPool();
 
- public:
+ private:
     static CallBack m_new_connection_cb;
     static CallBack m_del_connection_cb;
     static CallBack m_revc_msg_cb;

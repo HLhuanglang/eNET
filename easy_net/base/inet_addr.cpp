@@ -1,5 +1,5 @@
 #include "inet_addr.h"
-#include "spdlog/spdlog.h"
+#include "log.h"
 #include <arpa/inet.h>
 #include <assert.h>
 #include <cstdint>
@@ -16,14 +16,14 @@ InetAddress::InetAddress(const char *ip, uint16_t port, bool ipv6) : m_ipv6(ipv6
         m_addr6.sin6_family = AF_INET6;
         m_addr6.sin6_port = htobe16(port);
         if (::inet_pton(AF_INET6, ip, &m_addr6.sin6_addr) <= 0) {
-            spdlog::critical("IPaddress Error");
+            LOG_ERROR("IPaddress Error");
         }
     } else {
         bzero(&m_addr, sizeof m_addr);
         m_addr.sin_family = AF_INET;
         m_addr.sin_port = htobe16(port);
         if (::inet_pton(AF_INET, ip, &m_addr.sin_addr) <= 0) {
-            spdlog::critical("IPaddress Error");
+            LOG_ERROR("IPaddress Error");
         }
     }
 }

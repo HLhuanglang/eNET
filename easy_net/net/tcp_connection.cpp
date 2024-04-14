@@ -11,7 +11,7 @@
 #include "socket_opt.h"
 
 #include "buffer.h"
-#include "spdlog/spdlog.h"
+#include "log.h"
 
 using namespace EasyNet;
 
@@ -58,7 +58,7 @@ void TcpConn::ProcessWriteEvent() {
         auto ret = SocketOpt::WriteBufferToFd(*m_write_buf, this->GetFD());
         if (ret < 0) {
             // 写入失败,表示当前连接出现问题了，直接断开
-            spdlog::error("WriteBufferToFd err");
+            LOG_ERROR("WriteBufferToFd err");
             m_owner->DelConn(shared_from_this());
         }
         if (ret == 0) {

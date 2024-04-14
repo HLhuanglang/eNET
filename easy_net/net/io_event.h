@@ -9,6 +9,7 @@
 #define __EASYNET_FD_EVENT_H
 
 #include "non_copyable.h"
+#include "socket_opt.h"
 #include <string>
 #include <vector>
 
@@ -42,7 +43,9 @@ class IOEvent : public EasyNet::NonCopyable {
           m_fd(fd) {
         // nothing todo
     }
-    virtual ~IOEvent() = default;
+    virtual ~IOEvent() {
+        SocketOpt::Close(m_fd);
+    }
 
     /// @brief 分发处理IO事件
     void DispatchEvent();

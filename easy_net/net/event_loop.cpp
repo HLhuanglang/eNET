@@ -8,10 +8,10 @@
 #include <vector>
 
 #include "io_event.h"
+#include "log.h"
 #include "non_copyable.h"
 #include "notify.h"
 #include "poller.h"
-#include "spdlog/spdlog.h"
 #include "timer_miniheap.h"
 
 namespace EasyNet {
@@ -39,10 +39,10 @@ EventLoop::EventLoop() : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL
     std::stringstream ss;
     ss << m_threadid;
     if (t_loopInThread) {
-        spdlog::critical("Another Loop bind in this thread:{}", ss.str());
+        LOG_ERROR("Another Loop bind in this thread:{}", ss.str());
     } else {
         t_loopInThread = this;
-        spdlog::info("EventLoop bind in this thread:{}", ss.str());
+        LOG_INFO("EventLoop bind in this thread:{}", ss.str());
     }
 }
 
