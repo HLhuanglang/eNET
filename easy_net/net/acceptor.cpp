@@ -11,6 +11,7 @@ using namespace EasyNet;
 
 void Acceptor::ProcessReadEvent() {
     InetAddress peerAddr;
+    // todo-hl：如果是采用ET模式,当一次性有很多连接时,需要使用while循环来处理所有连接.
     int acceptfd = SocketOpt::Accept(m_fd, peerAddr);
     LOG_TRACE("acceptfd={}", acceptfd);
     if (acceptfd < 0) {
