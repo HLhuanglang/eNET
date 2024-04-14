@@ -21,7 +21,7 @@ CallBack TcpServer::m_write_complete_cb;
 
 TcpServer::TcpServer(const std::string &nameArg, unsigned int numEventThreads,
                      const InetAddress &listenAddr)
-    : m_loop(new EventLoop()),
+    : m_loop(new EventLoop(nameArg + "_loop")),
       m_addr(listenAddr),
       m_name(nameArg),
       m_thread_cnt(numEventThreads) {
@@ -99,7 +99,7 @@ EventLoop *TcpServer::GetEventLoop() const {
 }
 
 void TcpServer::startThreadPool() {
-    for (int i = 0; i < m_thread_cnt; i++) {
+    for (int i = 1; i <= m_thread_cnt; i++) {
         std::unique_ptr<ServerThread> svr_thread = make_unique<ServerThread>("child_svr_" + std::to_string(i), this->m_addr);
         auto tmp_loop = svr_thread->StartServerThread();
         m_child_svr_vec.push_back(std::move(svr_thread));

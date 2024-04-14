@@ -12,6 +12,7 @@
 #include "non_copyable.h"
 #include "notify.h"
 #include "poller.h"
+#include "thread.h"
 #include "timer_miniheap.h"
 
 namespace EasyNet {
@@ -28,21 +29,21 @@ using namespace EasyNet;
 
 thread_local EventLoop *t_loopInThread = nullptr;
 
-EventLoop::EventLoop() : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL, this)),
-                         m_pending_func(false),
-                         m_quit(false),
-                         m_looping(false),
-                         m_threadid(std::this_thread::get_id()) {
+EventLoop::EventLoop(std::string name) : m_name(name),
+                                         m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL, this)),
+                                         m_pending_func(false),
+                                         m_quit(false),
+                                         m_looping(false),
+                                         m_threadid(GetCurrentThreadId()) {
     m_notifyer = make_unique<Notify>(this);
     m_timer_queue = make_unique<MiniHeapTimer>();
 
-    std::stringstream ss;
-    ss << m_threadid;
+    auto id = GetCurrentThreadId();
     if (t_loopInThread) {
-        LOG_ERROR("Another Loop bind in this thread:{}", ss.str());
+        LOG_ERROR("Another Loop bind in this thread:{}", id);
     } else {
         t_loopInThread = this;
-        LOG_INFO("EventLoop bind in this thread:{}", ss.str());
+        LOG_INFO("{} bind in this thread:{}", m_name, id);
     }
 }
 
@@ -81,7 +82,7 @@ void EventLoop::Loop() {
 }
 
 bool EventLoop::IsThreadInLoop() {
-    return m_threadid == std::this_thread::get_id();
+    return m_threadid == GetCurrentThreadId();
 }
 
 void EventLoop::RunInLoop(const pending_func_t &cb) {

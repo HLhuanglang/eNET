@@ -47,7 +47,6 @@ void ServerThread::threadEntry() {
         m_ready = true;
         m_cv.notify_all();
     }
-    LOG_INFO("ChildServer {} Run", m_name);
     svr.start();
 
     // 出现错误了

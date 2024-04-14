@@ -37,6 +37,11 @@ void TcpConn::SendData(const std::string &data) {
 void TcpConn::ProcessReadEvent() {
     auto n = SocketOpt::ReadFdToBuffer(*m_read_buf, this->GetFD());
     if (n > 0) {
+        // todo-hl：增加一个解包回调?
+        // 应用层注入解析回调函数，由easynet回调,
+        // if (m_owner->UpackStream(this->m_read_buf)) {
+        //     m_owner->RecvMsg(shared_from_this());
+        // }
         m_owner->RecvMsg(shared_from_this());
     } else if (n == 0) {
         // 对端关闭了连接

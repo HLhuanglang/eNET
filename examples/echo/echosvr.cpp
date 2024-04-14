@@ -35,8 +35,7 @@ int main() {
     EasyNet::LogInit(spdlog::level::debug);
 
     // 创建tcpsvr
-    EasyNet::InetAddress addr("127.0.0.1", 8888);
-    EasyNet::TcpServer svr("tcpsvr-demo", 2 * std::thread::hardware_concurrency(), addr);
+    EasyNet::TcpServer svr("echosvr", 2 * std::thread::hardware_concurrency() - 1, {"127.0.0.1", 8888});
 
     // 设置业务回调
     svr.set_new_connection_cb([](const EasyNet::tcp_connection_t &conn) {

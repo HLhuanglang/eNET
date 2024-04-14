@@ -1,6 +1,7 @@
 #ifndef __EASYNET_EVENT_LOOP_H
 #define __EASYNET_EVENT_LOOP_H
 
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -22,7 +23,7 @@ using pending_func_t = std::function<void()>;
 
 class EventLoop : public NonCopyable {
  public:
-    EventLoop();
+    EventLoop(std::string nameArg);
     ~EventLoop() = default;
 
  public:
@@ -64,7 +65,8 @@ class EventLoop : public NonCopyable {
     void _do_pending_functions();
 
  private:
-    std::thread::id m_threadid;                      // 当前loop绑定的线程id
+    std::string m_name;                              // loop名称
+    size_t m_threadid;                               // 当前loop绑定的线程id
     bool m_quit;                                     // 退出标志位
     bool m_looping;                                  // 是否正在循环
     active_events_t m_ready_events;                  // 当前loop上就绪的fd
