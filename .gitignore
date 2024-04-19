@@ -1,4 +1,3 @@
 .clangd
-.cache
 build
 tools/bin

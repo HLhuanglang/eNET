@@ -1,7 +1,6 @@
 #ifndef __EASYNET_ACCEPTOR_H
 #define __EASYNET_ACCEPTOR_H
 
-#include <asm-generic/errno-base.h>
 #include <cerrno>
 #include <fcntl.h>
 #include <memory>

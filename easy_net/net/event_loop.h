@@ -6,7 +6,6 @@
 #include <memory>
 #include <mutex>
 #include <sys/epoll.h>
-#include <thread>
 #include <unordered_set>
 #include <vector>
 
@@ -14,7 +13,6 @@
 #include "non_copyable.h"
 #include "notify.h"
 #include "poller.h"
-#include "timer.h"
 #include "timer_miniheap.h"
 
 namespace EasyNet {

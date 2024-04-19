@@ -2,9 +2,7 @@
 #include <csignal>
 #include <cstdio>
 #include <mutex>
-#include <sstream>
 #include <sys/epoll.h>
-#include <thread>
 #include <vector>
 
 #include "io_event.h"

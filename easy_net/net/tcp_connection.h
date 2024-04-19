@@ -7,10 +7,8 @@
 #include <chrono>
 #include <cstddef>
 #include <memory>
-#include <vector>
 
 #include "connection_owner.h"
-#include "event_loop.h"
 #include "inet_addr.h"
 #include "io_event.h"
 

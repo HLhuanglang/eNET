@@ -14,9 +14,7 @@
     "clangd.path": "/usr/bin/clangd",
     "clangd.checkUpdates": false,
     "clangd.arguments": [
-        //bear编译后会产出一个compile_commands.json
         "--compile-commands-dir=${workspaceFolder}/build",
-        //
         "--query-driver=/usr/bin/g++",
         // 在后台自动分析文件（基于complie_commands)
         "--background-index",
@@ -35,6 +33,8 @@
         "--clang-tidy",
         // clangd只输出error级别日志
         "--log=error",
+        //定期释放内存
+        "--malloc-trim",
     ],
     "cmake.buildDirectory": "${workspaceFolder}/build",
     "cmake.configureOnOpen": true

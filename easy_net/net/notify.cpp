@@ -3,7 +3,6 @@
 #include "io_event.h"
 #include "log.h"
 #include <cassert>
-#include <cstdint>
 #include <sys/eventfd.h>
 #include <unistd.h>
 

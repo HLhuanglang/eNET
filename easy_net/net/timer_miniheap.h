@@ -3,12 +3,9 @@
 
 #include <ctime>
 #include <fcntl.h>
-#include <functional>
 #include <queue>
 #include <sys/epoll.h>
-#include <utility>
 
-#include <iostream>
 #include <vector>
 
 #include "def.h"

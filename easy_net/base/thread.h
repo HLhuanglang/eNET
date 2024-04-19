@@ -1,5 +1,4 @@
 #include <cstddef>
-#include <thread>
 #ifdef _WIN32
 #    include <processthreadsapi.h>
 #elif defined(__linux__)

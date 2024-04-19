@@ -6,8 +6,6 @@
 #ifndef __EASYNET_TCP_SERVER_H
 #define __EASYNET_TCP_SERVER_H
 
-#include <cstddef>
-#include <map>
 #include <memory>
 #include <set>
 #include <string>
@@ -18,8 +16,6 @@
 #include "event_loop.h"
 #include "inet_addr.h"
 #include "tcp_connection.h"
-
-#include "buffer.h"
 
 namespace EasyNet {
 

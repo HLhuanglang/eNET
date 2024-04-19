@@ -2,7 +2,6 @@
 #include "socket_opt.h"
 #include "tcp_server.h"
 #include <arpa/inet.h>
-#include <asm-generic/errno-base.h>
 #include <cerrno>
 #include <netinet/in.h>
 #include <sys/socket.h>

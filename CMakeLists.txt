@@ -1,7 +1,6 @@
 # 设置最低cmake版本,3.6-Morden CMake
 cmake_minimum_required(VERSION 3.6)
 
-
 # ---------------------------------------------------------------------------------------
 # Start EasyNet project
 # ---------------------------------------------------------------------------------------
@@ -49,15 +48,12 @@ if(BUILD_WITH_HTTP)
 endif()
 file(GLOB_RECURSE BASE_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/base/*.cpp")
 file(GLOB_RECURSE NET_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/net/*.cpp")
-list(APPEND EASYNET_SOURCES ${BASE_SOURCES} ${NET_SOURCES} ${UTIL_SOURCES})
+list(APPEND EASYNET_SOURCES ${BASE_SOURCES} ${NET_SOURCES})
 add_library(${EASYNET_LIB_NAME} STATIC ${EASYNET_SOURCES})
 target_include_directories(${EASYNET_LIB_NAME}
   PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/base
-  PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/net)
-if(BUILD_WITH_HTTP)
-target_include_directories(${EASYNET_LIB_NAME}
-    PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/protocol/http)
-endif()
+  PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/net
+  PUBLIC $<IF:$<BOOL:${BUILD_WITH_HTTP}>,${CMAKE_SOURCE_DIR}/easy_net/protocol/http,>)
 target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 
 # ---------------------------------------------------------------------------------------
@@ -68,6 +64,10 @@ add_executable(EasyNetUnitTest ${EASYNET_UNITTEST_SOURCES})
 target_include_directories(EasyNetUnitTest PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
 target_link_libraries(EasyNetUnitTest ${EASYNET_LIB_NAME})
 target_link_libraries(EasyNetUnitTest gtest gtest_main)
+
+# ---------------------------------------------------------------------------------------
+# EasyNet库安装
+# ---------------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------------------
 # EasyNet使用案例

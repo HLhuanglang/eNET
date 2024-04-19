@@ -1,5 +1,4 @@
 #include "epoll_poller.h"
-#include <array>
 #include <strings.h>
 #include <sys/epoll.h>
 #include <unistd.h>

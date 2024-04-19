@@ -1,12 +1,6 @@
 #ifndef __EASYNET_CONNECTION_OWNER_H
 #define __EASYNET_CONNECTION_OWNER_H
 
-#include <cstddef>
-#include <functional>
-#include <memory>
-#include <string>
-
-#include "buffer.h"
 #include "def.h"
 #include "inet_addr.h"
 

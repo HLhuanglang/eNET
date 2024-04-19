@@ -5,7 +5,6 @@
 #include <ctime>
 #include <fcntl.h>
 #include <functional>
-#include <list>
 #include <sys/epoll.h>
 #include <utility>
 

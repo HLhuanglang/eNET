@@ -5,11 +5,9 @@
 #include "inet_addr.h"
 #include "non_copyable.h"
 #include "server_thread.h"
-#include "socket_opt.h"
 #include "tcp_connection.h"
 #include <memory>
 #include <string>
-#include <thread>
 #include <utility>
 
 using namespace EasyNet;
@@ -35,7 +33,7 @@ TcpServer::~TcpServer() {
     m_connections_map.clear();
 }
 
-//应该先loop，然后再acceptor
+// 应该先loop，然后再acceptor
 void TcpServer::start() {
     // 1,开启子线程(如果是子线程,这里直接跳过)
     startThreadPool();

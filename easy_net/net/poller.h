@@ -1,9 +1,6 @@
 #ifndef __EASYNET_POLLER_H
 #define __EASYNET_POLLER_H
 
-#include <map>
-#include <vector>
-
 #include "io_event.h"
 #include "non_copyable.h"
 
