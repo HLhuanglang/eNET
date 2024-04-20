@@ -53,16 +53,17 @@ size_t SocketOpt::ReadFdToBuffer(Buffer &buf, int fd) {
         n = ::readv(fd, vec, iovcnt);
     } while (n == -1 && errno == EINTR);
 
-    if (n < 0) {
-        // n=-1, errno= EAGAIN时表示 读缓冲区暂时没数据了,需要用户自己拆包确认数据有没有读全,没读全则继续.
-    } else if (static_cast<size_t>(n) <= read_size) {
+    if (n <= 0) {
+        return n;
+    }
+
+    if (static_cast<size_t>(n) <= read_size) {
         buf.AdvanceWriter(n);
     } else {
         // 读取的数量超过buf的容量,利用栈上空间.
         buf.SetWriterAddr(buf.GetBufferSize()); // 可写区域已经先被写满了
         buf.Append(extrabuf, n - read_size);
     }
-
     return n;
 }
 
