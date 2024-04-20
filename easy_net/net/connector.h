@@ -8,8 +8,8 @@
 namespace EasyNet {
 class Connector : public IOEvent {
  public:
-    Connector(EventLoop *loop, const InetAddress &addr, TcpClient *client)
-        : IOEvent(loop, -1),
+    Connector(TcpClient *client, const InetAddress &addr)
+        : IOEvent(client->GetEventLoop(), -1),
           m_client(client) {
         m_addr = addr;
     }

@@ -1,9 +1,9 @@
 #include "tcp_client.h"
-#include "def.h"
+#include "connector.h"
 
 using namespace EasyNet;
 
 TcpClient::TcpClient(EventLoop *loop, const InetAddress &addr)
     : m_loop(loop) {
-    // todo
+    m_connector = make_unique<Connector>(this, addr);
 }

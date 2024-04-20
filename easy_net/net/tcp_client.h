@@ -8,10 +8,10 @@
 #include "inet_addr.h"
 #include "tcp_connection.h"
 
+namespace EasyNet {
 // 前置声明
 class Connector;
 
-namespace EasyNet {
 class TcpClient : public ConnOwner {
  public:
     TcpClient(EventLoop *loop, const InetAddress &addr);
