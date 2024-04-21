@@ -32,3 +32,5 @@ Reactor 模型有三个重要的组件：
 ![](https://hl1998-1255562705.cos.ap-shanghai.myqcloud.com/Img/20240328145557.png)
 
 ## 使用同步IO模拟proactor模式
+
+本质上就是在线程中把数据读取完成，然后再通知上层。
