@@ -3,6 +3,7 @@
 #include <asm-generic/socket.h>
 #include <cerrno> // errno
 #include <cstddef>
+#include <cstring>
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/uio.h> // readv
@@ -174,7 +175,7 @@ int SocketOpt::Accept(int fd, InetAddress &perrAddr) {
 
     int connfd = ::accept(fd, (struct sockaddr *)&addr, &addrlen);
     if (connfd < 0) {
-        LOG_ERROR("accept error={}", errno);
+        LOG_ERROR("accept errno={} msg={}", errno, strerror(errno));
     }
     perrAddr.setSockAddrInet6(addr);
     SetFdNonblock(connfd);

@@ -63,6 +63,7 @@ void TcpServer::detach_thread() {
 void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {
     auto tcp_conn = std::make_shared<TcpConn>(this, fd, peerAddr);
     m_connections_map.insert(tcp_conn);
+    tcp_conn->SetStatus(TcpConn::ConnStatus::CONNECTED);
     tcp_conn->EnableRead();
     if (m_new_connection_cb != nullptr) {
         m_new_connection_cb(tcp_conn);

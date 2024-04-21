@@ -42,9 +42,7 @@ void TcpConn::ProcessReadEvent() {
         // }
         m_owner->RecvMsg(shared_from_this());
     } else if (n == 0) {
-        // 对端关闭了连接
-        // 1,从poller中删除
-        // 2,从eventloop中删除
+        m_status = ConnStatus::DISCONNECTED;
         m_owner->DelConn(shared_from_this());
     } else {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -52,6 +50,7 @@ void TcpConn::ProcessReadEvent() {
             return;
         }
         // 连接出现错误错误,删除链接
+        LOG_ERROR("ReadFdToBuffer err:{}-{}", errno, strerror(errno));
         m_owner->DelConn(shared_from_this());
     }
 }

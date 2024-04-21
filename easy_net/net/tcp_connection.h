@@ -23,10 +23,10 @@ class EventLoop;
 class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
  public:
     enum class ConnStatus {
-        Disconnected,
-        Connecting,
-        Connected,
-        Disconnecting
+        CONNECTING,    // 正在连接
+        CONNECTED,     // 已经连接
+        DISCONNECTING, // 正在断开连接(给客户端使用的,就是只关闭写端)
+        DISCONNECTED,  // 断开连接
     };
 
  public:
@@ -43,6 +43,7 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
 
         // 3,设置状态
         SocketOpt::SetKeepAlive(fd, true);
+        m_status = ConnStatus::CONNECTING;
     }
 
     ~TcpConn() override {
@@ -61,6 +62,7 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
     Buffer &GetReadBuf() { return *m_read_buf; }
     Buffer &GetWriteBuf() { return *m_write_buf; }
     std::string GetConnName() { return m_name; }
+    void SetStatus(ConnStatus status) { m_status = status; }
 
  public:
     void ProcessWriteEvent() override;
@@ -71,6 +73,7 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
     Buffer *m_read_buf;
     Buffer *m_write_buf;
     std::string m_name; // 连接的name
+    ConnStatus m_status;
 };
 
 } // namespace EasyNet

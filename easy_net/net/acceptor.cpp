@@ -1,6 +1,5 @@
 #include "acceptor.h"
 #include "socket_opt.h"
-#include "tcp_server.h"
 #include <arpa/inet.h>
 #include <cerrno>
 #include <netinet/in.h>
@@ -10,7 +9,12 @@ using namespace EasyNet;
 
 void Acceptor::ProcessReadEvent() {
     InetAddress peerAddr;
-    // todo-hl：如果是采用ET模式,当一次性有很多连接时,需要使用while循环来处理所有连接.
+    // accept是从已经完成三次握手的tcp队列中取出一个连接的。
+    // 假设在accept之前，客户端主动发送RST终止连接，如果监听套接字是阻塞的，那么服务器就会一直阻塞在accept调用上，直到新的连接到来accept才会返回。
+    // 所以一般socket()创建监听套接字后，都会设置成非阻塞的。
+    // 当客户在服务器调用 accept 之前中止某个连接时，accept 调用可以立即返回 -1
+    // 这时源自 Berkeley 的实现会在内核中处理该事件，并不会将该事件通知给 epoll
+    // 而其他实现把 errno 设置为 ECONNABORTED 或者 EPROTO 错误，我们应该忽略这两个错误。
     int acceptfd = SocketOpt::Accept(m_fd, peerAddr);
     LOG_TRACE("acceptfd={}", acceptfd);
     if (acceptfd < 0) {

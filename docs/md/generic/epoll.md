@@ -64,12 +64,14 @@ epoll_ctl(epfd, EPOLL_CTL_ADD, client_fd, &ee);
 
 epoll是怎么知道哪个io就绪了呢？我们从ip头可以解析出源ip，目的ip和协议，从tcp头可以解析出源端口和目的端口，此时五元组就凑齐了。socket fd --- <源IP地址, 源端口, 目的IP地址, 目的端口, 协议> 一个fd就是一个五元组，知道了fd，我们就能从红黑树中找到对应的结点。
 
-通知的时机有5个地方：
+通知的时机：(服务端)
 - **三次握手完成后**：协议栈会往全连接队列中添加一个TCB结点，然后触发一个回调函数，通知到epoll里面有个EPOLLIN事件。
 - **接收数据回复ACK之后**：客户端发送一个数据包，服务端协议栈接收后回复ACK，之后触发一个回调函数，通知到epoll里面有个EPOLLIN事件。
 - **发送数据收到ACK之后**：每个连接的TCB里面都有一个sendbuf，在对端接收到数据并返回ACK以后，sendbuf就可以将这部分确认接收的数据清空，此时sendbuf里面就有剩余空间，此时触发一个回调函数，通知到epoll里面有个EPOLLOUT事件。
-- **接收FIN回复ACK之后**： 当对端close后，接收到FIN报文后后回复对端ACK，此时会调用回调函数，通知到epoll有个EPOLLIN事件(此时read返回0)。
+- **接收FIN回复ACK之后**： 客户端close后，服务端接收到FIN报文后后回复对端ACK，此时会调用回调函数，通知到epoll有个EPOLLIN事件(此时read返回0)。
 - **接收RST回复ACK之后**：对端发送RST报文，回复ack之后也会触发回调函数，通知epoll有一个EPOLLERR事件。
+
+通知的时机：(客户端)
 
 ## ET和LT是如何实现的
 

@@ -39,9 +39,10 @@ cmake --build build
 
 ## 6.参考项目/文章/论文
 
-- [muduo](https://github.com/chenshuo/muduo)
-- [trantor](https://github.com/an-tao/trantor)
 - [Easy-Reactor](https://github.com/LeechanX/Easy-Reactor)
+- [muduo](https://github.com/chenshuo/muduo)
+- [sim_muduo](https://gitee.com/coolbaul/sim_muduo)
+- [trantor](https://github.com/an-tao/trantor)
 
 ## 7.授权许可
 本项目采用 MIT 开源授权许可证，完整的授权说明已放置在 [LICENSE](LICENSE) 文件中。
