@@ -15,6 +15,8 @@
 - gcc>=4.8.1(支持c++11)
 - git
 - cmake
+- geogletest：tag release-1.12.1
+- spdlog：tag v1.13.0
 
 ## 4.编译运行
 
@@ -35,7 +37,7 @@ cmake --build build
 | raw_examples | socket系列接口的原生使用方法、优秀的网络库使用案例 |
 | test         | 测试代码                                           |
 | build        | 编译的中间产物、可执行程序等     |
-| third_party      | 依赖使用的第三方库                                 |
+| tools      | 工具                                 |
 
 ## 6.参考项目/文章/论文
 

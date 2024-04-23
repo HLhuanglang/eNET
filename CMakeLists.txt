@@ -30,12 +30,15 @@ endif()
 # ---------------------------------------------------------------------------------------
 # config thrid_party
 # ---------------------------------------------------------------------------------------
-# 编译gtest库
-add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/gtest)
-enable_testing()
+find_package(GTest REQUIRED)
+if (GTest_FOUND)
+  message(STATUS "GTest found")
+endif()
 
-# 编译spdlog库
-add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/spdlog)
+find_package(spdlog REQUIRED)
+if (spdlog_FOUND)
+  message(STATUS "spdlog found")
+endif()
 
 # ---------------------------------------------------------------------------------------
 # EasyNet库编译
@@ -48,7 +51,7 @@ if(BUILD_WITH_HTTP)
 endif()
 file(GLOB_RECURSE BASE_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/base/*.cpp")
 file(GLOB_RECURSE NET_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/net/*.cpp")
-list(APPEND EASYNET_SOURCES ${BASE_SOURCES} ${NET_SOURCES})
+list(APPEND EASYNET_SOURCES ${BASE_SOURCES} ${NET_SOURCES})  
 add_library(${EASYNET_LIB_NAME} STATIC ${EASYNET_SOURCES})
 target_include_directories(${EASYNET_LIB_NAME}
   PUBLIC ${CMAKE_SOURCE_DIR}/easy_net/base
@@ -61,13 +64,11 @@ target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 # ---------------------------------------------------------------------------------------
 file(GLOB_RECURSE EASYNET_UNITTEST_SOURCES "${CMAKE_SOURCE_DIR}/test/*.cpp")
 add_executable(EasyNetUnitTest ${EASYNET_UNITTEST_SOURCES})
-target_include_directories(EasyNetUnitTest PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
+target_include_directories(EasyNetUnitTest 
+  PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
 target_link_libraries(EasyNetUnitTest ${EASYNET_LIB_NAME})
-target_link_libraries(EasyNetUnitTest gtest gtest_main)
+target_link_libraries(EasyNetUnitTest GTest::gtest GTest::gtest_main)
 
-# ---------------------------------------------------------------------------------------
-# EasyNet库安装
-# ---------------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------------------
 # EasyNet使用案例
