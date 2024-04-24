@@ -30,12 +30,12 @@ endif()
 # ---------------------------------------------------------------------------------------
 # config thrid_party
 # ---------------------------------------------------------------------------------------
-find_package(GTest REQUIRED)
+find_package(GTest 1.12.1 EXACT REQUIRED)
 if (GTest_FOUND)
   message(STATUS "GTest found")
 endif()
 
-find_package(spdlog REQUIRED)
+find_package(spdlog 1.13.0 EXACT REQUIRED)
 if (spdlog_FOUND)
   message(STATUS "spdlog found")
 endif()
