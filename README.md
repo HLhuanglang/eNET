@@ -21,7 +21,7 @@
 ## 4.编译运行
 
 ```
-git clone --recurse-submodules https://github.com/HLhuanglang/EasyNet.git
+git clone https://github.com/HLhuanglang/EasyNet.git
 cmake -S . -B build
 cmake --build build
 ```
