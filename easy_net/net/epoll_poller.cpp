@@ -79,13 +79,13 @@ void EpollPoller::Polling(int timeout_ms, active_events_t &events) {
         int mask = 0;
         struct epoll_event e = epoll_events[i];
         auto *ev = static_cast<IOEvent *>(e.data.ptr);
-        if (e.events & EPOLLIN)
+        if (e.events & (POLLIN | POLLPRI | POLLRDHUP))
             mask |= IOEvent_READABLE;
-        if (e.events & EPOLLOUT)
+        if (e.events & POLLOUT)
             mask |= IOEvent_WRITEABLE;
-        if (e.events & EPOLLERR)
+        if (e.events & (POLLNVAL | POLLERR))
             mask |= IOEvent_WRITEABLE | IOEvent_READABLE;
-        if (e.events & EPOLLHUP)
+        if (e.events & POLLHUP)
             mask |= IOEvent_WRITEABLE | IOEvent_READABLE;
         ev->SetFiredEvents(mask);
         events.push_back(ev);

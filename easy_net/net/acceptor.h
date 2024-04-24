@@ -29,10 +29,7 @@ class IdleFD {
         ::close(m_idlefd);
     }
 
-    // 基于one thread perr loop模型,一个tcp_server就是一个单线程,不存在竞争问题
-    // 并且重复打开同一个文件会得到不同的fd
     void ReAccept(int fd) {
-        std::lock_guard<std::mutex> lgmtx(m_mtx);
         // 1,释放fd用于处理新的链接
         ::close(m_idlefd);
         // 2,处理链接
@@ -48,7 +45,6 @@ class IdleFD {
 
  private:
     int m_idlefd;
-    std::mutex m_mtx;
 };
 
 class Acceptor : public IOEvent {

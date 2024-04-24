@@ -19,7 +19,7 @@ class Connector : public IOEvent {
  public:
  private:
     InetAddress m_addr;
-    TcpClient *m_client; // 当前acceptor属于哪一个TcpServer,生命周期由TcpServer控制
+    TcpClient *m_client; // 当前connector属于哪一个TcpClient,生命周期由TcpClient控制
 };
 } // namespace EasyNet
 

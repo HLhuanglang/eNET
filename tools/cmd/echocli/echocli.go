@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 const (
@@ -19,14 +20,16 @@ func SocketClient(ip, port string, index int) bool {
 	// 根据端口拼接网络地址
 	addr := strings.Join([]string{ip, port}, ":")
 
+	// 连接服务器
 	conn, err := net.Dial("tcp", addr)
-
 	if err != nil {
-		fmt.Printf("err:%+v\n", err)
 		return false
 	}
+	defer func() {
+		fmt.Println(conn.LocalAddr().String() + " Close")
+		conn.Close()
+	}()
 
-	defer conn.Close()
 	// 写入发送消息
 	msg := message + "_" + strconv.Itoa(index)
 	_, err = conn.Write([]byte(msg))
@@ -35,16 +38,19 @@ func SocketClient(ip, port string, index int) bool {
 		return false
 	}
 
+	// 读取返回消息
 	buff := make([]byte, 1024)
-	// 循环读取消息，响应服务器
 	n, err := conn.Read(buff)
 	if err != nil {
 		fmt.Printf("Read Err:%+v\n", err)
 		return false
 	}
 	recv_msg := string(buff[:n])
-	fmt.Printf("LocalAddr=%+v send_msg=%v recv_msg=%v\n", conn.LocalAddr().String(), msg, recv_msg)
-	return recv_msg == msg
+	if recv_msg != msg {
+		fmt.Printf("LocalAddr=%+v send_msg=%v recv_msg=%v\n", conn.LocalAddr().String(), msg, recv_msg)
+		return false
+	}
+	return true
 }
 
 func main() {
@@ -62,15 +68,17 @@ func main() {
 	}
 
 	wg := sync.WaitGroup{}
+	var count int64
 	for i := 1; i <= cnt; i++ {
 		//time.Sleep(1 * time.Millisecond)
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
 			if !SocketClient(ip, port, i) {
-				return
+				atomic.AddInt64(&count, 1)
 			}
 		}(i)
 	}
 	wg.Wait()
+	fmt.Printf("Total=%v Fail=%v\n", cnt, count)
 }
