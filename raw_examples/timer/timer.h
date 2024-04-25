@@ -4,11 +4,8 @@
 #include <ctime>
 #include <fcntl.h>
 #include <functional>
-#include <list>
 #include <sys/epoll.h>
 #include <utility>
-
-#include <iostream>
 
 enum timer_type {
     E_EVERY,

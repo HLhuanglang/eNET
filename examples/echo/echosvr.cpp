@@ -1,8 +1,5 @@
-#include "event_loop.h"
 #include "inet_addr.h"
 #include "spdlog/common.h"
-#include "spdlog/spdlog.h"
-#include "tcp_connection.h"
 #include "tcp_server.h"
 #include <atomic>
 #include <iostream>

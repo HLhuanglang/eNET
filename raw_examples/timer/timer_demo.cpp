@@ -1,13 +1,11 @@
-#include "list.h"
 #include "miniheap.h"
-#include "timewheel.h"
 
 #include "timer.h"
 
 #include <iostream>
 #include <unistd.h>
 
-//后缀的参数只能是unsigned long long、long double、const char*或者const char* + size_t
+// 后缀的参数只能是unsigned long long、long double、const char*或者const char* + size_t
 unsigned long long operator"" _s(unsigned long long s) {
     return s * 1000;
 }
@@ -17,7 +15,7 @@ unsigned long long operator"" _ms(unsigned long long ms) {
 }
 
 int main() {
-    //基于有序链表的定时器
+    // 基于有序链表的定时器
     timer_manager<miniheap_timer> tm;
 
     tm.run_after(10_s, [](int) {

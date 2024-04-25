@@ -11,7 +11,7 @@
 #include "notify.h"
 #include "poller.h"
 #include "thread.h"
-#include "timer_miniheap.h"
+#include "timer_list.h"
 
 namespace EasyNet {
 class IgnoreSigPipe {
@@ -34,7 +34,7 @@ EventLoop::EventLoop(std::string name) : m_name(name),
                                          m_looping(false),
                                          m_threadid(GetCurrentThreadId()) {
     m_notifyer = make_unique<Notify>(this);
-    m_timer_queue = make_unique<MiniHeapTimer>();
+    m_timer_queue = make_unique<ListTimer>();
 
     auto id = GetCurrentThreadId();
     if (t_loopInThread) {
@@ -108,6 +108,14 @@ void EventLoop::Quit() {
     if (!IsThreadInLoop()) {
         m_notifyer->WakeUp();
     }
+}
+
+void EventLoop::TimerAfter(const TimerCallBack &cb, int interval) {
+    m_timer_queue->add_timer(interval, TimerType::E_AFTER, cb);
+}
+
+void EventLoop::TimerEvery(const TimerCallBack &cb, int interval) {
+    m_timer_queue->add_timer(interval, TimerType::E_EVERY, cb);
 }
 
 void EventLoop::_do_pending_functions() {
