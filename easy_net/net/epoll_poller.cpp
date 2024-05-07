@@ -21,7 +21,7 @@ using namespace EasyNet;
 /// POLLWRBAND 0x0200 可以不阻塞的写优先级带数据
 ///
 /// POLLERR    0x0008 发生错误
-/// POLLHUP    0x0010 管道的写端被关闭，读端描述符上接收到这个事件
+/// POLLHUP    0x0010 管道的写端被关闭，读端描述符上接收到这个事件(对端调用shoutdown(SHUT_WR)表示不再写入数据,此时本端感知到)
 /// POLLNVAL   0x0020 描述符不是一个打开的文件
 ///
 /// POLLRDHUP  0x2000 TCP连接被对方关闭，或者对方关闭了写操作

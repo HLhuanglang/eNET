@@ -220,3 +220,9 @@ void SocketOpt::ShutDownWrite(int sockfd) {
         LOG_ERROR("shutdownWrite error");
     }
 }
+
+void SocketOpt::ShutDownRead(int sockfd) {
+    if (::shutdown(sockfd, SHUT_RD) < 0) {
+        LOG_ERROR("shutDownRead error");
+    }
+}

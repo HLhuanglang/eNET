@@ -94,6 +94,7 @@ class SocketOpt {
     static void Close(int fd);
 
     static void ShutDownWrite(int fd);
+    static void ShutDownRead(int fd);
 };
 } // namespace EasyNet
 

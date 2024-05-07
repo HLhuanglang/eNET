@@ -42,8 +42,13 @@ void TcpConn::ProcessReadEvent() {
         // }
         m_owner->RecvMsg(shared_from_this());
     } else if (n == 0) {
-        m_status = ConnStatus::DISCONNECTED;
-        m_owner->DelConn(shared_from_this());
+        // 当read返回0时,一定是表示对端关闭了连接
+        // 如果只是本次数据传输完了,read会返回-1,并设置errno=EGAIN或EWOULDBLOCK,此时链接还继续保持.
+        m_status = ConnStatus::DISCONNECTING;
+        if (m_write_buf->GetReadableSize() == 0) {
+            m_owner->DelConn(shared_from_this());
+            m_status = ConnStatus::DISCONNECTED;
+        }
     } else {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
             // 对端没有数据可读
@@ -56,6 +61,12 @@ void TcpConn::ProcessReadEvent() {
 }
 
 void TcpConn::ProcessWriteEvent() {
+    if (m_status == ConnStatus::DISCONNECTED) {
+        LOG_INFO("Connection has been disconnected");
+        m_owner->DelConn(shared_from_this());
+        return;
+    }
+
     while (m_write_buf->GetReadableSize() != 0U) {
         auto ret = SocketOpt::WriteBufferToFd(*m_write_buf, this->GetFD());
         if (ret < 0) {
@@ -69,7 +80,13 @@ void TcpConn::ProcessWriteEvent() {
         }
     }
     if (m_write_buf->GetReadableSize() == 0) {
-        // 无数据可写了,将EPOLLOUT事件删除，避免一直触发
+        // 无数据可写了,如果对端关闭了写,那么就断开连接
+        // 如果链接正常，则将EPOLLOUT事件删除，避免一直触发
+        if (m_status == ConnStatus::DISCONNECTING) {
+            m_owner->DelConn(shared_from_this());
+            m_status = ConnStatus::DISCONNECTED;
+            return;
+        }
         this->DisableWrite();
         m_owner->WriteComplete(shared_from_this());
     }
