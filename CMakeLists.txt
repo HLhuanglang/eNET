@@ -67,7 +67,8 @@ target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 # ---------------------------------------------------------------------------------------
 # EasyNet库安装
 # ---------------------------------------------------------------------------------------
-# 安装头文件和库
+# 安装头文件和库 
+# --头文件
 set(easynet_public_headers
     easy_net/net/tcp_server.h
     easy_net/net/connection_owner.h
@@ -97,9 +98,15 @@ set(easynet_public_headers
     easy_net/base/sigleton.h)
 install(FILES ${easynet_public_headers}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
+# 这种模式,需要项目所有的头文件放到include目录下 
+# install( DIRECTORY
+# ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION
+# ${CMAKE_INSTALL_INCLUDEDIR}/easynet )
+
+# --库和可执行文件
 install(
   TARGETS easynet
-  EXPORT easynet
+  EXPORT EasyNetTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} # 动态库安装路径
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} # 静态库安装路径
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}) # 可执行文件安装路径
@@ -108,23 +115,27 @@ install(
 set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/easynetConfig.cmake.in")
 set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/easynetConfig.cmake")
 set(config_targets_file "easynetConfigTargets.cmake")
-set(version_config_file
-    "${CMAKE_CURRENT_BINARY_DIR}/easynetConfigVersion.cmake")
+set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/easynetConfigVersion.cmake")
 set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake/easynet")
-export(TARGETS easynet
-       FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
-install(
-  EXPORT easynet
-  DESTINATION ${export_dest_dir}
-  FILE ${config_targets_file})
+
+# --根据配置模板，生成并安装包配置文件easynetConfig.cmake
 include(CMakePackageConfigHelpers)
 configure_package_config_file("${project_config_in}" "${project_config_out}"
                               INSTALL_DESTINATION ${export_dest_dir})
+install(FILES "${project_config_out}" DESTINATION ${export_dest_dir}) 
 
+# --生成并安装easynetConfigVersion.cmake
 write_basic_package_version_file("${version_config_file}"
                                  COMPATIBILITY SameMajorVersion)
-install(FILES "${project_config_out}" "${version_config_file}"
-        DESTINATION "${export_dest_dir}")
+install(FILES "${version_config_file}" DESTINATION ${export_dest_dir})
+
+# --生成并安装easynetConfigTargets.cmake
+export(TARGETS easynet
+       FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
+install(
+  EXPORT EasyNetTargets
+  FILE ${config_targets_file}
+  DESTINATION ${export_dest_dir})
 
 # ---------------------------------------------------------------------------------------
 # EasyNet库单元测试
