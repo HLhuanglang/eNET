@@ -83,6 +83,7 @@ void TcpConn::ProcessWriteEvent() {
         // 无数据可写了,如果对端关闭了写,那么就断开连接
         // 如果链接正常，则将EPOLLOUT事件删除，避免一直触发
         if (m_status == ConnStatus::DISCONNECTING) {
+            LOG_INFO("Connection is disconnecting and no more data to send");
             m_owner->DelConn(shared_from_this());
             m_status = ConnStatus::DISCONNECTED;
             return;

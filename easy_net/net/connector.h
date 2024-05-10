@@ -9,17 +9,35 @@ namespace EasyNet {
 class Connector : public IOEvent {
  public:
     Connector(TcpClient *client, const InetAddress &addr)
-        : IOEvent(client->GetEventLoop(), -1),
-          m_client(client) {
+        : IOEvent(client->GetEventLoop(), -1), // Connector本身不持有fd
+          m_client(client),
+          m_status(ConnectState::DISCONNECTED) {
         m_addr = addr;
+        m_retry_delay_ms = KInitRetryTimeMS;
     }
 
     ~Connector() = default;
 
  public:
+    void ProcessWriteEvent() override;
+
+ public:
+    void Connect();
+
  private:
-    InetAddress m_addr;
-    TcpClient *m_client; // 当前connector属于哪一个TcpClient,生命周期由TcpClient控制
+    void Retry();
+    void ReConnect();
+
+ private:
+    enum class ConnectState {
+        DISCONNECTED,
+        CONNECTING,
+        CONNECTED
+    };
+    ConnectState m_status; // 当前连接状态
+    InetAddress m_addr;    // 服务端地址
+    TcpClient *m_client;   // 当前connector属于哪一个TcpClient,生命周期由TcpClient控制
+    int m_retry_delay_ms;  // 重试时间
 };
 } // namespace EasyNet
 

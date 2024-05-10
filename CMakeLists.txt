@@ -37,7 +37,7 @@ if(GTest_FOUND)
   message(STATUS "GTest found")
 endif()
 
-find_package(spdlog 1.13.0 EXACT REQUIRED)
+find_package(spdlog REQUIRED)
 if(spdlog_FOUND)
   message(STATUS "spdlog found")
 endif()
@@ -67,6 +67,7 @@ target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 # ---------------------------------------------------------------------------------------
 # EasyNet库安装
 # ---------------------------------------------------------------------------------------
+add_library(easynet::easynet ALIAS easynet)
 # 安装头文件和库 
 # --头文件
 set(easynet_public_headers
@@ -131,9 +132,11 @@ install(FILES "${version_config_file}" DESTINATION ${export_dest_dir})
 
 # --生成并安装easynetConfigTargets.cmake
 export(TARGETS easynet
+       NAMESPACE easynet::
        FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
 install(
   EXPORT EasyNetTargets
+  NAMESPACE easynet::
   FILE ${config_targets_file}
   DESTINATION ${export_dest_dir})
 

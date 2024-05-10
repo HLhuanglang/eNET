@@ -4,7 +4,6 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <memory>
-#include <mutex>
 #include <sys/socket.h>
 #include <unistd.h>
 

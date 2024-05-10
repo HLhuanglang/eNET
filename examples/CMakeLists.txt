@@ -1,7 +1,13 @@
-# echosvr
+# echo
+# - echosvr
 add_executable(echosvr echo/echosvr.cpp)
 target_include_directories(echosvr PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
 target_link_libraries(echosvr ${EASYNET_LIB_NAME})
+
+# - echocli
+add_executable(echocli echo/echocli.cpp)
+target_include_directories(echocli PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
+target_link_libraries(echocli ${EASYNET_LIB_NAME})
 
 # timer
 add_executable(timer timer/timer.cpp)
