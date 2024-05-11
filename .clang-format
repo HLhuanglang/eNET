@@ -1,11 +1,11 @@
-BasedOnStyle: LLVM
+---
+Language: Cpp # this format style is targeted at. Cpp for c, c++, oc, oc++.
+BasedOnStyle: Google
 UseTab: Never
 IndentWidth: 4
 TabWidth: 4
-
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLambdasOnASingleLine: None
-
 IndentCaseLabels: true
 ColumnLimit: 0
 AccessModifierOffset: -3

@@ -48,7 +48,7 @@ endif()
 set(EASYNET_LIB_NAME "easynet")
 option(BUILD_WITH_HTTP "是否编译http协议模块" OFF)
 if(BUILD_WITH_HTTP)
-  file(GLOB_RECURSE HTTP_SOURCES "protocol/http/*.cpp")
+  file(GLOB_RECURSE HTTP_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.cpp" "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.c")
   list(APPEND EASYNET_SOURCES ${HTTP_SOURCES})
 endif()
 file(GLOB_RECURSE BASE_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/base/*.cpp")
@@ -70,7 +70,7 @@ target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 add_library(easynet::easynet ALIAS easynet)
 # 安装头文件和库 
 # --头文件
-set(easynet_public_headers
+set(easynet_core_headers
     easy_net/net/tcp_server.h
     easy_net/net/connection_owner.h
     easy_net/net/poll_poller.h
@@ -97,7 +97,20 @@ set(easynet_public_headers
     easy_net/base/non_copyable.h
     easy_net/base/thread.h
     easy_net/base/sigleton.h)
-install(FILES ${easynet_public_headers}
+install(FILES ${easynet_core_headers}
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
+set(easynet_http_headers
+    easy_net/protocol/http/http_headers.h
+    easy_net/protocol/http/http_router.h
+    easy_net/protocol/http/http_response.h
+    easy_net/protocol/http/http_request.h
+    easy_net/protocol/http/http_context.h
+    easy_net/protocol/http/http_parser.h
+    easy_net/protocol/http/http_def.h
+    easy_net/protocol/http/http_client.h
+    easy_net/protocol/http/http_server.h
+)
+install(FILES ${easynet_http_headers}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 # 这种模式,需要项目所有的头文件放到include目录下 
 # install( DIRECTORY

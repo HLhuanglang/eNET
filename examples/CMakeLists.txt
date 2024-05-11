@@ -13,3 +13,9 @@ target_link_libraries(echocli ${EASYNET_LIB_NAME})
 add_executable(timer timer/timer.cpp)
 target_include_directories(timer PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
 target_link_libraries(timer ${EASYNET_LIB_NAME})
+
+# http
+# -httpsvr
+add_executable(httpsvr http/httpsvr.cpp)
+target_include_directories(httpsvr PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
+target_link_libraries(httpsvr ${EASYNET_LIB_NAME})
