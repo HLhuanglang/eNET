@@ -1,9 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <unistd.h>
+
+#include <cstdio>
+#include <cstdlib>
 
 #define SOCKET_NAME "/tmp/my_socket"
 
@@ -24,7 +25,7 @@ int main() {
     // 绑定套接字
     server_addr.sun_family = AF_UNIX;
     strncpy(server_addr.sun_path, SOCKET_NAME, sizeof(server_addr.sun_path) - 1);
-    unlink(SOCKET_NAME); // bind时会创建文件,如果不提前删除了就会导致bind失败...
+    unlink(SOCKET_NAME);  // bind时会创建文件,如果不提前删除了就会导致bind失败...
     if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_un)) == -1) {
         perror("bind");
         exit(EXIT_FAILURE);

@@ -1,7 +1,9 @@
-#include "notify.h"
+#include <unistd.h>
+
 #include <cassert>
 #include <cstdint>
-#include <unistd.h>
+
+#include "notify.h"
 
 notifier::notifier() {
     int fd[2];

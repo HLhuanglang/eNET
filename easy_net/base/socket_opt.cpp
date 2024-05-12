@@ -1,13 +1,16 @@
 #include "socket_opt.h"
-#include "log.h"
+
 #include <asm-generic/socket.h>
-#include <cerrno> // errno
-#include <cstddef>
-#include <cstring>
 #include <fcntl.h>
 #include <sys/socket.h>
-#include <sys/uio.h> // readv
-#include <unistd.h>  // read
+#include <sys/uio.h>  // readv
+#include <unistd.h>   // read
+
+#include <cerrno>  // errno
+#include <cstddef>
+#include <cstring>
+
+#include "log.h"
 
 using namespace EasyNet;
 
@@ -62,7 +65,7 @@ size_t SocketOpt::ReadFdToBuffer(Buffer &buf, int fd) {
         buf.AdvanceWriter(n);
     } else {
         // 读取的数量超过buf的容量,利用栈上空间.
-        buf.SetWriterAddr(buf.GetBufferSize()); // 可写区域已经先被写满了
+        buf.SetWriterAddr(buf.GetBufferSize());  // 可写区域已经先被写满了
         buf.Append(extrabuf, n - read_size);
     }
     return n;
@@ -83,7 +86,7 @@ size_t SocketOpt::WriteBufferToFd(Buffer &buf, int fd) {
     if (n > 0) {
         buf.AdvanceReader(n);
     }
-    return n; // 当n=-1,且errno不为EAGAIN和EWOULDBLOCK时,就表示出错了
+    return n;  // 当n=-1,且errno不为EAGAIN和EWOULDBLOCK时,就表示出错了
 }
 
 bool SocketOpt::SetFdNonblock(int fd) {

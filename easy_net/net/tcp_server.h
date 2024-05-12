@@ -76,15 +76,15 @@ class TcpServer : public ConnOwner {
     static CallBack m_write_complete_cb;
 
  private:
-    EventLoop *m_loop;                                          // 每一个tcp服务器都应该有一个loop,用来处理各种事件
-    std::unique_ptr<Acceptor> m_acceptor;                       // 主线程中负责处理链接请求
-    InetAddress m_addr;                                         // 服务器监听的地址
-    std::string m_name;                                         // 服务器名称
-    unsigned int m_thread_cnt;                                  // 服务器启动的线程数量
-    std::set<std::shared_ptr<TcpConn>> m_connections_map;       // 当前持有的tcp链接
-    std::vector<std::unique_ptr<ServerThread>> m_child_svr_vec; // 子线程
-    std::vector<EventLoop *> m_child_loop_vec;                  // 子线程的loop
+    EventLoop *m_loop;                                           // 每一个tcp服务器都应该有一个loop,用来处理各种事件
+    std::unique_ptr<Acceptor> m_acceptor;                        // 主线程中负责处理链接请求
+    InetAddress m_addr;                                          // 服务器监听的地址
+    std::string m_name;                                          // 服务器名称
+    unsigned int m_thread_cnt;                                   // 服务器启动的线程数量
+    std::set<std::shared_ptr<TcpConn>> m_connections_map;        // 当前持有的tcp链接
+    std::vector<std::unique_ptr<ServerThread>> m_child_svr_vec;  // 子线程
+    std::vector<EventLoop *> m_child_loop_vec;                   // 子线程的loop
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

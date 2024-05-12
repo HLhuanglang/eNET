@@ -1,5 +1,6 @@
-#include "spdlog/common.h"
 #include <spdlog/spdlog.h>
+
+#include "spdlog/common.h"
 
 namespace EasyNet {
 #ifdef _WIN32
@@ -26,4 +27,4 @@ inline void LogInit(spdlog::level::level_enum lv) {
     spdlog::set_pattern("[%D %H:%M:%S.%e][%L][%t][%s:%# %!] %^%v%$");
 }
 
-} // namespace EasyNet
+}  // namespace EasyNet

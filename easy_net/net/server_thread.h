@@ -1,12 +1,13 @@
 #ifndef __EASYNET_SERVER_THREAD_H
 #define __EASYNET_SERVER_THREAD_H
 
-#include "event_loop.h"
-#include "inet_addr.h"
-#include "tcp_server.h"
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+
+#include "event_loop.h"
+#include "inet_addr.h"
+#include "tcp_server.h"
 
 namespace EasyNet {
 
@@ -34,6 +35,6 @@ class ServerThread {
     bool m_ready;
 };
 
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_SERVER_THREAD_H
+#endif  // !__EASYNET_SERVER_THREAD_H

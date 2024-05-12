@@ -11,11 +11,11 @@
 template <typename T>
 class data_container {
  private:
-    size_t m_max_items = 0;                        // 最大的存储容量
-    typename std::vector<T>::size_type m_head = 0; // 环形buffer-首部
-    typename std::vector<T>::size_type m_tail = 0; // 环形buffer-尾部
-    size_t m_overrun_counter = 0;                  // 被覆盖的元素个数
-    std::vector<T> m_container;                    // 最底层的数据存储容器
+    size_t m_max_items = 0;                         // 最大的存储容量
+    typename std::vector<T>::size_type m_head = 0;  // 环形buffer-首部
+    typename std::vector<T>::size_type m_tail = 0;  // 环形buffer-尾部
+    size_t m_overrun_counter = 0;                   // 被覆盖的元素个数
+    std::vector<T> m_container;                     // 最底层的数据存储容器
 
  public:
     data_container() = default;
@@ -24,12 +24,12 @@ class data_container {
         : m_max_items(max_items + 1), m_container(m_max_items) {
         // nothing
     }
-    data_container(const data_container &) = default;            // 拷贝构造
-    data_container &operator=(const data_container &) = default; // 赋值操作符重载
-    data_container(data_container &&other) noexcept {            // 移动构造
+    data_container(const data_container &) = default;             // 拷贝构造
+    data_container &operator=(const data_container &) = default;  // 赋值操作符重载
+    data_container(data_container &&other) noexcept {             // 移动构造
         _copy_moveable(std::move(other));
     }
-    data_container &operator=(data_container &&other) noexcept { // 移动赋值操作符重载
+    data_container &operator=(data_container &&other) noexcept {  // 移动赋值操作符重载
         _copy_moveable(std::move(other));
         return *this;
     }
@@ -37,7 +37,7 @@ class data_container {
  public:
     void push_back(T &&item) {
         if (m_max_items > 0) {
-            m_container[m_tail] = std::move(item); // fixme：覆盖写导致信息丢失
+            m_container[m_tail] = std::move(item);  // fixme：覆盖写导致信息丢失
             m_tail = (m_tail + 1) % m_max_items;
 
             if (m_tail == m_head) {
@@ -104,4 +104,4 @@ class data_container {
     }
 };
 
-#endif // !__EASYNET_DATA_CONTAINER_H
+#endif  // !__EASYNET_DATA_CONTAINER_H

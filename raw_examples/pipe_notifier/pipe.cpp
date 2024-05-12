@@ -1,11 +1,12 @@
+#include <sys/epoll.h>
+#include <unistd.h>
+
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <sys/epoll.h>
 #include <thread>
-#include <unistd.h>
 
 #include "notify.h"
 

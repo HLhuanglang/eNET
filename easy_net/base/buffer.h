@@ -10,7 +10,7 @@
 namespace EasyNet {
 
 namespace BufferDetail {
-const size_t KInitalSize = 1024; // 默认buff大小
+const size_t KInitalSize = 1024;  // 默认buff大小
 }
 
 /// @brief A buffer class modeled after org.jboss.netty.buffer.ChannelBuffer
@@ -109,6 +109,6 @@ class Buffer : NonCopyable {
     size_t m_readidx;
 };
 
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

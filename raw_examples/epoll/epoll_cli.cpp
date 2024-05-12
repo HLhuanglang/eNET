@@ -2,10 +2,7 @@
     关注epoll et和lt模式下，write的现象
 */
 #include <arpa/inet.h>
-#include <array>
-#include <cerrno>
 #include <fcntl.h>
-#include <iostream>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -15,6 +12,10 @@
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include <array>
+#include <cerrno>
+#include <iostream>
 
 #define MAX_INPUT_CHAR 256
 #define MAX_READ 256
@@ -187,7 +188,7 @@ int main(int argc, char **argv) {
     if (mode == "et") {
         epoll_type = EPOLLET;
     } else if (mode == "lt") {
-        epoll_type = 0; // 默认是lt模式
+        epoll_type = 0;  // 默认是lt模式
     } else {
         std::cout << "epoll type must be et or lt: " << mode << std::endl;
         exit(EXIT_FAILURE);

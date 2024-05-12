@@ -1,11 +1,12 @@
 // 测试：telnet 127.0.0.1 12345
 
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
 #include <cstring>
 #include <iostream>
-#include <sys/socket.h>
 #include <thread>
-#include <unistd.h>
 #include <vector>
 
 const int k_max_threads = 4;

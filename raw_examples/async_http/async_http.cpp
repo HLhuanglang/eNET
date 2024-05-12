@@ -62,21 +62,21 @@ void async_http_client_result_callback(const char *hostname, char *result);
 void async_http_destory_context(struct async_context *ctx);
 
 int main() {
-    //初始化上下文
+    // 初始化上下文
     struct async_context *context = async_http_init_context();
     if (context == NULL)
         exit(EXIT_FAILURE);
 
-    //进行HTTP请求
+    // 进行HTTP请求
     int count = sizeof(reqs) / sizeof(reqs[0]);
     int i;
     for (i = 0; i < count; ++i)
         async_http_commit(reqs[i].hostname, reqs[i].resource, context, async_http_client_result_callback);
 
-    //防止主线程先执行结束，从而导致子线程还未完成任务就终止了
+    // 防止主线程先执行结束，从而导致子线程还未完成任务就终止了
     getchar();
 
-    //销毁上下文
+    // 销毁上下文
     async_http_destory_context(context);
 
     return 0;
@@ -86,13 +86,13 @@ const char *host_to_ip(const char *hostname) {
     struct hostent *host_entry = (struct hostent *)malloc(sizeof(struct hostent));
     host_entry = NULL;
 
-    //根据主机名返回对应的struct hostent结构
+    // 根据主机名返回对应的struct hostent结构
     host_entry = gethostbyname(hostname);
     if (host_entry == NULL) {
         fprintf(stderr, "gethostbyname error: %s\n", hstrerror(h_errno));
         return NULL;
     } else {
-        //将网络字节序的ip地址转换为本地字节序的ip地址
+        // 将网络字节序的ip地址转换为本地字节序的ip地址
         return inet_ntoa(*(struct in_addr *)(*host_entry->h_addr_list));
     }
 }
@@ -100,27 +100,27 @@ const char *host_to_ip(const char *hostname) {
 int async_http_create_socket(const char *ip) {
     int sockfd = -1;
 
-    //创建socket
+    // 创建socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         perror("socket");
         exit(EXIT_FAILURE);
     }
 
-    //服务端地址
+    // 服务端地址
     struct sockaddr_in servaddr;
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = inet_addr(ip);
     servaddr.sin_port = htons(80);
 
-    //连接服务端
+    // 连接服务端
     if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) == -1) {
         perror("connect");
         exit(EXIT_FAILURE);
     }
 
-    //将套接字设置为非阻塞的
+    // 将套接字设置为非阻塞的
     fcntl(sockfd, F_SETFL, O_NONBLOCK);
 
     return sockfd;
@@ -133,7 +133,7 @@ struct async_context *async_http_init_context() {
         return NULL;
     }
 
-    //创建epoll套接字
+    // 创建epoll套接字
     int epfd = epoll_create(5);
     if (epfd == -1) {
         free(context);
@@ -142,7 +142,7 @@ struct async_context *async_http_init_context() {
     }
     context->epoll_fd = epfd;
 
-    //开启新的线程
+    // 开启新的线程
     int thread_ret = pthread_create(&context->thread_id, NULL, async_http_thread_func, context);
     if (thread_ret == -1) {
         free(context);
@@ -160,7 +160,7 @@ void *async_http_thread_func(void *arg) {
     struct epoll_event events[EPOLL_WAIT_NUM];
     bzero(&events, sizeof(events));
 
-    //调用epoll_wait监听
+    // 调用epoll_wait监听
     while (1) {
         int epoll_ret = epoll_wait(context->epoll_fd, events, EPOLL_WAIT_NUM, -1);
         if (epoll_ret == -1) {
@@ -183,10 +183,10 @@ void *async_http_thread_func(void *arg) {
                 free(data);
                 continue;
             }
-            //调用客户端的回调函数
+            // 调用客户端的回调函数
             data->cb(data->hostname, buffer);
 
-            //处理完成之后记得将套接字移除
+            // 处理完成之后记得将套接字移除
             if (epoll_ctl(context->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL) == -1) {
                 perror("epoll_ctl");
                 close(client_fd);
@@ -194,7 +194,7 @@ void *async_http_thread_func(void *arg) {
                 continue;
             }
 
-            //善后处理
+            // 善后处理
             close(client_fd);
             free(data);
         }
@@ -205,14 +205,15 @@ void *async_http_thread_func(void *arg) {
 int async_http_commit(const char *hostname, const char *resource, struct async_context *ctx, async_result_cb cb) {
     const char *ip = host_to_ip(hostname);
 
-    //创建客户端套接字
+    // 创建客户端套接字
     int client_fd = async_http_create_socket(ip);
 
-    //向服务端发送数据
+    // 向服务端发送数据
     char buffer[BUFFER_SIZE];
     bzero(buffer, BUFFER_SIZE);
 
-    sprintf(buffer, "GET %s %s\r\n\
+    sprintf(buffer,
+            "GET %s %s\r\n\
 Host:%s\r\n\
 %s\r\n\
 \r\n",
@@ -220,7 +221,7 @@ Host:%s\r\n\
 
     printf("%s\n", buffer);
 
-    //发送数据
+    // 发送数据
     if (send(client_fd, buffer, strlen(buffer), 0) == -1) {
         perror("send");
         return -1;
@@ -231,7 +232,7 @@ Host:%s\r\n\
     bcopy(hostname, data->hostname, strlen(hostname));
     data->cb = cb;
 
-    //创建事件，加入到epoll池中
+    // 创建事件，加入到epoll池中
     struct epoll_event ev;
     ev.data.ptr = data;
     ev.events = EPOLLIN;

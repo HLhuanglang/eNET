@@ -1,8 +1,10 @@
 #include "event_loop.h"
+
+#include <sys/epoll.h>
+
 #include <csignal>
 #include <cstdio>
 #include <mutex>
-#include <sys/epoll.h>
 #include <vector>
 
 #include "io_event.h"
@@ -21,7 +23,7 @@ class IgnoreSigPipe {
     }
 };
 IgnoreSigPipe initObj;
-} // namespace EasyNet
+}  // namespace EasyNet
 
 using namespace EasyNet;
 

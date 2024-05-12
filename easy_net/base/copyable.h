@@ -8,6 +8,6 @@ class Copyable {
     Copyable() = default;
     ~Copyable() = default;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

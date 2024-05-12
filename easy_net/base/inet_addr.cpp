@@ -1,12 +1,15 @@
 #include "inet_addr.h"
-#include "log.h"
+
 #include <arpa/inet.h>
 #include <assert.h>
+#include <endian.h>
+#include <strings.h>
+
 #include <cstdint>
 #include <cstdio>
-#include <endian.h>
 #include <string>
-#include <strings.h>
+
+#include "log.h"
 
 using namespace EasyNet;
 

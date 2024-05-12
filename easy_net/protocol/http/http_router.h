@@ -1,11 +1,12 @@
 #ifndef __EASYNET_HTTP_ROUTER_H
 #define __EASYNET_HTTP_ROUTER_H
 
+#include <map>
+#include <string>
+
 #include "http_def.h"
 #include "http_request.h"
 #include "http_response.h"
-#include <map>
-#include <string>
 
 namespace EasyNet {
 class HttpServer;
@@ -44,6 +45,6 @@ class HttpRouter {
     std::map<std::string, HttpCallBack> m_get_router;
     std::map<std::string, HttpCallBack> m_post_router;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_HTTP_ROUTER_H
+#endif  // !__EASYNET_HTTP_ROUTER_H

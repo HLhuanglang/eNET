@@ -1,9 +1,10 @@
 #ifndef __EASYNET_SOCKET_OPT_H
 #define __EASYNET_SOCKET_OPT_H
 
-#include <cstddef>
 #include <netinet/in.h>
 #include <sys/socket.h>
+
+#include <cstddef>
 
 #include "buffer.h"
 #include "inet_addr.h"
@@ -96,6 +97,6 @@ class SocketOpt {
     static void ShutDownWrite(int fd);
     static void ShutDownRead(int fd);
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

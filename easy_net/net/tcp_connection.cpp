@@ -1,15 +1,16 @@
 #include "tcp_connection.h"
+
+#include <fcntl.h>
+
 #include <cerrno>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
-#include <fcntl.h>
 #include <string>
-
-#include "socket_opt.h"
 
 #include "buffer.h"
 #include "log.h"
+#include "socket_opt.h"
 
 using namespace EasyNet;
 
@@ -23,7 +24,7 @@ void TcpConn::SendData(const char *data, size_t data_size) {
     m_write_buf->Append(data, data_size);
 
     // 2,判断当前数据是否真的需要发送
-    if (m_write_buf->GetReadableSize() > 0) { // fixme：定时器+数据量，双重判断是否需要发送
+    if (m_write_buf->GetReadableSize() > 0) {  // fixme：定时器+数据量，双重判断是否需要发送
         this->EnableWrite();
     }
 }

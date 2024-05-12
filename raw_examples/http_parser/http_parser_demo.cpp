@@ -2,9 +2,10 @@
 ** http_parser是一个字符解析状态机，一个字符一个字符解析
 ** 只要消息是按照http协议格式来的,就能做解析
 */
-#include "http_parser.h"
 #include <iostream>
 #include <string>
+
+#include "http_parser.h"
 
 // 所有的回调必须返回0,如果返回非0,就会停止解析
 

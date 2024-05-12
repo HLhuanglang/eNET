@@ -19,6 +19,6 @@ class EpollPoller : public Poller {
  private:
     int m_epollfd;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

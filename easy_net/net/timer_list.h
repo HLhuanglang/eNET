@@ -1,10 +1,11 @@
 #ifndef __EASYNET_LIST_H
 #define __EASYNET_LIST_H
 
-#include <ctime>
 #include <fcntl.h>
-#include <list>
 #include <sys/epoll.h>
+
+#include <ctime>
+#include <list>
 
 #include "def.h"
 #include "timer.h"
@@ -23,7 +24,7 @@ class ListTimer : public TimerPolicy<std::list<Timer>> {
 
     int find_timer() override {
         if (m_timers.empty()) {
-            return 1 * 1000; // 默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
+            return 1 * 1000;  // 默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
         }
         return m_timers.front().get_interval();
     }
@@ -88,6 +89,6 @@ class ListTimer : public TimerPolicy<std::list<Timer>> {
         }
     }
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_LIST_H
+#endif  // !__EASYNET_LIST_H

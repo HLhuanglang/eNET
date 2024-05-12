@@ -1,9 +1,12 @@
 #include "acceptor.h"
-#include "socket_opt.h"
+
 #include <arpa/inet.h>
-#include <cerrno>
 #include <netinet/in.h>
 #include <sys/socket.h>
+
+#include <cerrno>
+
+#include "socket_opt.h"
 
 using namespace EasyNet;
 

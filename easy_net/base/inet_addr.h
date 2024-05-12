@@ -1,8 +1,9 @@
 #ifndef __EASYNET_INET_ADDR_H_
 #define __EASYNET_INET_ADDR_H_
 
-#include <cstdint>
 #include <netinet/in.h>
+
+#include <cstdint>
 #include <string>
 
 namespace EasyNet {
@@ -74,6 +75,6 @@ class InetAddress {
     };
     bool m_ipv6;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_INET_ADDR_H_
+#endif  // !__EASYNET_INET_ADDR_H_

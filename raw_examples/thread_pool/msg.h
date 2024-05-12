@@ -30,4 +30,4 @@ class test_msg {
     std::string m_msg;
 };
 
-#endif // !__EASYNET_MSG_H
+#endif  // !__EASYNET_MSG_H

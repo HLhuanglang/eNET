@@ -1,10 +1,10 @@
 #include "epoll_poller.h"
+
 #include <strings.h>
 #include <sys/epoll.h>
 #include <unistd.h>
 
 #include "io_event.h"
-
 #include "log.h"
 
 using namespace EasyNet;

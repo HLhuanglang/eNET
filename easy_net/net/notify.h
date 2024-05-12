@@ -1,8 +1,9 @@
 #ifndef __EASYNET_NOTIFY_H
 #define __EASYNET_NOTIFY_H
 
-#include "io_event.h"
 #include <features.h>
+
+#include "io_event.h"
 
 #if defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 9)
 #    define HAVE_EVENTFD 1
@@ -22,9 +23,9 @@ class Notify : public IOEvent {
 
  private:
 #ifndef HAVE_EVENTFD
-    int m_notifier; // 使用pipe时
+    int m_notifier;  // 使用pipe时
 #endif
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_NOTIFY_H
+#endif  // !__EASYNET_NOTIFY_H

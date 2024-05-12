@@ -1,4 +1,5 @@
 #include "inet_addr.h"
+
 #include <gtest/gtest.h>
 
 TEST(InetAddress, BasicTest) {

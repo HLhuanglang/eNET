@@ -1,15 +1,15 @@
 #ifndef __EASYNET_SOME_TIME_FUNC_H
 #define __EASYNET_SOME_TIME_FUNC_H
 
-#include <ctime>
-#include <iostream>
-#include <sys/time.h> //gettimeofday()
+#include <sys/time.h>  //gettimeofday()
 #include <unistd.h>
 
-//时间换算关系
-// 1s[second] = 1000ms[millisecond ] = 1000,000us[microsecond] = 1000,000,000ns[nanosecond]
-inline void some_function_to_get_curr_time() {
+#include <ctime>
+#include <iostream>
 
+// 时间换算关系
+//  1s[second] = 1000ms[millisecond ] = 1000,000us[microsecond] = 1000,000,000ns[nanosecond]
+inline void some_function_to_get_curr_time() {
     // (bt) time()函数,C库函数,精度秒,返回自1970年1月1日以来经过的秒数
     // https://man7.org/linux/man-pages/man2/time.2.html
     time_t t;
@@ -55,4 +55,4 @@ inline void some_function_to_impl_timer() {
     nanosleep(&ts, nullptr);
 }
 
-#endif // !__EASYNET_SOME_TIME_FUNC_H
+#endif  // !__EASYNET_SOME_TIME_FUNC_H

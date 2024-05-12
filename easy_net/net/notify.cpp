@@ -1,10 +1,13 @@
 #include "notify.h"
+
+#include <sys/eventfd.h>
+#include <unistd.h>
+
+#include <cassert>
+
 #include "event_loop.h"
 #include "io_event.h"
 #include "log.h"
-#include <cassert>
-#include <sys/eventfd.h>
-#include <unistd.h>
 
 using namespace EasyNet;
 

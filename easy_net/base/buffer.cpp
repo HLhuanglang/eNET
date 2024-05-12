@@ -1,9 +1,9 @@
 
+#include "buffer.h"
+
 #include <algorithm>
 #include <cstddef>
 #include <string>
-
-#include "buffer.h"
 
 using namespace EasyNet;
 

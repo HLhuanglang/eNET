@@ -4,12 +4,13 @@
 #ifndef __EASYNET_MSG_QUNUE_H
 #define __EASYNET_MSG_QUNUE_H
 
-#include "data_container.h"
 #include <condition_variable>
 #include <cstddef>
 #include <iostream>
 #include <mutex>
 #include <thread>
+
+#include "data_container.h"
 
 template <typename T>
 class msg_queue {
@@ -23,7 +24,7 @@ class msg_queue {
             std::unique_lock<std::mutex> lock(m_queue_mtx);
             std::cout << "enqueue waiting..." << std::this_thread::get_id() << std::endl;
             m_pop_cv.wait(lock, [this] {
-                return !this->m_data.full(); // 如果没空间了,就一直阻塞,除非被唤醒
+                return !this->m_data.full();  // 如果没空间了,就一直阻塞,除非被唤醒
             });
             m_data.push_back(std::move(item));
         }
@@ -63,7 +64,7 @@ class msg_queue {
             std::unique_lock<std::mutex> lock(m_queue_mtx);
             std::cout << "dequeue waiting..." << std::this_thread::get_id() << std::endl;
             m_push_cv.wait(lock, [this] {
-                return !this->m_data.empty(); // 如果为空,那么就一直阻塞,直到被唤醒
+                return !this->m_data.empty();  // 如果为空,那么就一直阻塞,直到被唤醒
             });
             popped_item = std::move(m_data.front());
             m_data.pop_front();
@@ -94,4 +95,4 @@ class msg_queue {
     data_container<T> m_data;
 };
 
-#endif // !__EASYNET_MSG_QUNUE_H
+#endif  // !__EASYNET_MSG_QUNUE_H

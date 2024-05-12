@@ -1,9 +1,9 @@
 #ifndef __HTTP_REQUEST_H
 #define __HTTP_REQUEST_H
 
-#include "http_headers.h"
-
 #include <string>
+
+#include "http_headers.h"
 
 namespace EasyNet {
 class HttpRequest {
@@ -19,9 +19,9 @@ class HttpRequest {
     std::string m_method;
     std::string m_url;
     std::string m_version;
-    mutable HttpHeaders m_headers; // key-val
+    mutable HttpHeaders m_headers;  // key-val
     std::string m_body;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

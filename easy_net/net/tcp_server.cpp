@@ -1,4 +1,9 @@
 #include "tcp_server.h"
+
+#include <memory>
+#include <string>
+#include <utility>
+
 #include "acceptor.h"
 #include "def.h"
 #include "event_loop.h"
@@ -6,9 +11,6 @@
 #include "non_copyable.h"
 #include "server_thread.h"
 #include "tcp_connection.h"
-#include <memory>
-#include <string>
-#include <utility>
 
 using namespace EasyNet;
 

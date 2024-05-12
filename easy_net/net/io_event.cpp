@@ -1,8 +1,9 @@
 #include "io_event.h"
 
+#include <string>
+
 #include "event_loop.h"
 #include "log.h"
-#include <string>
 
 using namespace EasyNet;
 

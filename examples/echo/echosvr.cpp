@@ -1,12 +1,13 @@
-#include "inet_addr.h"
-#include "spdlog/common.h"
-#include "tcp_server.h"
+#include <signal.h>
+
 #include <atomic>
 #include <iostream>
-#include <signal.h>
 #include <thread>
 
+#include "inet_addr.h"
 #include "log.h"
+#include "spdlog/common.h"
+#include "tcp_server.h"
 
 // 后缀的参数只能是unsigned long long、long double、const char*或者const char* + size_t
 unsigned long long operator"" _s(unsigned long long s) {

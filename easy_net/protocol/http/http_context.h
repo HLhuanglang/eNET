@@ -4,9 +4,10 @@
 #ifndef __HTTP_CONTEXT_H
 #define __HTTP_CONTEXT_H
 
+#include <cstddef>
+
 #include "http_parser.h"
 #include "http_request.h"
-#include <cstddef>
 
 namespace EasyNet {
 class HttpContext {
@@ -14,8 +15,8 @@ class HttpContext {
     class Status {
      public:
         enum ParseSatatus {
-            PARSE_OK = 0, // 解析完成
-            PARSE_ERROR,  // 解析出错
+            PARSE_OK = 0,  // 解析完成
+            PARSE_ERROR,   // 解析出错
         };
 
      public:
@@ -48,6 +49,6 @@ class HttpContext {
     static http_parser_settings s_parser_settings;
     http_parser m_parser;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

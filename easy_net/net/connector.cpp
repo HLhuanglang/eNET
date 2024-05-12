@@ -1,4 +1,5 @@
 #include "connector.h"
+
 #include "log.h"
 #include "socket_opt.h"
 
@@ -50,7 +51,7 @@ void Connector::Connect() {
 
 void Connector::ProcessWriteEvent() {
     if (m_status == ConnectState::CONNECTING) {
-        DisableWrite(); // 只是为了完成异步connect,此时不再关注写事件,由后续客户端是否发送数据来决定是否关注写事件
+        DisableWrite();  // 只是为了完成异步connect,此时不再关注写事件,由后续客户端是否发送数据来决定是否关注写事件
 
         int err = SocketOpt::GetSocketError(m_fd);
         if (err) {

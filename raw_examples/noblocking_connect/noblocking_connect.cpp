@@ -2,14 +2,15 @@
 // nc -v -l 0.0.0.0 3000
 
 #include <arpa/inet.h>
-#include <cerrno>
-#include <cstdio>
-#include <cstring>
 #include <fcntl.h>
-#include <iostream>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
 
 #define SERVER_ADDRESS "127.0.0.1"
 #define SERVER_PORT 3000

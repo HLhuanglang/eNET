@@ -5,6 +5,6 @@ namespace EasyNet {
 class TimeWheelTimer {
     // TODO
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_TIMEWHEEL_H
+#endif  // !__EASYNET_TIMEWHEEL_H

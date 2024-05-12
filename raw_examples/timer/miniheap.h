@@ -1,11 +1,11 @@
 #ifndef __EASYNET_MINIHEAP_H
 #define __EASYNET_MINIHEAP_H
 
-#include <ctime>
 #include <fcntl.h>
-#include <queue>
 #include <sys/epoll.h>
 
+#include <ctime>
+#include <queue>
 #include <vector>
 
 #include "timer.h"
@@ -33,13 +33,13 @@ class miniheap_timer : public timer_policy<std::priority_queue<timer, std::vecto
 
     int find_timer() override {
         if (m_timers.empty()) {
-            return 1 * 1000; // 默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
+            return 1 * 1000;  // 默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
         }
-        return m_timers.top().get_expired_time(); // 不能使用get_interval,因为get_interval是下一次超时的时间间隔,而不是当前的实际超时时间
+        return m_timers.top().get_expired_time();  // 不能使用get_interval,因为get_interval是下一次超时的时间间隔,而不是当前的实际超时时间
     }
 
     void add_timer(int tm, timer_type type, const timer::timer_cb &cb) override {
-        m_timers.emplace(_gen_timer_id(), type, cb, tm); // 插入元素时，排序的规则是根据过期时间来进行判断的
+        m_timers.emplace(_gen_timer_id(), type, cb, tm);  // 插入元素时，排序的规则是根据过期时间来进行判断的
     }
 
     void handle_expired_timer() override {
@@ -71,4 +71,4 @@ class miniheap_timer : public timer_policy<std::priority_queue<timer, std::vecto
     }
 };
 
-#endif // !__EASYNET_MINIHEAP_H
+#endif  // !__EASYNET_MINIHEAP_H

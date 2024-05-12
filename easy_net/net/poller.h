@@ -27,9 +27,9 @@ class Poller : public NonCopyable {
     virtual void Polling(int timeout_ms, active_events_t &events) = 0;
 
  private:
-    EventLoop *m_owner_loop; // poller所属的event_loop，不由poller控制生命周期
+    EventLoop *m_owner_loop;  // poller所属的event_loop，不由poller控制生命周期
 };
 
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

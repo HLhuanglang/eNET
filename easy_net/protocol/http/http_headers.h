@@ -14,6 +14,6 @@ class HttpHeaders {
  private:
     std::map<std::string, std::string> m_headers;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_HTTP_HEADERS_H
+#endif  // !__EASYNET_HTTP_HEADERS_H

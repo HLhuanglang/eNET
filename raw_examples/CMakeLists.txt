@@ -45,8 +45,8 @@ add_executable(thread_pool thread_pool/main.cpp)
 target_link_libraries(thread_pool pthread)
 
 # timer
-add_executable(timer timer/timer_demo.cpp)
-target_link_libraries(timer pthread)
+add_executable(timer_demo timer/timer_demo.cpp)
+target_link_libraries(timer_demo pthread)
 
 # timerfd
 add_executable(timerfd timerfd/timerfd_demo.cpp)

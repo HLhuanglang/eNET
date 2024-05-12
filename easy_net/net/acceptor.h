@@ -1,11 +1,12 @@
 #ifndef __EASYNET_ACCEPTOR_H
 #define __EASYNET_ACCEPTOR_H
 
-#include <cerrno>
 #include <fcntl.h>
-#include <memory>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include <cerrno>
+#include <memory>
 
 #include "io_event.h"
 #include "log.h"
@@ -78,8 +79,8 @@ class Acceptor : public IOEvent {
 
  private:
     std::unique_ptr<IdleFD> m_idle;
-    TcpServer *m_server; // 当前acceptor属于哪一个TcpServer,生命周期由TcpServer控制
+    TcpServer *m_server;  // 当前acceptor属于哪一个TcpServer,生命周期由TcpServer控制
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

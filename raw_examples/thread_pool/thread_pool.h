@@ -1,11 +1,12 @@
-#include "msg.h"
-#include "msg_qunue.h"
 #include <cstddef>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <thread>
 #include <vector>
+
+#include "msg.h"
+#include "msg_qunue.h"
 
 class thread_pool {
  public:
@@ -31,14 +32,14 @@ class thread_pool {
     ~thread_pool() {
         for (int i = 0; i < m_threads.size(); i++) {
             for (auto &it : m_threads) {
-                it.join(); // 主线程需等待子线程执行完成
+                it.join();  // 主线程需等待子线程执行完成
             }
         }
     }
 
  public:
     void commit(test_msg msg) {
-        m_msg_queue.enqueue(std::move(msg)); // 提交任务到线程池,并唤醒一个线程
+        m_msg_queue.enqueue(std::move(msg));  // 提交任务到线程池,并唤醒一个线程
     }
 
  private:
@@ -51,7 +52,7 @@ class thread_pool {
     bool _prcess_next_msg() {
         // fixme：增加不同类型的消息,有些任务使得线程执行完了就退出
         test_msg msg;
-        m_msg_queue.dequeue(msg); // 阻塞在这里,等待生产者投递消息
+        m_msg_queue.dequeue(msg);  // 阻塞在这里,等待生产者投递消息
         msg.consume();
         return true;
     }

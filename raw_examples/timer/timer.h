@@ -1,10 +1,11 @@
 #ifndef __EASYNET_TIMER_H
 #define __EASYNET_TIMER_H
 
-#include <ctime>
 #include <fcntl.h>
-#include <functional>
 #include <sys/epoll.h>
+
+#include <ctime>
+#include <functional>
 #include <utility>
 
 enum timer_type {
@@ -85,11 +86,11 @@ class timer {
  private:
     int m_id;
     timer_cb m_cb;
-    timespec m_expried_time; // 下一次过期的时间戳
-    timespec m_current_time; // 当前时间戳
+    timespec m_expried_time;  // 下一次过期的时间戳
+    timespec m_current_time;  // 当前时间戳
     timer_type m_type;
-    int m_timeat;   // run_at
-    int m_interval; // 超时时间间隔  单位：ms
+    int m_timeat;    // run_at
+    int m_interval;  // 超时时间间隔  单位：ms
 };
 
 template <typename Container>
@@ -159,4 +160,4 @@ class timer_manager {
     Policy m_timer_container;
 };
 
-#endif // !__EASYNET_TIMER_H
+#endif  // !__EASYNET_TIMER_H

@@ -1,6 +1,7 @@
+#include <spdlog/common.h>
+
 #include "acceptor.h"
 #include "event_loop.h"
-#include <spdlog/common.h>
 
 unsigned long long operator"" _s(unsigned long long s) {
     return s * 1000;

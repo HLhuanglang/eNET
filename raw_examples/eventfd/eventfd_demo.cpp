@@ -1,10 +1,10 @@
-#include <cstdint>
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
 #include <unistd.h>
 
 #include <chrono>
 #include <csignal>
+#include <cstdint>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -35,17 +35,14 @@ void thread_func(int fd) {
                     int ret = ::read(ready_events[i].data.fd, &msg, sizeof(msg_type_t));
                     if (ret == -1) {
                         perror("eventfd write");
-                    }
-                    else {
+                    } else {
                         std::cout << "reciv main thread notify!" << std::endl;
                     }
                 }
             }
-        }
-        else if (nfd == 0) {
+        } else if (nfd == 0) {
             // nothing happen
-        }
-        else {
+        } else {
             // error happen
         }
     }
@@ -56,12 +53,11 @@ int main(int argc, char* argv[]) {
     int event_fd = ::eventfd(0, EFD_NONBLOCK);
     std::thread t(thread_func, event_fd);
     for (int i = 0; i < 5; i++) {
-        msg_type_t msg = 1; //必须赋值,否则无法触发.
+        msg_type_t msg = 1;  // 必须赋值,否则无法触发.
         int ret = ::write(event_fd, &msg, sizeof(msg_type_t));
         if (ret == -1) {
             perror("eventfd write");
-        }
-        else {
+        } else {
             std::cout << "send signal to sub thread!" << std::endl;
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));

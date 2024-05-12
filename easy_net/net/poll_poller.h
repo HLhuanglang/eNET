@@ -16,6 +16,6 @@ class PollPoller : public Poller {
 
     void Polling(int timeout_ms, active_events_t &events) override;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

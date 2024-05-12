@@ -22,6 +22,6 @@ class HttpServer {
     TcpServer m_server;
     HttpRouter m_router;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

@@ -1,11 +1,12 @@
 #ifndef __EASYNET_TIMER_H
 #define __EASYNET_TIMER_H
 
+#include <fcntl.h>
+#include <sys/epoll.h>
+
 #include <cstdint>
 #include <ctime>
-#include <fcntl.h>
 #include <functional>
-#include <sys/epoll.h>
 #include <utility>
 
 #include "def.h"
@@ -87,11 +88,11 @@ class Timer {
  private:
     uint64_t m_id;
     TimerCallBack m_cb;
-    timespec m_expried_time; // 下一次过期的时间戳
-    timespec m_current_time; // 当前时间戳
+    timespec m_expried_time;  // 下一次过期的时间戳
+    timespec m_current_time;  // 当前时间戳
     TimerType m_type;
-    int m_timeat;   // run_at
-    int m_interval; // 超时时间间隔  单位：ms
+    int m_timeat;    // run_at
+    int m_interval;  // 超时时间间隔  单位：ms
 };
 
 template <typename Container>
@@ -113,6 +114,6 @@ class TimerPolicy {
     Container m_timers;
 };
 
-} // namespace EasyNet
+}  // namespace EasyNet
 
-#endif // !__EASYNET_TIMER_H
+#endif  // !__EASYNET_TIMER_H

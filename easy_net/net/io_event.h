@@ -8,10 +8,11 @@
 #ifndef __EASYNET_FD_EVENT_H
 #define __EASYNET_FD_EVENT_H
 
-#include "non_copyable.h"
-#include "socket_opt.h"
 #include <string>
 #include <vector>
+
+#include "non_copyable.h"
+#include "socket_opt.h"
 
 #ifdef __linux__
 #    include <sys/poll.h>
@@ -73,11 +74,11 @@ class IOEvent : public EasyNet::NonCopyable {
     std::string cover_opt_to_string(update_opt_e opt);
 
  protected:
-    EventLoop *m_ioloop;  // 负责处理本描述符的IO线程
-    int m_fd;             // 被监控的文件描述符
-    int m_expect_event{}; // 用户设置期望监听的事件
-    int m_actual_event{}; // Poller返回实际监听得到的事件
+    EventLoop *m_ioloop;   // 负责处理本描述符的IO线程
+    int m_fd;              // 被监控的文件描述符
+    int m_expect_event{};  // 用户设置期望监听的事件
+    int m_actual_event{};  // Poller返回实际监听得到的事件
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

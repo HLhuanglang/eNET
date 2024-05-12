@@ -21,12 +21,12 @@ class HttpResponse {
     std::string SerializeToString() const;
 
  public:
-    std::string m_version{"HTTP/1.1"}; // http协议版本1.0、1.1
-    std::string m_status_code;         // 状态码200、301、404等
-    std::string m_status_code_msg;     // 状态码描述信息,例如200的描述信息是ok
-    mutable HttpHeaders m_headers;     // key-val
-    std::string m_body;                // body的大小写入Content-Length
+    std::string m_version{"HTTP/1.1"};  // http协议版本1.0、1.1
+    std::string m_status_code;          // 状态码200、301、404等
+    std::string m_status_code_msg;      // 状态码描述信息,例如200的描述信息是ok
+    mutable HttpHeaders m_headers;      // key-val
+    std::string m_body;                 // body的大小写入Content-Length
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

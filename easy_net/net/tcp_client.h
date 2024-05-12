@@ -55,8 +55,8 @@ class TcpClient : public ConnOwner {
  private:
     EventLoop *m_loop;
     std::unique_ptr<Connector> m_connector;
-    tcp_connection_t m_conn; // 必须持有一下,不然NewConn结束链接就释放了
+    tcp_connection_t m_conn;  // 必须持有一下,不然NewConn结束链接就释放了
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif

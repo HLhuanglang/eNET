@@ -30,6 +30,6 @@ class ConnOwner {
     // 获取当前连接属于哪个loop
     virtual EventLoop *GetEventLoop() const = 0;
 };
-} // namespace EasyNet
+}  // namespace EasyNet
 
 #endif
