@@ -52,6 +52,9 @@ class TcpServer : public ConnOwner {
     void join_thread();
     void detach_thread();
 
+    // 获取loop
+    EventLoop *get_loop();
+
  private:
     void startThreadPool();
 
@@ -63,7 +66,7 @@ class TcpServer : public ConnOwner {
     unsigned int m_thread_cnt;                                   // 服务器启动的线程数量
     std::set<std::shared_ptr<TcpConn>> m_connections_map;        // 当前持有的tcp链接
     std::vector<std::unique_ptr<ServerThread>> m_child_svr_vec;  // 子线程
-    std::vector<EventLoop *> m_child_loop_vec;                   // 子线程的loop
+    std::vector<EventLoop *> m_worker_loop;                      // 工作线程loop
 };
 }  // namespace EasyNet
 

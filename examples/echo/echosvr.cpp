@@ -38,8 +38,8 @@ int main() {
     // 设置业务回调
     svr.onNewConnection = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Get New Conn");
-        conn->GetEventLoop()->TimerAfter([=]() {
-            LOG_DEBUG("TimerAfter 1s: loop={}", conn->GetEventLoop()->GetLoopName());
+        conn->GetOwnerLoop()->TimerAfter([=]() {
+            LOG_DEBUG("TimerAfter 1s: loop={}", conn->GetOwnerLoop()->GetLoopName());
         },
                                          1_s);
     });

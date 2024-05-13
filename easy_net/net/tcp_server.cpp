@@ -26,6 +26,7 @@ TcpServer::TcpServer(const std::string &nameArg, unsigned int numEventThreads,
       m_name(nameArg),
       m_thread_cnt(numEventThreads) {
     m_acceptor = make_unique<Acceptor>(this, listenAddr, true);
+    m_worker_loop.push_back(m_loop);
 }
 
 TcpServer::~TcpServer() {
@@ -60,6 +61,14 @@ void TcpServer::detach_thread() {
     for (auto &n : m_child_svr_vec) {
         n->Detach();
     }
+}
+
+EventLoop *TcpServer::get_loop() {
+    static int idx = 0;
+    if (idx == m_thread_cnt + 1) {
+        idx = 0;
+    }
+    return m_worker_loop[idx++ % (m_thread_cnt + 1)];
 }
 
 void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {
@@ -104,6 +113,6 @@ void TcpServer::startThreadPool() {
         std::unique_ptr<ServerThread> svr_thread = make_unique<ServerThread>("child_svr_" + std::to_string(i), this->m_addr);
         auto tmp_loop = svr_thread->StartServerThread();
         m_child_svr_vec.push_back(std::move(svr_thread));
-        m_child_loop_vec.push_back(tmp_loop);
+        m_worker_loop.push_back(tmp_loop);
     }
 }

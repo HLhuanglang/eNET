@@ -62,7 +62,7 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
     Buffer &GetWriteBuf() { return *m_write_buf; }
     std::string GetConnName() { return m_name; }
     void SetStatus(ConnStatus status) { m_status = status; }
-    EventLoop *GetEventLoop() { return m_ioloop; }
+    EventLoop *GetOwnerLoop() { return m_ioloop; }
 
  public:
     void ProcessWriteEvent() override;
