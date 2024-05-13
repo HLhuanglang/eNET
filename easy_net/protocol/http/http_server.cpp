@@ -10,10 +10,10 @@ using namespace EasyNet;
 
 HttpServer::HttpServer(const std::string &ip, size_t port)
     : m_server("httpsvr", KThreadPoolSize, {ip.c_str(), static_cast<uint16_t>(port)}) {
-    m_server.set_new_connection_cb(std::bind(&HttpServer::_on_connection, this, std::placeholders::_1));
-    m_server.set_recv_msg_cb(std::bind(&HttpServer::_on_recv_msg, this, std::placeholders::_1));
-    m_server.set_write_complete_cb(std::bind(&HttpServer::_on_send_complete, this, std::placeholders::_1));
-    m_server.set_del_connection_cb(std::bind(&HttpServer::_on_del_connection, this, std::placeholders::_1));
+    m_server.onNewConnection = std::bind(&HttpServer::_on_connection, this, std::placeholders::_1);
+    m_server.onRecvMsg = std::bind(&HttpServer::_on_recv_msg, this, std::placeholders::_1);
+    m_server.onWriteComplete = std::bind(&HttpServer::_on_send_complete, this, std::placeholders::_1);
+    m_server.onDelConnection = std::bind(&HttpServer::_on_del_connection, this, std::placeholders::_1);
 }
 
 void HttpServer::_on_connection(const tcp_connection_t &conn) {

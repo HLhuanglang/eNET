@@ -29,8 +29,7 @@ using namespace EasyNet;
 
 thread_local EventLoop *t_loopInThread = nullptr;
 
-EventLoop::EventLoop(std::string name) : m_name(name),
-                                         m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL, this)),
+EventLoop::EventLoop(std::string name) : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL, this)),
                                          m_pending_func(false),
                                          m_quit(false),
                                          m_looping(false),
@@ -43,6 +42,7 @@ EventLoop::EventLoop(std::string name) : m_name(name),
         LOG_ERROR("Another Loop bind in this thread:{}", id);
     } else {
         t_loopInThread = this;
+        m_name = name + "-" + std::to_string(id);
         LOG_INFO("{} bind in this thread:{}", m_name, id);
     }
 }
@@ -75,7 +75,7 @@ void EventLoop::Loop() {
         // 如何解决呢？
         // 我们采取如下方法来解决该问题，以linux为例，不管epoll_fd上有没有文件描述符fd，我们都给它绑定一个默认的fd，这个fd被称为唤醒fd。
         // 当我们需要处理其他任务的时候，向这个唤醒fd上随便写入1个字节的，这样这个fd立即就变成可读的了，epoll_wait() / poll() / select() 函数立即被唤醒，并返回,接下来马上就能执行_do_pending_functions()，其他任务得到处理。
-        _do_pending_functions();
+        DoPendiongFunc();
     }
 
     m_looping = false;
@@ -120,7 +120,7 @@ void EventLoop::TimerEvery(const TimerCallBack &cb, int interval) {
     m_timer_queue->add_timer(interval, TimerType::E_EVERY, cb);
 }
 
-void EventLoop::_do_pending_functions() {
+void EventLoop::DoPendiongFunc() {
     std::vector<pending_func_t> functors;
     m_pending_func = true;
     {

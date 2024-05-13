@@ -20,26 +20,26 @@ void TcpClient::NewConn(int fd, const InetAddress &peerAddr) {
     m_conn = std::make_shared<TcpConn>(this, fd, peerAddr);
     m_conn->SetStatus(TcpConn::ConnStatus::CONNECTED);
     m_conn->EnableRead();
-    if (m_new_connection_cb != nullptr) {
-        m_new_connection_cb(m_conn);
+    if (onNewConnection != nullptr) {
+        onNewConnection(m_conn);
     }
 }
 
 void TcpClient::DelConn(const tcp_connection_t &conn) {
-    if (m_del_connection_cb != nullptr) {
-        m_del_connection_cb(conn);
+    if (onDelConnection != nullptr) {
+        onDelConnection(conn);
     }
 }
 
 void TcpClient::RecvMsg(const tcp_connection_t &conn) {
-    if (m_revc_msg_cb != nullptr) {
-        m_revc_msg_cb(conn);
+    if (onRecvMsg != nullptr) {
+        onRecvMsg(conn);
     }
 }
 
 void TcpClient::WriteComplete(const tcp_connection_t &conn) {
-    if (m_write_complete_cb != nullptr) {
-        m_write_complete_cb(conn);
+    if (onWriteComplete != nullptr) {
+        onWriteComplete(conn);
     }
 }
 

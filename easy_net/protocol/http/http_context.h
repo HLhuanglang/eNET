@@ -1,6 +1,3 @@
-/*
-** http服务器主要时处理http请求的
-*/
 #ifndef __HTTP_CONTEXT_H
 #define __HTTP_CONTEXT_H
 

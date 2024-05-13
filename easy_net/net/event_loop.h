@@ -21,6 +21,8 @@ namespace EasyNet {
 using pending_func_t = std::function<void()>;
 
 class EventLoop : public NonCopyable {
+    friend class IOEvent;
+
  public:
     EventLoop(std::string nameArg);
     ~EventLoop() = default;
@@ -48,7 +50,12 @@ class EventLoop : public NonCopyable {
     // 退出当前循环
     void Quit();
 
-    // 判断fd是否已添加poller中
+    std::string GetLoopName() { return m_name; }
+    std::unique_ptr<Poller> &get_poller() { return m_poller; }
+
+ private:
+    void DoPendiongFunc();
+
     bool IsRegistered(int fd) {
         return m_registered_events.count(fd);
     }
@@ -58,11 +65,6 @@ class EventLoop : public NonCopyable {
     void UnRegister(int fd) {
         m_registered_events.erase(fd);
     }
-
-    std::unique_ptr<Poller> &get_poller() { return m_poller; }
-
- private:
-    void _do_pending_functions();
 
  private:
     std::string m_name;                               // loop名称

@@ -14,10 +14,10 @@
 
 using namespace EasyNet;
 
-CallBack TcpServer::m_new_connection_cb;
-CallBack TcpServer::m_del_connection_cb;
-CallBack TcpServer::m_revc_msg_cb;
-CallBack TcpServer::m_write_complete_cb;
+CallBack TcpServer::onNewConnection;
+CallBack TcpServer::onDelConnection;
+CallBack TcpServer::onRecvMsg;
+CallBack TcpServer::onWriteComplete;
 
 TcpServer::TcpServer(const std::string &nameArg, unsigned int numEventThreads,
                      const InetAddress &listenAddr)
@@ -67,14 +67,14 @@ void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {
     m_connections_map.insert(tcp_conn);
     tcp_conn->SetStatus(TcpConn::ConnStatus::CONNECTED);
     tcp_conn->EnableRead();
-    if (m_new_connection_cb != nullptr) {
-        m_new_connection_cb(tcp_conn);
+    if (onNewConnection != nullptr) {
+        onNewConnection(tcp_conn);
     }
 }
 
 void TcpServer::DelConn(const tcp_connection_t &conn) {
-    if (m_del_connection_cb != nullptr) {
-        m_del_connection_cb(conn);
+    if (onDelConnection != nullptr) {
+        onDelConnection(conn);
     }
 
     conn->RemoveEvent();
@@ -84,14 +84,14 @@ void TcpServer::DelConn(const tcp_connection_t &conn) {
 }
 
 void TcpServer::RecvMsg(const tcp_connection_t &conn) {
-    if (m_revc_msg_cb != nullptr) {
-        m_revc_msg_cb(conn);
+    if (onRecvMsg != nullptr) {
+        onRecvMsg(conn);
     }
 }
 
 void TcpServer::WriteComplete(const tcp_connection_t &conn) {
-    if (m_write_complete_cb != nullptr) {
-        m_write_complete_cb(conn);
+    if (onWriteComplete != nullptr) {
+        onWriteComplete(conn);
     }
 }
 

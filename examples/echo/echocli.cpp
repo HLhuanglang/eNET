@@ -22,14 +22,14 @@ int main() {
     EasyNet::EventLoop loop("echocli_loop");
     EasyNet::TcpClient cli(&loop, {"127.0.0.1", 8888});
 
-    cli.set_new_connection_cb([](const EasyNet::tcp_connection_t &conn) {
+    cli.onNewConnection = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Get New Conn");
         std::string send_msg;
         std::cin >> send_msg;
         conn->SendData(send_msg);
     });
 
-    cli.set_recv_msg_cb([](const EasyNet::tcp_connection_t &conn) {
+    cli.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
         auto msg = conn->GetReadBuf().RetriveAllAsString();
         LOG_DEBUG("recv msg={}", msg);
         std::string send_msg;
@@ -37,11 +37,11 @@ int main() {
         conn->SendData(send_msg);
     });
 
-    cli.set_del_connection_cb([](const EasyNet::tcp_connection_t &conn) {
+    cli.onDelConnection = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Remove Conn:{}", conn->GetConnName());
     });
 
-    cli.set_write_complete_cb([](const EasyNet::tcp_connection_t &conn) {
+    cli.onWriteComplete = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Sent Complete: {}", conn->GetConnName());
     });
 

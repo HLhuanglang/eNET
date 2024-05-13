@@ -36,11 +36,15 @@ int main() {
     EasyNet::TcpServer svr("echosvr", 2 * std::thread::hardware_concurrency() - 1, {"127.0.0.1", 8888});
 
     // 设置业务回调
-    svr.set_new_connection_cb([](const EasyNet::tcp_connection_t &conn) {
+    svr.onNewConnection = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Get New Conn");
+        conn->GetEventLoop()->TimerAfter([=]() {
+            LOG_DEBUG("TimerAfter 1s: loop={}", conn->GetEventLoop()->GetLoopName());
+        },
+                                         1_s);
     });
 
-    svr.set_recv_msg_cb([](const EasyNet::tcp_connection_t &conn) {
+    svr.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
         // fixme-hl：出现回包为空的情况
         auto msg = conn->GetReadBuf().RetriveAllAsString();
         if (msg.empty()) {
@@ -51,11 +55,11 @@ int main() {
         }
     });
 
-    svr.set_del_connection_cb([](const EasyNet::tcp_connection_t &conn) {
+    svr.onDelConnection = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Remove Conn:{}", conn->GetConnName());
     });
 
-    svr.set_write_complete_cb([](const EasyNet::tcp_connection_t &conn) {
+    svr.onWriteComplete = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Sent Complete: {}", conn->GetConnName());
     });
 
