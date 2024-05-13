@@ -13,7 +13,7 @@
 #include "notify.h"
 #include "poller.h"
 #include "thread.h"
-#include "timer_list.h"
+#include "timer.h"
 
 namespace EasyNet {
 class IgnoreSigPipe {
@@ -35,7 +35,7 @@ EventLoop::EventLoop(std::string name) : m_poller(Poller::CreatePoller(poller_ty
                                          m_looping(false),
                                          m_threadid(GetCurrentThreadId()) {
     m_notifyer = make_unique<Notify>(this);
-    m_timer_queue = make_unique<ListTimer>();
+    m_timer_queue = make_unique<MiniHeapTimer>();
 
     auto id = GetCurrentThreadId();
     if (t_loopInThread) {
@@ -55,12 +55,12 @@ void EventLoop::Loop() {
     m_quit = false;
 
     while (!m_quit) {
-        auto tm = m_timer_queue->find_timer();
+        auto tm = m_timer_queue->GetNextExpiredTime();
         m_ready_events.clear();
         m_poller->Polling(tm, m_ready_events);
 
         // 1,处理到期事件
-        m_timer_queue->handle_expired_timer();
+        m_timer_queue->HandleExpiredTimer();
 
         // 2,处理当前处于活动状态的fd上的事件
         for (auto &it : m_ready_events) {
@@ -112,12 +112,16 @@ void EventLoop::Quit() {
     }
 }
 
-void EventLoop::TimerAfter(const TimerCallBack &cb, int interval) {
-    m_timer_queue->add_timer(interval, TimerType::E_AFTER, cb);
+TimerID EventLoop::TimerAfter(const TimerCallBack &cb, int interval) {
+    return m_timer_queue->AddTimer(interval, TimerType::E_AFTER, cb);
 }
 
-void EventLoop::TimerEvery(const TimerCallBack &cb, int interval) {
-    m_timer_queue->add_timer(interval, TimerType::E_EVERY, cb);
+TimerID EventLoop::TimerEvery(const TimerCallBack &cb, int interval) {
+    return m_timer_queue->AddTimer(interval, TimerType::E_EVERY, cb);
+}
+
+void EventLoop::CancelTimer(TimerID id) {
+    m_timer_queue->CancelTimer(id);
 }
 
 void EventLoop::DoPendiongFunc() {

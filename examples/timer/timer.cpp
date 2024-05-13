@@ -1,7 +1,8 @@
 #include <spdlog/common.h>
+#include <unistd.h>
 
-#include "acceptor.h"
 #include "event_loop.h"
+#include "log.h"
 
 unsigned long long operator"" _s(unsigned long long s) {
     return s * 1000;
@@ -15,15 +16,23 @@ int main() {
     EasyNet::LogInit(spdlog::level::level_enum::trace);
     EasyNet::EventLoop loop("timer_loop");
 
-    loop.TimerAfter([]() {
+    auto t1 = loop.TimerAfter([]() {
         LOG_DEBUG("TimerAfter 2s");
     },
-                    2_s);
+                              2_s);
+    loop.CancelTimer(t1);
 
-    loop.TimerEvery([]() {
-        LOG_DEBUG("TimerEvery 3s");
+    auto t2 = loop.TimerEvery([]() {
+        LOG_DEBUG("TimerEvery 2s");
+        sleep(3);
     },
-                    3_s);
+                              2_s);
+
+    auto t3 = loop.TimerEvery([]() {
+        LOG_DEBUG("TimerEvery 3s");
+        sleep(1);
+    },
+                              3_s);
 
     loop.Loop();
 }

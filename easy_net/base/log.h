@@ -1,3 +1,6 @@
+#ifndef __EASYNET_LOG_H
+#define __EASYNET_LOG_H
+
 #include <spdlog/spdlog.h>
 
 #include "spdlog/common.h"
@@ -28,3 +31,5 @@ inline void LogInit(spdlog::level::level_enum lv) {
 }
 
 }  // namespace EasyNet
+
+#endif  // !__EASYNET_LOG_H

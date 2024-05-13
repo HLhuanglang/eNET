@@ -14,7 +14,7 @@ using CallBack = std::function<void(const tcp_connection_t &)>;
 using TimerCallBack = std::function<void()>;
 
 const int KThreadPoolSize = 2 * std::thread::hardware_concurrency();
-
+const constexpr int KMaxTimeout = 5 * 1000;
 const constexpr int KMaxRetryTimeMS = 5 * 1000;
 const constexpr int KInitRetryTimeMS = 500;
 
