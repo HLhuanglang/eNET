@@ -42,6 +42,12 @@ if(spdlog_FOUND)
   message(STATUS "spdlog found")
 endif()
 
+find_package(c-ares REQUIRED)
+if(c-ares_FOUND)
+  message(STATUS "c-ares found")
+  message(STATUS "${c-ares_INCLUDE_DIR}")
+endif()
+
 # ---------------------------------------------------------------------------------------
 # EasyNet库编译
 # ---------------------------------------------------------------------------------------
