@@ -41,7 +41,7 @@ class Timer {
     }
 
  public:
-    bool is_expired() const {
+    bool expired() const {
         bool ret = false;
         switch (m_type) {
             case TimerType::E_AFTER:

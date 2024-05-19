@@ -9,7 +9,6 @@
 #include <queue>
 
 #include "def.h"
-#include "log.h"
 #include "timer.h"
 
 namespace EasyNet {
@@ -24,8 +23,8 @@ class TimerPolicy {
     virtual void HandleExpiredTimer() = 0;
 
  protected:
-    static uint64_t GenTimerID() {
-        static uint64_t s_timer_id = 0;
+    static TimerID GenTimerID() {
+        static TimerID s_timer_id = 0;
         return ++s_timer_id;
     }
 
@@ -70,16 +69,9 @@ class ListTimer : public TimerPolicy<std::list<Timer>> {
     }
 
     void HandleExpiredTimer() override {
-        // 处理过期的定时器
         for (auto it = m_timers.begin(); it != m_timers.end(); ++it) {
-            // 先对所有的定时器进行时间累加。
-            // fixme：如果存在网络IO事件，在处理IO事件时耗费了很多时间，那么这种简单的时间累加就会导致定时器的误差变大
-            // 是否可以增加一个任务队列，超时事件直接丢给另外一个工作线程去处理？
-            // 这样子的意义不大，因为定时任务耗时的话，任务队列同样会累计时间误差......
-            // 也就是说，事件驱动的框架中，定时任务绝对不能很耗时。
-
             it->update_curr_time();
-            if (it->is_expired()) {
+            if (it->expired()) {
                 switch (it->get_type()) {
                     case TimerType::E_EVERY: {
                         it->run_task();
@@ -121,6 +113,13 @@ class ListTimer : public TimerPolicy<std::list<Timer>> {
     }
 };
 
+// 基于最小堆的定时器
+// 堆顶是最近要过期的时间
+//       1s
+//        /\
+//     2s 3s
+//      /\   \
+//   4s 5s  6s
 class MiniHeapTimer : public TimerPolicy<std::priority_queue<Timer, std::vector<Timer>, TimerGreater>> {
  public:
     int GetNextExpiredTime() override {
@@ -155,7 +154,7 @@ class MiniHeapTimer : public TimerPolicy<std::priority_queue<Timer, std::vector<
         while (!m_timers.empty()) {
             auto t = m_timers.top();
             t.update_curr_time();
-            if (t.is_expired()) {
+            if (t.expired()) {
                 switch (t.get_type()) {
                     case TimerType::E_EVERY: {
                         t.run_task();
