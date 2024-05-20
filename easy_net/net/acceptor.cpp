@@ -26,6 +26,8 @@ void Acceptor::ProcessReadEvent() {
         }
     } else {
         // 通知所属的TcpServer有新的连接到来
+        // 因为acceptor是属于tcpserver的，由内核决定唤醒哪个线程来处理新的连接
+        // 因此,新建立的链接一定是和某个tcpserver关联的.
         m_server->NewConn(acceptfd, peerAddr);
     }
 }

@@ -9,8 +9,7 @@ using namespace EasyNet;
 // 1. 创建socket，并将 socket 设置成非阻塞模式；
 // 2. 调用 connect 函数，此时无论 connect 函数是否连接成功会立即返回；如果返回-1并不表示连接出错，如果此时错误码是EINPROGRESS表示连接还未完成.
 // 3. 接着调用 select 函数，在指定的时间内判断该 socket 是否可写，如果可写说明连接成功，反之则认为连接失败。
-void Connector::Connect() {
-    m_status = ConnectState::CONNECTING;
+void Connector::Start() {
     m_fd = SocketOpt::CreateNonBlockSocket(m_addr.family());
     int ret = SocketOpt::Connect(m_fd, m_addr.GetAddr());
     int savedErrno = (ret == 0) ? 0 : errno;
@@ -20,6 +19,7 @@ void Connector::Connect() {
         case EINTR:
         case EISCONN:
             LOG_DEBUG("Connecting...");
+            m_status = ConnectState::CONNECTING;
             EnableWrite();
             break;
 
@@ -77,7 +77,7 @@ void Connector::Retry() {
 void Connector::ReConnect() {
     m_ioloop->RunInLoop([&]() {
         if (m_status == ConnectState::DISCONNECTED) {
-            Connect();
+            Start();
         }
     });
 }

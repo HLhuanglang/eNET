@@ -22,7 +22,8 @@ class Connector : public IOEvent {
     void ProcessWriteEvent() override;
 
  public:
-    void Connect();
+    // connector负责连接对端
+    void Start();  // 开始主动发起连接
 
  private:
     void Retry();
