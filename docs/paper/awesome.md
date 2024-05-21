@@ -1,0 +1,4 @@
+- [PSOA2](https://www.dre.vanderbilt.edu/~schmidt/POSA/POSA2/)
+- [scalable-networking](http://bulk.fefe.de/scalable-networking.pdf)
+- [C10K](http://www.kegel.com/c10k.html)
+- [NIO](https://gee.cs.oswego.edu/dl/cpjslides/nio.pdf)

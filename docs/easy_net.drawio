@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="QyFkRlclYH_Wge8nbu0W" name="拆包图">
-        <mxGraphModel dx="1357" dy="656" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1922" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="UaKJABe7PAXAUNxV_94r-0"/>
                 <mxCell id="UaKJABe7PAXAUNxV_94r-1" parent="UaKJABe7PAXAUNxV_94r-0"/>
@@ -89,7 +89,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="Biu67a_eYHCAKZCPrpXr" name="Model-1">
-        <mxGraphModel dx="1757" dy="256" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2322" dy="436" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="wnQJwDpq4NG_0scp0d9E-0"/>
                 <mxCell id="wnQJwDpq4NG_0scp0d9E-1" parent="wnQJwDpq4NG_0scp0d9E-0"/>
@@ -117,7 +117,7 @@
                 <mxCell id="uRYG12ZJpqSl4SAKRl5s-16" style="edgeStyle=none;html=1;" parent="wnQJwDpq4NG_0scp0d9E-1" source="uRYG12ZJpqSl4SAKRl5s-3" target="uRYG12ZJpqSl4SAKRl5s-8" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="uRYG12ZJpqSl4SAKRl5s-3" value="MainReactor" style="rounded=1;whiteSpace=wrap;html=1;" parent="wnQJwDpq4NG_0scp0d9E-1" vertex="1">
+                <mxCell id="uRYG12ZJpqSl4SAKRl5s-3" value="MainReactor&lt;br&gt;(主线程中运行,round robin)" style="rounded=1;whiteSpace=wrap;html=1;" parent="wnQJwDpq4NG_0scp0d9E-1" vertex="1">
                     <mxGeometry x="270" y="415" width="206" height="95" as="geometry"/>
                 </mxCell>
                 <mxCell id="uRYG12ZJpqSl4SAKRl5s-4" value="SubReactor1" style="rounded=1;whiteSpace=wrap;html=1;" parent="wnQJwDpq4NG_0scp0d9E-1" vertex="1">
@@ -132,7 +132,7 @@
                 <mxCell id="uRYG12ZJpqSl4SAKRl5s-7" value="SubReactor4" style="rounded=1;whiteSpace=wrap;html=1;" parent="wnQJwDpq4NG_0scp0d9E-1" vertex="1">
                     <mxGeometry x="380" y="680" width="120" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="uRYG12ZJpqSl4SAKRl5s-9" value="thread pool" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="wnQJwDpq4NG_0scp0d9E-1" vertex="1">
+                <mxCell id="uRYG12ZJpqSl4SAKRl5s-9" value="reactor pool" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="wnQJwDpq4NG_0scp0d9E-1" vertex="1">
                     <mxGeometry x="517" y="665" width="90" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="uRYG12ZJpqSl4SAKRl5s-13" value="连接请求" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="wnQJwDpq4NG_0scp0d9E-1" vertex="1">
@@ -178,7 +178,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="PvpKgmDp-BPa8ZGQhezf" name="Model-2">
-        <mxGraphModel dx="2387" dy="1247" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2322" dy="1236" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>

@@ -78,7 +78,7 @@ size_t SocketOpt::WriteBufferToFd(Buffer &buf, int fd) {
         n = static_cast<int>(::write(fd, buf.GetReadableAddr(), buf.GetReadableSize()));
     } while (n == -1 && errno == EINTR);
 
-    if (n == -1 && errno == EAGAIN || errno == EWOULDBLOCK) {
+    if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
         // fd的发送缓冲区已满,本次没有写入任何数据,需要再次尝试
         return 0;
     }
@@ -218,6 +218,7 @@ bool SocketOpt::IsSelfConnect(int sockfd) {
     }
 }
 
+// 会导致一直触发EPOLLIN、EPOLLHUP事件
 void SocketOpt::ShutDownWrite(int sockfd) {
     if (::shutdown(sockfd, SHUT_WR) < 0) {
         LOG_ERROR("shutdownWrite error");
