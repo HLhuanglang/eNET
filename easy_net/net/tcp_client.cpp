@@ -13,7 +13,7 @@ TcpClient::~TcpClient() {
 }
 
 void TcpClient::connect() {
-    m_connector->Connect();
+    m_connector->Start();
 }
 
 void TcpClient::NewConn(int fd, const InetAddress &peerAddr) {

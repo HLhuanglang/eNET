@@ -2,6 +2,8 @@
 #define __EASYNET_HTTP_HEADERS_H
 
 #include <map>
+#include <string>
+
 namespace EasyNet {
 class HttpHeaders {
  public:
