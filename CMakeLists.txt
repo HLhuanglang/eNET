@@ -33,7 +33,7 @@ endif()
 # config thrid_party
 # ---------------------------------------------------------------------------------------
 # 例如cmake安装在/opt目录，那么这些库只能安装在/opt目录下,或者默认目录
-find_package(GTest 1.12.1 EXACT REQUIRED)
+find_package(GTest REQUIRED)
 if(GTest_FOUND)
   message(STATUS "GTest found")
 endif()
