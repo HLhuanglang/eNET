@@ -1,4 +1,4 @@
 .clangd
 build
 tools/bin
-.vscode/launch.json
+.vscode
