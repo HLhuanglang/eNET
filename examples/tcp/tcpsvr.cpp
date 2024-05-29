@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <spdlog/common.h>
 
 #include <atomic>
 #include <iostream>
@@ -6,7 +7,6 @@
 
 #include "inet_addr.h"
 #include "log.h"
-#include "spdlog/common.h"
 #include "tcp_server.h"
 
 std::atomic<int> global_counter(0);

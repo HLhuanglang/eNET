@@ -64,7 +64,7 @@ class TcpServer : public ConnOwner {
     InetAddress m_addr;                                          // 服务器监听的地址
     std::string m_name;                                          // 服务器名称
     unsigned int m_thread_cnt;                                   // 服务器启动的线程数量
-    std::set<std::shared_ptr<TcpConn>> m_connections_map;        // 当前持有的tcp链接
+    std::set<std::shared_ptr<TcpConn>> m_connections_map;        // 当前持有的tcp链接[防止智能指针被释放]
     std::vector<std::unique_ptr<ServerThread>> m_child_svr_vec;  // 子线程
     std::vector<EventLoop *> m_worker_loop;                      // 工作线程loop
 };

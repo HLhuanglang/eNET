@@ -26,16 +26,16 @@ class IdleFD {
     }
 
     ~IdleFD() {
-        ::close(m_idlefd);
+        SocketOpt::Close(m_idlefd);
     }
 
     void ReAccept(int fd) {
         // 1,释放fd用于处理新的链接
-        ::close(m_idlefd);
+        SocketOpt::Close(m_idlefd);
         // 2,处理链接
         m_idlefd = ::accept(fd, nullptr, nullptr);
         // 3,处理完毕,重新占位
-        ::close(m_idlefd);
+        SocketOpt::Close(m_idlefd);
         m_idlefd = ::open("/tmp/easy_net_idlefd", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
         if (m_idlefd < 0) {
             LOG_ERROR("create idlefd failed!");

@@ -43,8 +43,9 @@ void TcpConn::ProcessReadEvent() {
         // }
         m_owner->RecvMsg(shared_from_this());
     } else if (n == 0) {
-        // 当read返回0时,一定是表示对端关闭了连接
+        // 当read返回0时,一定是表示对端关闭了连接,但是不知道是调用close还是shwtdown(SHUT_WR)
         // 如果只是本次数据传输完了,read会返回-1,并设置errno=EGAIN或EWOULDBLOCK,此时链接还继续保持.
+        LOG_DEBUG("read=0 Connection has been disconnected");
         m_status = ConnStatus::DISCONNECTING;
         if (m_write_buf->GetReadableSize() == 0) {
             m_owner->DelConn(shared_from_this());
@@ -63,8 +64,7 @@ void TcpConn::ProcessReadEvent() {
 
 void TcpConn::ProcessWriteEvent() {
     if (m_status == ConnStatus::DISCONNECTED) {
-        LOG_INFO("Connection has been disconnected");
-        m_owner->DelConn(shared_from_this());
+        LOG_DEBUG("Connection has been disconnected");
         return;
     }
 
@@ -72,7 +72,7 @@ void TcpConn::ProcessWriteEvent() {
         auto ret = SocketOpt::WriteBufferToFd(*m_write_buf, this->GetFD());
         if (ret < 0) {
             // 写入失败,表示当前连接出现问题了，直接断开
-            LOG_ERROR("WriteBufferToFd err");
+            LOG_ERROR("WriteBufferToFd err:{}-{}", errno, strerror(errno));
             m_owner->DelConn(shared_from_this());
         }
         if (ret == 0) {
@@ -84,7 +84,7 @@ void TcpConn::ProcessWriteEvent() {
         // 无数据可写了,如果对端关闭了写,那么就断开连接
         // 如果链接正常，则将EPOLLOUT事件删除，避免一直触发
         if (m_status == ConnStatus::DISCONNECTING) {
-            LOG_INFO("Connection is disconnecting and no more data to send");
+            LOG_DEBUG("Connection is disconnecting and no more data to send");
             m_owner->DelConn(shared_from_this());
             m_status = ConnStatus::DISCONNECTED;
             return;

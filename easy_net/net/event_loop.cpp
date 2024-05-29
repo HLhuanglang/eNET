@@ -18,8 +18,11 @@
 namespace EasyNet {
 class IgnoreSigPipe {
  public:
+    static void log(int sig) {
+        LOG_DEBUG("recive sig={}", sig);
+    }
     IgnoreSigPipe() {
-        ::signal(SIGPIPE, SIG_IGN);
+        ::signal(SIGPIPE, log);
     }
 };
 IgnoreSigPipe initObj;

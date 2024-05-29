@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <spdlog/common.h>
 
 #include <atomic>
 #include <iostream>
@@ -6,7 +7,6 @@
 
 #include "inet_addr.h"
 #include "log.h"
-#include "spdlog/common.h"
 #include "tcp_server.h"
 
 // 后缀的参数只能是unsigned long long、long double、const char*或者const char* + size_t

@@ -1,11 +1,11 @@
 #include <signal.h>
+#include <spdlog/common.h>
 
 #include <iostream>
 
 #include "event_loop.h"
 #include "inet_addr.h"
 #include "log.h"
-#include "spdlog/common.h"
 #include "tcp_client.h"
 
 void sighandler(int signum) {

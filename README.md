@@ -26,6 +26,16 @@ cmake -S . -B build
 cmake --build build
 ```
 
+编译选项
+
+| 选项                   | 描述                       | 默认值 |
+| ---------------------- | -------------------------- | ------ |
+| BUILD_WITH_HTTP        | 是否支持http协议           | OFF    |
+| BUILD_WITH_EXAMPLES    | 是否编译使用案例           | OFF    |
+| BUILD_WITH_RAWEXAMPLES | 是否编译原始socket使用案例 | OFF    |
+
+
+
 ## 5.目录说明
 
 | 目录         | 作用                                               |

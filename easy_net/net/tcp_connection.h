@@ -41,7 +41,7 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
         m_name = std::to_string(timestamp) + "_" + ip_port;
 
         // 3,设置状态
-        SocketOpt::SetKeepAlive(fd, true);
+        SocketOpt::SetKeepAlive(fd, true);  // 只能保证TCP连接是正常的,当对端掉电或者网络断开时,通过tcp保活机制来检测连接是否正常
         m_status = ConnStatus::CONNECTING;
     }
 

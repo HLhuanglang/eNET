@@ -7,6 +7,7 @@
 #include "http_def.h"
 #include "http_request.h"
 #include "http_response.h"
+#include "log.h"
 
 namespace EasyNet {
 class HttpServer;
@@ -28,6 +29,7 @@ class HttpRouter {
     void Routing(const HttpRequest &req, HttpResponse &resp) {
         auto method = req.GetMethod();
         auto cmd = req.GetUrl();
+        LOG_DEBUG("Routing: {} {}", method, cmd);
         if (method == "GET") {
             auto it = m_get_router.find(cmd);
             if (it != m_get_router.end()) {

@@ -11,6 +11,7 @@ using namespace EasyNet;
 // 3. 接着调用 select 函数，在指定的时间内判断该 socket 是否可写，如果可写说明连接成功，反之则认为连接失败。
 void Connector::Start() {
     m_fd = SocketOpt::CreateNonBlockSocket(m_addr.family());
+    LOG_DEBUG("CreateNonBlockSocket fd={}", m_fd);
     int ret = SocketOpt::Connect(m_fd, m_addr.GetAddr());
     int savedErrno = (ret == 0) ? 0 : errno;
     switch (savedErrno) {
@@ -20,7 +21,7 @@ void Connector::Start() {
         case EISCONN:
             LOG_DEBUG("Connecting...");
             m_status = ConnectState::CONNECTING;
-            EnableWrite();
+            EnableWrite();  // 使能读,必定在下一次loop中能唤醒，进行回调
             break;
 
         case EAGAIN:
@@ -51,7 +52,7 @@ void Connector::Start() {
 
 void Connector::ProcessWriteEvent() {
     if (m_status == ConnectState::CONNECTING) {
-        DisableWrite();  // 只是为了完成异步connect,此时不再关注写事件,由后续客户端是否发送数据来决定是否关注写事件
+        RemoveEvent();  // 只是为了完成异步connect,此时不再关注写事件,由后续客户端是否发送数据来决定是否关注写事件
 
         int err = SocketOpt::GetSocketError(m_fd);
         if (err) {
@@ -71,13 +72,17 @@ void Connector::Retry() {
     m_status = ConnectState::DISCONNECTED;
     SocketOpt::Close(m_fd);
     m_ioloop->TimerAfter(std::bind(&Connector::ReConnect, this), m_retry_delay_ms);
-    m_retry_delay_ms = std::min(m_retry_delay_ms * 2, KMaxRetryTimeMS);
+    m_retry_delay_ms = m_retry_delay_ms * 2;
 }
 
 void Connector::ReConnect() {
     m_ioloop->RunInLoop([&]() {
         if (m_status == ConnectState::DISCONNECTED) {
-            Start();
+            if (m_retry_delay_ms <= KMaxRetryTimeMS) {
+                Start();
+            } else {
+                LOG_ERROR("Retry too many times, give up!");
+            }
         }
     });
 }
