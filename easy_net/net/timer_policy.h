@@ -1,9 +1,6 @@
 #ifndef __EASYNET_TIMER_POLICY_H
 #define __EASYNET_TIMER_POLICY_H
 
-#include <fcntl.h>
-#include <sys/epoll.h>
-
 #include <ctime>
 #include <list>
 #include <queue>

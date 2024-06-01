@@ -30,9 +30,11 @@ cmake --build build
 
 | 选项                   | 描述                       | 默认值 |
 | ---------------------- | -------------------------- | ------ |
+| BUILD_WITH_DNS         | 是否支持dns协议            | ON    |
 | BUILD_WITH_HTTP        | 是否支持http协议           | OFF    |
 | BUILD_WITH_EXAMPLES    | 是否编译使用案例           | OFF    |
 | BUILD_WITH_RAWEXAMPLES | 是否编译原始socket使用案例 | OFF    |
+| BUILD_WITH_UNITTEST    | 是否编译单元测试           | OFF    |
 
 
 

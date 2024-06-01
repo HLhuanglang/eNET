@@ -1,9 +1,6 @@
 #ifndef __EASYNET_TIMER_H
 #define __EASYNET_TIMER_H
 
-#include <fcntl.h>
-#include <sys/epoll.h>
-
 #include <cstdint>
 #include <ctime>
 #include <functional>

@@ -4,7 +4,6 @@
 #include <thread>
 
 #include "event_loop.h"
-#include "log.h"
 #include "tcp_server.h"
 
 using namespace EasyNet;

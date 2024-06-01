@@ -30,36 +30,29 @@ if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
 endif()
 
 # ---------------------------------------------------------------------------------------
-# config thrid_party
+# EasyNet库编译
 # ---------------------------------------------------------------------------------------
-# 例如cmake安装在/opt目录，那么这些库只能安装在/opt目录下,或者默认目录
-find_package(GTest REQUIRED)
-if(GTest_FOUND)
-  message(STATUS "GTest found")
-endif()
+set(EASYNET_LIB_NAME "easynet")
 
+# 例如cmake安装在/opt目录，那么cmake安装的这些库就只能安装在/opt目录下,或者默认目录
 find_package(spdlog REQUIRED)
 if(spdlog_FOUND)
   message(STATUS "spdlog found")
 endif()
 
-find_package(c-ares)
-if(c-ares_FOUND)
-  add_definitions("-DHAS_CARES")
-  message(STATUS "c-ares found")
-  message(STATUS "${c-ares_INCLUDE_DIR}")
-endif()
-
-# ---------------------------------------------------------------------------------------
-# EasyNet库编译
-# ---------------------------------------------------------------------------------------
-set(EASYNET_LIB_NAME "easynet")
 option(BUILD_WITH_DNS "是否编译dns协议模块" OFF)
 if(BUILD_WITH_DNS)
+  find_package(c-ares)
+  if(c-ares_FOUND)
+    add_definitions("-DHAS_CARES")
+    message(STATUS "c-ares found")
+    message(STATUS "${c-ares_INCLUDE_DIR}")
+  endif()
   file(GLOB_RECURSE DNS_SOURCES
        "${CMAKE_SOURCE_DIR}/easy_net/protocol/dns/*.cpp")
   list(APPEND EASYNET_SOURCES ${DNS_SOURCES})
 endif()
+
 option(BUILD_WITH_HTTP "是否编译http协议模块" OFF)
 if(BUILD_WITH_HTTP)
   file(GLOB_RECURSE HTTP_SOURCES
@@ -67,6 +60,7 @@ if(BUILD_WITH_HTTP)
        "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.c")
   list(APPEND EASYNET_SOURCES ${HTTP_SOURCES})
 endif()
+
 file(GLOB_RECURSE BASE_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/base/*.cpp")
 file(GLOB_RECURSE NET_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/net/*.cpp")
 list(APPEND EASYNET_SOURCES ${BASE_SOURCES} ${NET_SOURCES})
@@ -131,13 +125,13 @@ if(BUILD_WITH_HTTP)
 endif()
 if(BUILD_WITH_DNS)
   set(easynet_dns_headers
-      easy_net/protocol/dns/resolver.h
-      easy_net/protocol/dns/default_resolver.h
+      easy_net/protocol/dns/resolver.h easy_net/protocol/dns/default_resolver.h
       easy_net/protocol/dns/cares_resolver.h)
   install(FILES ${easynet_dns_headers}
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 endif()
-# 这种模式,需要项目所有的头文件放到include目录下 install( DIRECTORY
+# 这种模式,需要项目所有的头文件放到include目录下 
+# install( DIRECTORY
 # ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION
 # ${CMAKE_INSTALL_INCLUDEDIR}/easynet )
 
@@ -181,11 +175,19 @@ install(
 # ---------------------------------------------------------------------------------------
 # EasyNet库单元测试
 # ---------------------------------------------------------------------------------------
-file(GLOB_RECURSE EASYNET_UNITTEST_SOURCES "${CMAKE_SOURCE_DIR}/test/*.cpp")
-add_executable(EasyNetUnitTest ${EASYNET_UNITTEST_SOURCES})
-target_include_directories(EasyNetUnitTest PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
-target_link_libraries(EasyNetUnitTest ${EASYNET_LIB_NAME})
-target_link_libraries(EasyNetUnitTest GTest::gtest GTest::gtest_main)
+option(BUILD_WITH_UNITTEST "是否编译单元测试" OFF)
+if(BUILD_WITH_UNITTEST)
+  find_package(GTest REQUIRED)
+  if(GTest_FOUND)
+    message(STATUS "GTest found")
+  endif()
+  file(GLOB_RECURSE EASYNET_UNITTEST_SOURCES "${CMAKE_SOURCE_DIR}/test/*.cpp")
+  add_executable(EasyNetUnitTest ${EASYNET_UNITTEST_SOURCES})
+  target_include_directories(EasyNetUnitTest
+                             PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
+  target_link_libraries(EasyNetUnitTest ${EASYNET_LIB_NAME})
+  target_link_libraries(EasyNetUnitTest GTest::gtest GTest::gtest_main)
+endif()
 
 # ---------------------------------------------------------------------------------------
 # EasyNet使用案例
