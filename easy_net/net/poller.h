@@ -9,14 +9,9 @@ namespace EasyNet {
 class EventLoop;
 class IOEvent;
 
-enum class poller_type_e {
-    TYPE_EPOLL,
-    TYPE_POLL
-};
-
 class Poller : public NonCopyable {
  public:
-    static Poller *CreatePoller(poller_type_e type, EventLoop *loop);
+    static Poller *CreatePoller(EventLoop *loop);
 
  public:
     Poller(EventLoop *loop);

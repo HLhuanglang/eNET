@@ -32,7 +32,7 @@ using namespace EasyNet;
 
 thread_local EventLoop *t_loopInThread = nullptr;
 
-EventLoop::EventLoop(std::string name) : m_poller(Poller::CreatePoller(poller_type_e::TYPE_EPOLL, this)),
+EventLoop::EventLoop(std::string name) : m_poller(Poller::CreatePoller(this)),
                                          m_pending_func(false),
                                          m_quit(false),
                                          m_looping(false),
