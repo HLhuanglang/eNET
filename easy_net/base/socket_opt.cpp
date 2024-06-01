@@ -1,6 +1,5 @@
 #include "socket_opt.h"
 
-#include <asm-generic/socket.h>
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/uio.h>  // readv

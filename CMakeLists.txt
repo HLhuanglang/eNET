@@ -43,8 +43,9 @@ if(spdlog_FOUND)
   message(STATUS "spdlog found")
 endif()
 
-find_package(c-ares REQUIRED)
+find_package(c-ares)
 if(c-ares_FOUND)
+  add_definitions("-DHAS_CARES")
   message(STATUS "c-ares found")
   message(STATUS "${c-ares_INCLUDE_DIR}")
 endif()
@@ -53,9 +54,17 @@ endif()
 # EasyNet库编译
 # ---------------------------------------------------------------------------------------
 set(EASYNET_LIB_NAME "easynet")
+option(BUILD_WITH_DNS "是否编译dns协议模块" OFF)
+if(BUILD_WITH_DNS)
+  file(GLOB_RECURSE DNS_SOURCES
+       "${CMAKE_SOURCE_DIR}/easy_net/protocol/dns/*.cpp")
+  list(APPEND EASYNET_SOURCES ${DNS_SOURCES})
+endif()
 option(BUILD_WITH_HTTP "是否编译http协议模块" OFF)
 if(BUILD_WITH_HTTP)
-  file(GLOB_RECURSE HTTP_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.cpp" "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.c")
+  file(GLOB_RECURSE HTTP_SOURCES
+       "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.cpp"
+       "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.c")
   list(APPEND EASYNET_SOURCES ${HTTP_SOURCES})
 endif()
 file(GLOB_RECURSE BASE_SOURCES "${CMAKE_SOURCE_DIR}/easy_net/base/*.cpp")
@@ -68,6 +77,7 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/easy_net/base>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/easy_net/net>
     $<BUILD_INTERFACE:$<IF:$<BOOL:${BUILD_WITH_HTTP}>,${CMAKE_SOURCE_DIR}/easy_net/protocol/http,>>
+    $<BUILD_INTERFACE:$<IF:$<BOOL:${BUILD_WITH_DNS}>,${CMAKE_SOURCE_DIR}/easy_net/protocol/dns,>>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 
@@ -75,8 +85,7 @@ target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 # EasyNet库安装
 # ---------------------------------------------------------------------------------------
 add_library(easynet::easynet ALIAS easynet)
-# 安装头文件和库 
-# --头文件
+# 安装头文件和库 --头文件
 set(easynet_core_headers
     easy_net/net/tcp_server.h
     easy_net/net/connection_owner.h
@@ -106,21 +115,29 @@ set(easynet_core_headers
     easy_net/base/sigleton.h)
 install(FILES ${easynet_core_headers}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
-set(easynet_http_headers
-    easy_net/protocol/http/http_headers.h
-    easy_net/protocol/http/http_router.h
-    easy_net/protocol/http/http_response.h
-    easy_net/protocol/http/http_request.h
-    easy_net/protocol/http/http_context.h
-    easy_net/protocol/http/http_parser.h
-    easy_net/protocol/http/http_def.h
-    easy_net/protocol/http/http_client.h
-    easy_net/protocol/http/http_server.h
-)
-install(FILES ${easynet_http_headers}
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
-# 这种模式,需要项目所有的头文件放到include目录下 
-# install( DIRECTORY
+if(BUILD_WITH_HTTP)
+  set(easynet_http_headers
+      easy_net/protocol/http/http_headers.h
+      easy_net/protocol/http/http_router.h
+      easy_net/protocol/http/http_response.h
+      easy_net/protocol/http/http_request.h
+      easy_net/protocol/http/http_context.h
+      easy_net/protocol/http/http_parser.h
+      easy_net/protocol/http/http_def.h
+      easy_net/protocol/http/http_client.h
+      easy_net/protocol/http/http_server.h)
+  install(FILES ${easynet_http_headers}
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
+endif()
+if(BUILD_WITH_DNS)
+  set(easynet_dns_headers
+      easy_net/protocol/dns/resolver.h
+      easy_net/protocol/dns/default_resolver.h
+      easy_net/protocol/dns/cares_resolver.h)
+  install(FILES ${easynet_dns_headers}
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
+endif()
+# 这种模式,需要项目所有的头文件放到include目录下 install( DIRECTORY
 # ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION
 # ${CMAKE_INSTALL_INCLUDEDIR}/easynet )
 
@@ -143,7 +160,7 @@ set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake/easynet")
 include(CMakePackageConfigHelpers)
 configure_package_config_file("${project_config_in}" "${project_config_out}"
                               INSTALL_DESTINATION ${export_dest_dir})
-install(FILES "${project_config_out}" DESTINATION ${export_dest_dir}) 
+install(FILES "${project_config_out}" DESTINATION ${export_dest_dir})
 
 # --生成并安装easynetConfigVersion.cmake
 write_basic_package_version_file("${version_config_file}"
@@ -151,9 +168,10 @@ write_basic_package_version_file("${version_config_file}"
 install(FILES "${version_config_file}" DESTINATION ${export_dest_dir})
 
 # --生成并安装easynetConfigTargets.cmake
-export(TARGETS easynet
-       NAMESPACE easynet::
-       FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
+export(
+  TARGETS easynet
+  NAMESPACE easynet::
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
 install(
   EXPORT EasyNetTargets
   NAMESPACE easynet::

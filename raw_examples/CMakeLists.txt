@@ -59,6 +59,8 @@ add_executable(unix_domain_svr unix_domain/server.cpp)
 target_link_libraries(unix_domain_svr pthread)
 
 # c-ares
-add_executable(c-ares c-ares/main.cpp)
-target_link_libraries(c-ares pthread c-ares::cares_static)
-target_link_directories(c-ares PRIVATE "${c-ares_INCLUDE_DIR}")
+if(c-ares_FOUND)
+    add_executable(c-ares c-ares/main.cpp)
+    target_link_libraries(c-ares pthread c-ares::cares_static)
+    target_link_directories(c-ares PRIVATE "${c-ares_INCLUDE_DIR}")
+endif()
