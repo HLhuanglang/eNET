@@ -32,7 +32,7 @@ int main() {
     });
 
     svr.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
-        auto msg = conn->GetReadBuf().RetriveAllAsString();
+        auto msg = conn->GetBuffer().RetriveAllAsString();
         if (msg.empty()) {
             global_counter.fetch_add(1, std::memory_order_relaxed);
         } else {

@@ -30,7 +30,7 @@ int main() {
     });
 
     cli.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
-        auto msg = conn->GetReadBuf().RetriveAllAsString();
+        auto msg = conn->GetBuffer().RetriveAllAsString();
         LOG_DEBUG("recv msg={}", msg);
     });
 

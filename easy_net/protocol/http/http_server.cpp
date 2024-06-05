@@ -28,10 +28,10 @@ void HttpServer::_on_recv_msg(const tcp_connection_t &conn) {
     // 1,完整的http请求
     // 2,不完整的http请求
     // 3,多个http请求
-    HttpContext::Status status = ctx.Parse(conn->GetReadBuf().GetReadableAddr(), conn->GetReadBuf().GetReadableSize(), req);
+    HttpContext::Status status = ctx.Parse(conn->GetBuffer().GetReadableAddr(), conn->GetBuffer().GetReadableSize(), req);
     if (status.ParseComplete()) {
         // 1,解析成功,那么消费掉对应的数据
-        conn->GetReadBuf().AdvanceReader(status.GetParsedLen());
+        conn->GetBuffer().AdvanceReader(status.GetParsedLen());
 
         // 2,根据url找到对应的处理函数
         HttpResponse resp;

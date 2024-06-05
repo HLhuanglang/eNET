@@ -20,6 +20,11 @@ void TcpConn::SendData(const char *data, size_t data_size) {
     //(上层调用有个小优化逻辑,就是数据必须达到多少量才发送,不然频繁的发送小数据不划算...当然如果只发一点点无法触发发送也是不行的，可以增加一个定时器操作,如果达到多少时间后数据量还是不够,就直接发送)
     // 当buf写空了以后才把EPOLLOUT事件去除。
 
+    if (m_status == ConnStatus::DISCONNECTED || m_status == ConnStatus::DISCONNECTING) {
+        LOG_ERROR("Connection != CONNECTED, can't send data");
+        return;
+    }
+
     // 1,先写入缓存中
     m_write_buf->Append(data, data_size);
 

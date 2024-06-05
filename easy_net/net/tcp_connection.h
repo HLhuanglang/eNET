@@ -58,8 +58,7 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
  public:
     void SendData(const char *data, size_t data_size);
     void SendData(const std::string &data);
-    Buffer &GetReadBuf() { return *m_read_buf; }
-    Buffer &GetWriteBuf() { return *m_write_buf; }
+    Buffer &GetBuffer() { return *m_read_buf; }
     std::string GetConnName() { return m_name; }
     void SetStatus(ConnStatus status) { m_status = status; }
     EventLoop *GetOwnerLoop() { return m_ioloop; }

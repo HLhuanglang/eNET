@@ -46,7 +46,7 @@ int main() {
 
     svr.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
         // fixme-hl：出现回包为空的情况
-        auto msg = conn->GetReadBuf().RetriveAllAsString();
+        auto msg = conn->GetBuffer().RetriveAllAsString();
         if (msg.empty()) {
             global_counter.fetch_add(1, std::memory_order_relaxed);
         } else {
