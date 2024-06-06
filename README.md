@@ -15,8 +15,9 @@
 - gcc>=4.8.1(支持c++11)
 - git
 - cmake
-- geogletest：tag release-1.12.1
-- spdlog：tag v1.13.0
+- geogletest
+- spdlog
+- c-ares
 
 ## 4.编译运行
 
@@ -30,7 +31,7 @@ cmake --build build
 
 | 选项                   | 描述                       | 默认值 |
 | ---------------------- | -------------------------- | ------ |
-| BUILD_WITH_DNS         | 是否支持dns协议            | ON    |
+| BUILD_WITH_DNS         | 是否支持dns协议            | OFF    |
 | BUILD_WITH_HTTP        | 是否支持http协议           | OFF    |
 | BUILD_WITH_EXAMPLES    | 是否编译使用案例           | OFF    |
 | BUILD_WITH_RAWEXAMPLES | 是否编译原始socket使用案例 | OFF    |
@@ -42,13 +43,12 @@ cmake --build build
 
 | 目录         | 作用                                               |
 | ------------ | -------------------------------------------------- |
-| .vscode      | vscode开发环境配置                                 |
+| cmake        | cmake安装模板文件|
 | docs         | 开发文档                                           |
 | easy_net     | 网络库底层，目前主要支持tcp协议，udp暂未考虑       |
 | examples     | 使用easynet编写的demo       |
 | raw_examples | socket系列接口的原生使用方法、优秀的网络库使用案例 |
 | test         | 测试代码                                           |
-| build        | 编译的中间产物、可执行程序等     |
 | tools      | 工具                                 |
 
 ## 6.参考项目/文章/论文
