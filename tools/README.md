@@ -1,15 +1,5 @@
 # eTools
 
-## 安装pcap库
-- On Ubuntu or other Debian-based systems, you can use the following command:
-
-  ```bash
-  sudo apt-get install libpcap-dev
-  ```
-
-- On CentOS, Fedora, or other RHEL-based systems, you can use the following command:
-
-  ```bash
-  sudo yum install libpcap-devel
-  ``
-
+方便EasyNet开发的一些小工具合集：
+- [ethfilter](./docs/ethfilter.md)：网卡抓包工具,可以打印IP层、TCP/UDP层、应用层包的信息
+- [echo](./docs/echo.md)：方便压测echosvr

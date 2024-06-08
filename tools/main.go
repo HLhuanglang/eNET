@@ -16,8 +16,8 @@ func main() {
 		fmt.Println("Error getting executable path:", err)
 		return
 	}
-	executableDir := filepath.Dir(executablePath)            // 获取可执行文件所在的目录路径
-	logFilePath := filepath.Join(executableDir, "eTool.log") // 构建日志文件的完整路
+	executableDir := filepath.Dir(executablePath)             // 获取可执行文件所在的目录路径
+	logFilePath := filepath.Join(executableDir, "eTools.log") // 构建日志文件的完整路
 	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatal("open eTool.log fail:", err)
