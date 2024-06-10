@@ -64,3 +64,9 @@ if(c-ares_FOUND)
     target_link_libraries(c-ares pthread c-ares::cares_static)
     target_link_directories(c-ares PRIVATE "${c-ares_INCLUDE_DIR}")
 endif()
+
+# udp
+add_executable(udp_cli udp/udpcli.cpp)
+target_link_libraries(udp_cli pthread)
+add_executable(udp_svr udp/udpsvr.cpp)
+target_link_libraries(udp_svr pthread)
