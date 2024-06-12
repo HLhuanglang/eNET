@@ -2,7 +2,6 @@
 #define __EASYNET_NON_COPYABLE_H
 
 #include <memory>
-#include <utility>
 
 namespace EasyNet {
 /// @brief 屏蔽拷贝构造和赋值函数

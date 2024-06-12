@@ -1,7 +1,6 @@
 #ifndef __EASYNET_BUFFER_H
 #define __EASYNET_BUFFER_H
 
-#include <cstddef>
 #include <string>
 #include <vector>
 

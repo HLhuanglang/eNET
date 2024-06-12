@@ -1,11 +1,24 @@
 #ifndef __EASYNET_INET_ADDR_H_
 #define __EASYNET_INET_ADDR_H_
 
-#include <netinet/in.h>
+#ifdef _WIN32
+#    include <WinSock2.h>
+#    include <ws2tcpip.h>
+using sa_family_t = unsigned short;
+using in_addr_t = uint32_t;
+using uint16_t = unsigned short;
+#else
+#    include <arpa/inet.h>
+#    include <netinet/in.h>
+#    include <sys/socket.h>
+#endif
 
-#include <cstdint>
 #include <string>
 
+/*
+see this post about endian:
+https://github.com/HLhuanglang/EasyNet/blob/main/docs/md/generic/%E4%B8%BB%E6%9C%BA%E5%AD%97%E8%8A%82%E5%BA%8F%E5%92%8C%E7%BD%91%E7%BB%9C%E5%AD%97%E8%8A%82%E5%BA%8F.md
+*/
 namespace EasyNet {
 class InetAddress {
  public:
@@ -14,7 +27,7 @@ class InetAddress {
     explicit InetAddress(const struct sockaddr_in &addr)
         : m_addr(addr) {}
     explicit InetAddress(const struct sockaddr_in6 &addr)
-        : m_addr6(addr) {}
+        : m_addr6(addr), m_ipv6(true) {}
 
  public:
     sa_family_t family() const {
@@ -73,7 +86,7 @@ class InetAddress {
         struct sockaddr_in m_addr;
         struct sockaddr_in6 m_addr6;
     };
-    bool m_ipv6;
+    bool m_ipv6 = false;
 };
 }  // namespace EasyNet
 

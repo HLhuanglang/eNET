@@ -1,9 +1,8 @@
 #ifndef __EASYNET_LOG_H
 #define __EASYNET_LOG_H
 
+#include <spdlog/common.h>
 #include <spdlog/spdlog.h>
-
-#include "spdlog/common.h"
 
 namespace EasyNet {
 #ifdef _WIN32
@@ -25,8 +24,20 @@ namespace EasyNet {
 #define LOG_WARN(fmt, ...) spdlog::log({__FILENAME__, __LINE__, __FUNCTION__}, spdlog::level::warn, fmt, ##__VA_ARGS__)
 #define LOG_ERROR(fmt, ...) spdlog::log({__FILENAME__, __LINE__, __FUNCTION__}, spdlog::level::err, fmt, ##__VA_ARGS__)
 
-inline void LogInit(spdlog::level::level_enum lv) {
-    spdlog::set_level(lv);
+enum level {
+    trace = 0,
+    debug = 1,
+    info = 2,
+    warn = 3,
+    err = 4,
+    critical = 5,
+    off = 6,
+    n_levels
+};
+
+inline void LogInit(level lv) {
+    spdlog::level::level_enum spdlogLevel = static_cast<spdlog::level::level_enum>(lv);
+    spdlog::set_level(spdlogLevel);
     spdlog::set_pattern("[%D %H:%M:%S.%e][%L][%t][%s:%# %!] %^%v%$");
 }
 

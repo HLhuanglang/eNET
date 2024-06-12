@@ -1,9 +1,14 @@
 #include "socket_opt.h"
 
+#ifdef _WIN32
+#    include <ws2tcpip.h>
+#else
+#    include <sys/socket.h>
+#    include <sys/uio.h>  // readv
+#    include <unistd.h>   // read
+#endif
+
 #include <fcntl.h>
-#include <sys/socket.h>
-#include <sys/uio.h>  // readv
-#include <unistd.h>   // read
 
 #include <cerrno>  // errno
 #include <cstddef>
@@ -135,7 +140,7 @@ void SocketOpt::SetKeepAlive(int fd, bool on) {
 
 struct sockaddr_in6 SocketOpt::GetLocalAddr(int sockfd) {
     struct sockaddr_in6 localaddr;
-    bzero(&localaddr, sizeof localaddr);
+    memset(&localaddr, 0, sizeof localaddr);
     socklen_t addrlen = static_cast<socklen_t>(sizeof localaddr);
     if (::getsockname(sockfd, (sockaddr *)(&localaddr), &addrlen) < 0) {
         LOG_ERROR("getsockname fial");
@@ -145,7 +150,7 @@ struct sockaddr_in6 SocketOpt::GetLocalAddr(int sockfd) {
 
 struct sockaddr_in6 SocketOpt::GetPeerAddr(int sockfd) {
     struct sockaddr_in6 peeraddr;
-    bzero(&peeraddr, sizeof peeraddr);
+    memset(&peeraddr, 0, sizeof peeraddr);
     socklen_t addrlen = static_cast<socklen_t>(sizeof peeraddr);
     if (::getpeername(sockfd, (sockaddr *)(&peeraddr), &addrlen) < 0) {
         LOG_ERROR("getpeername fial");
@@ -172,7 +177,7 @@ int SocketOpt::Connect(int sockfd, const struct sockaddr *addr) {
 
 int SocketOpt::Accept(int fd, InetAddress &perrAddr) {
     struct sockaddr_in6 addr;
-    bzero(&addr, sizeof addr);
+    memset(&addr, 0, sizeof addr);
     socklen_t addrlen = sizeof(struct sockaddr_in6);
 
     int connfd = ::accept(fd, (struct sockaddr *)&addr, &addrlen);

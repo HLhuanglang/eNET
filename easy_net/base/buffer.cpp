@@ -2,7 +2,6 @@
 #include "buffer.h"
 
 #include <algorithm>
-#include <cstddef>
 #include <string>
 
 using namespace EasyNet;

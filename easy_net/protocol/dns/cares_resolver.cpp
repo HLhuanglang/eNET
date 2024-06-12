@@ -1,1 +1,0 @@
-#include "cares_resolver.h"

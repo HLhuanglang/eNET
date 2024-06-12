@@ -1,12 +1,14 @@
 #include "inet_addr.h"
 
-#include <arpa/inet.h>
-#include <assert.h>
-#include <endian.h>
-#include <strings.h>
+#ifdef _WIN32
+#    include <ws2tcpip.h>
+#else
+#    include <arpa/inet.h>
+#endif
 
-#include <cstdint>
+#include <cassert>
 #include <cstdio>
+#include <cstring>
 #include <string>
 
 #include "log.h"
@@ -15,16 +17,16 @@ using namespace EasyNet;
 
 InetAddress::InetAddress(const char *ip, uint16_t port, bool ipv6) : m_ipv6(ipv6) {
     if (ipv6) {
-        bzero(&m_addr6, sizeof m_addr6);
+        memset(&m_addr6, 0, sizeof m_addr6);
         m_addr6.sin6_family = AF_INET6;
-        m_addr6.sin6_port = htobe16(port);
+        m_addr6.sin6_port = htons(port);
         if (::inet_pton(AF_INET6, ip, &m_addr6.sin6_addr) <= 0) {
             LOG_ERROR("IPaddress Error");
         }
     } else {
-        bzero(&m_addr, sizeof m_addr);
+        memset(&m_addr, 0, sizeof m_addr);
         m_addr.sin_family = AF_INET;
-        m_addr.sin_port = htobe16(port);
+        m_addr.sin_port = htons(port);
         if (::inet_pton(AF_INET, ip, &m_addr.sin_addr) <= 0) {
             LOG_ERROR("IPaddress Error");
         }
@@ -33,17 +35,17 @@ InetAddress::InetAddress(const char *ip, uint16_t port, bool ipv6) : m_ipv6(ipv6
 
 InetAddress::InetAddress(uint16_t port, bool loopbackOnly, bool ipv6) : m_ipv6(ipv6) {
     if (ipv6) {
-        bzero(&m_addr6, sizeof m_addr6);
+        memset(&m_addr6, 0, sizeof m_addr6);
         m_addr6.sin6_family = AF_INET6;
         in6_addr ip = loopbackOnly ? in6addr_loopback : in6addr_any;
         m_addr6.sin6_addr = ip;
-        m_addr6.sin6_port = htobe16(port);
+        m_addr6.sin6_port = htons(port);
     } else {
-        bzero(&m_addr, sizeof m_addr);
+        memset(&m_addr, 0, sizeof m_addr);
         m_addr.sin_family = AF_INET;
         in_addr_t ip = loopbackOnly ? INADDR_LOOPBACK : INADDR_ANY;
-        m_addr.sin_addr.s_addr = htobe32(ip);
-        m_addr.sin_port = htobe16(port);
+        m_addr.sin_addr.s_addr = htonl(ip);
+        m_addr.sin_port = htons(port);
     }
 }
 
@@ -54,11 +56,11 @@ std::string InetAddress::SerializationToIpPort() const {
 
     if (m_ipv6) {
         assert(size >= INET6_ADDRSTRLEN);
-        port = be16toh(m_addr6.sin6_port);
+        port = ntohs(m_addr6.sin6_port);
         ::inet_ntop(AF_INET6, &m_addr6.sin6_addr, buf, static_cast<socklen_t>(size));
     } else {
         assert(size >= INET_ADDRSTRLEN);
-        port = be16toh(m_addr.sin_port);
+        port = ntohs(m_addr.sin_port);
         ::inet_ntop(AF_INET, &m_addr.sin_addr, buf, static_cast<socklen_t>(size));
     }
     size_t end = ::strlen(buf);
@@ -87,10 +89,10 @@ std::string InetAddress::SerializationToPort() const {
     uint16_t port;
     if (m_ipv6) {
         assert(size >= INET6_ADDRSTRLEN);
-        port = be16toh(m_addr6.sin6_port);
+        port = ntohs(m_addr6.sin6_port);
     } else {
         assert(size >= INET_ADDRSTRLEN);
-        port = be16toh(m_addr.sin_port);
+        port = ntohs(m_addr.sin_port);
     }
     snprintf(buf, size, "%u", port);
     return buf;
