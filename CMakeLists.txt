@@ -42,12 +42,6 @@ endif()
 
 option(BUILD_WITH_DNS "是否编译dns协议模块" OFF)
 if(BUILD_WITH_DNS)
-  find_package(c-ares)
-  if(c-ares_FOUND)
-    add_definitions("-DHAS_CARES")
-    message(STATUS "c-ares found")
-    message(STATUS "${c-ares_INCLUDE_DIR}")
-  endif()
   file(GLOB_RECURSE DNS_SOURCES
        "${CMAKE_SOURCE_DIR}/easy_net/protocol/dns/*.cpp")
   list(APPEND EASYNET_SOURCES ${DNS_SOURCES})
@@ -83,19 +77,16 @@ add_library(easynet::easynet ALIAS easynet)
 set(easynet_core_headers
     easy_net/net/tcp_server.h
     easy_net/net/connection_owner.h
-    easy_net/net/poll_poller.h
     easy_net/net/tcp_connection.h
-    easy_net/net/timer_timewheel.h
     easy_net/net/io_event.h
     easy_net/net/timer.h
+    easy_net/net/timer_policy.h
     easy_net/net/poller.h
     easy_net/net/notify.h
     easy_net/net/connector.h
     easy_net/net/acceptor.h
-    easy_net/net/timer_list.h
     easy_net/net/server_thread.h
     easy_net/net/tcp_client.h
-    easy_net/net/timer_miniheap.h
     easy_net/net/event_loop.h
     easy_net/net/def.h
     easy_net/net/epoll_poller.h
@@ -106,7 +97,8 @@ set(easynet_core_headers
     easy_net/base/inet_addr.h
     easy_net/base/non_copyable.h
     easy_net/base/thread.h
-    easy_net/base/sigleton.h)
+    easy_net/base/sigleton.h
+    easy_net/base/win_support.h)
 install(FILES ${easynet_core_headers}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 if(BUILD_WITH_HTTP)
@@ -125,8 +117,7 @@ if(BUILD_WITH_HTTP)
 endif()
 if(BUILD_WITH_DNS)
   set(easynet_dns_headers
-      easy_net/protocol/dns/resolver.h easy_net/protocol/dns/default_resolver.h
-      easy_net/protocol/dns/cares_resolver.h)
+      easy_net/protocol/dns/dns.h)
   install(FILES ${easynet_dns_headers}
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 endif()
@@ -134,6 +125,7 @@ endif()
 # install( DIRECTORY
 # ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION
 # ${CMAKE_INSTALL_INCLUDEDIR}/easynet )
+source_group("Headers" FILES ${easynet_core_headers} ${easynet_http_headers} ${easynet_dns_headers})
 
 # --库和可执行文件
 install(

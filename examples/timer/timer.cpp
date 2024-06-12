@@ -1,4 +1,3 @@
-#include <spdlog/common.h>
 #include <unistd.h>
 
 #include "event_loop.h"
@@ -13,7 +12,7 @@ unsigned long long operator"" _ms(unsigned long long ms) {
 }
 
 int main() {
-    EasyNet::LogInit(spdlog::level::level_enum::trace);
+    EasyNet::LogInit(EasyNet::level::debug);
     EasyNet::EventLoop loop("timer_loop");
 
     auto t1 = loop.TimerAfter([]() {

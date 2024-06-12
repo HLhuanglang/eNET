@@ -33,3 +33,8 @@ target_link_libraries(tcpsvr ${EASYNET_LIB_NAME})
 add_executable(tcpcli tcp/tcpcli.cpp)
 target_include_directories(tcpcli PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
 target_link_libraries(tcpcli ${EASYNET_LIB_NAME})
+
+# dns
+add_executable(dns dns/dns.cpp)
+target_include_directories(dns PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
+target_link_libraries(dns ${EASYNET_LIB_NAME})

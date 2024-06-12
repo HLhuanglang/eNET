@@ -9,6 +9,7 @@
 ## 2.支持平台
 
 - linux
+- windows(doing)
 
 ## 3.依赖
 
@@ -17,7 +18,6 @@
 - cmake
 - geogletest
 - spdlog
-- c-ares
 
 ## 4.编译运行
 

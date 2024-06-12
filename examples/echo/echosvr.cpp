@@ -1,5 +1,4 @@
 #include <signal.h>
-#include <spdlog/common.h>
 
 #include <atomic>
 #include <iostream>
@@ -30,7 +29,7 @@ int main() {
     signal(SIGINT, sighandler);
 
     // 设置日志
-    EasyNet::LogInit(spdlog::level::debug);
+    EasyNet::LogInit(EasyNet::level::debug);
 
     // 创建tcpsvr
     EasyNet::TcpServer svr("echosvr", 2 * std::thread::hardware_concurrency() - 1, {"127.0.0.1", 8888});

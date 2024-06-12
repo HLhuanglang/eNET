@@ -1,11 +1,9 @@
-#include <spdlog/common.h>
-
 #include "http_router.h"
 #include "http_server.h"
 #include "log.h"
 
 int main() {
-    EasyNet::LogInit(spdlog::level::debug);
+    EasyNet::LogInit(EasyNet::level::debug);
     EasyNet::HttpRouter route;
     route.GET("/Hi", [](const EasyNet::HttpRequest &req, EasyNet::HttpResponse &res) {
         // 1,处理请求

@@ -1,5 +1,4 @@
 #include <signal.h>
-#include <spdlog/common.h>
 
 #include <iostream>
 
@@ -17,7 +16,7 @@ int main() {
     signal(SIGINT, sighandler);
 
     // 设置日志
-    EasyNet::LogInit(spdlog::level::debug);
+    EasyNet::LogInit(EasyNet::level::debug);
 
     EasyNet::EventLoop loop("echocli_loop");
     EasyNet::TcpClient cli(&loop, {"127.0.0.1", 8888});
