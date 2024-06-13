@@ -49,7 +49,4 @@ void ServerThread::threadEntry() {
         m_cv.notify_all();
     }
     svr.start();
-
-    // 出现错误了
-    m_loop = nullptr;
 }

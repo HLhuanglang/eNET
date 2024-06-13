@@ -34,6 +34,13 @@ TcpServer::~TcpServer() {
         conn->RemoveEvent();
     }
     m_connections_map.clear();
+    m_worker_loop.clear();
+
+    // 释放资源：析构顺序：自身(先处理成员变量析构,再处理自身)->父类
+    if (m_loop != nullptr) {
+        delete m_loop;
+        m_loop = nullptr;
+    }
 }
 
 // 应该先loop，然后再acceptor
@@ -47,7 +54,6 @@ void TcpServer::start() {
     }
     m_loop->Loop();
 
-    // 3,发生错误/主动退出
     LOG_ERROR("Svr {} quit", m_name);
 }
 
