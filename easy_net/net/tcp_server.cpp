@@ -52,7 +52,16 @@ void TcpServer::start() {
 }
 
 void TcpServer::stop() {
-    // TODO
+    // 先停止子线程
+    for (auto &loop : m_worker_loop) {
+        if (loop == m_loop) {
+            continue;
+        }
+        loop->Quit();
+    }
+    // 等子线程停止后,再停止主线程
+    join_thread();
+    m_loop->Quit();
 }
 
 void TcpServer::join_thread() {
@@ -73,6 +82,10 @@ EventLoop *TcpServer::get_loop() {
         idx = 0;
     }
     return m_worker_loop[idx++ % (m_thread_cnt + 1)];
+}
+
+EventLoop *TcpServer::get_main_loop() {
+    return m_loop;
 }
 
 void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {

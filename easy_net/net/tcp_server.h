@@ -55,8 +55,11 @@ class TcpServer : public ConnOwner {
     void join_thread();
     void detach_thread();
 
-    // 获取loop
+    // 获取loop(round-robin：获取主线程和子线程的loop)
     EventLoop *get_loop();
+
+    // 获取主线程loop
+    EventLoop *get_main_loop();
 
  private:
     void startThreadPool();

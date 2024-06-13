@@ -37,10 +37,6 @@ int main() {
     // 设置业务回调
     svr.onNewConnection = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Get New Conn");
-        conn->GetOwnerLoop()->TimerAfter([=]() {
-            LOG_DEBUG("TimerAfter 1s: loop={}", conn->GetOwnerLoop()->GetLoopName());
-        },
-                                         1_s);
     });
 
     svr.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
@@ -61,6 +57,11 @@ int main() {
     svr.onWriteComplete = ([](const EasyNet::tcp_connection_t &conn) {
         LOG_DEBUG("Sent Complete: {}", conn->GetConnName());
     });
+
+    svr.get_main_loop()->TimerAfter([&] {
+        svr.stop();
+    },
+                                    10_s);
 
     // 启动服务
     svr.start();

@@ -27,6 +27,9 @@ class EventLoop : public NonCopyable {
  public:
     EventLoop(std::string nameArg);
     ~EventLoop() = default;
+    bool operator==(const EventLoop &rhs) {
+        return m_threadid == rhs.m_threadid;
+    }
 
  public:
     // loop
