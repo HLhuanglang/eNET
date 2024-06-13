@@ -29,6 +29,7 @@ void TcpClient::DelConn(const tcp_connection_t &conn) {
     if (onDelConnection != nullptr) {
         onDelConnection(conn);
     }
+    conn->RemoveEvent();
 }
 
 void TcpClient::RecvMsg(const tcp_connection_t &conn) {

@@ -48,6 +48,9 @@ class TcpServer : public ConnOwner {
     // 运行tcp server
     void start();
 
+    // 停止tcp server
+    void stop();
+
     // join/detach 子线程
     void join_thread();
     void detach_thread();

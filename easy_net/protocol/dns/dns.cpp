@@ -16,9 +16,10 @@ DNSResolverPtr DNSResolver::CreateResolver() {
 /*
   一般机器上可以使用nslookup和dig来查询域名对应的Ip地址，在ubuntu上一般是请求named服务：
     - https://www.cnblogs.com/heyongshen/p/17794738.html
-  使用getaddrinfo和getnameinfo函数来进行域名解析，比较慢：
+  使用getaddrinfo和getnameinfo函数来进行域名解析，比较慢,并且是阻塞式的,同时也不推荐使用gethostbyname：
     - https://jameshfisher.com/2018/02/03/what-does-getaddrinfo-do/
     - http://blog.gerryyang.com/tcp/ip/2022/05/12/c-ares-in-action.html
+    - https://skarnet.org/software/s6-dns/getaddrinfo.html
  */
 void DNSResolver::resolve(const std::string& hostname, const Callback& callback) {
     std::vector<InetAddress> ips;
@@ -37,14 +38,10 @@ void DNSResolver::resolve(const std::string& hostname, const Callback& callback)
     for (p = servinfo; p != nullptr; p = p->ai_next) {
         if (p->ai_family == AF_INET) {  // IPv4地址
             struct sockaddr_in* ipv4 = reinterpret_cast<struct sockaddr_in*>(p->ai_addr);
-            char ipv4_str[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, &(ipv4->sin_addr), ipv4_str, INET_ADDRSTRLEN);
-            ips.emplace_back(ipv4_str, ntohs(ipv4->sin_port));
+            ips.emplace_back(*ipv4);
         } else if (p->ai_family == AF_INET6) {  // IPv6地址
             struct sockaddr_in6* ipv6 = reinterpret_cast<struct sockaddr_in6*>(p->ai_addr);
-            char ipv6_str[INET6_ADDRSTRLEN];
-            inet_ntop(AF_INET6, &(ipv6->sin6_addr), ipv6_str, INET6_ADDRSTRLEN);
-            ips.emplace_back(ipv6_str, ntohs(ipv6->sin6_port), true);
+            ips.emplace_back(*ipv6);
         }
     }
 

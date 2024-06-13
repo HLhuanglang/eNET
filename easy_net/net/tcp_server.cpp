@@ -47,8 +47,12 @@ void TcpServer::start() {
     }
     m_loop->Loop();
 
-    // 3,发生错误
-    LOG_ERROR("Svr {} error, quit", m_name);
+    // 3,发生错误/主动退出
+    LOG_ERROR("Svr {} quit", m_name);
+}
+
+void TcpServer::stop() {
+    // TODO
 }
 
 void TcpServer::join_thread() {
