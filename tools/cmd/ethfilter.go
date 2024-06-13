@@ -23,8 +23,7 @@ var ethfilterCmd = &cobra.Command{
 	Short: "Capture packets on a network interface, Support BPF filter",
 	Long: `Capture packets on a network interface, Support BPF filter.
 
-PS:if your svr/cli running in the same machine, you can't capture the packets
-beacuse the packets are not send to the network interface`,
+PS:if your svr/cli running in the same machine, capture the loopback`,
 	Example: `
 eg1: eTools ethfilter -d eth0 tcp and port 80 //use bpf filter
 eg2: eTools ethfilter -d eth0 //capture all packets
