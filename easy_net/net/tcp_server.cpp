@@ -60,17 +60,17 @@ void TcpServer::stop() {
         loop->Quit();
     }
     // 等子线程停止后,再停止主线程
-    join_thread();
+    JoinThread();
     m_loop->Quit();
 }
 
-void TcpServer::join_thread() {
+void TcpServer::JoinThread() {
     for (auto &n : m_child_svr_vec) {
         n->Join();
     }
 }
 
-void TcpServer::detach_thread() {
+void TcpServer::DetachThread() {
     for (auto &n : m_child_svr_vec) {
         n->Detach();
     }

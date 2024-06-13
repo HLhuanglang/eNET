@@ -51,10 +51,6 @@ class TcpServer : public ConnOwner {
     // 停止tcp server
     void stop();
 
-    // join/detach 子线程
-    void join_thread();
-    void detach_thread();
-
     // 获取loop(round-robin：获取主线程和子线程的loop)
     EventLoop *get_loop();
 
@@ -63,6 +59,9 @@ class TcpServer : public ConnOwner {
 
  private:
     void startThreadPool();
+    // join/detach 子线程
+    void JoinThread();
+    void DetachThread();
 
  private:
     EventLoop *m_loop;                                           // 每一个tcp服务器都应该有一个loop,用来处理各种事件
