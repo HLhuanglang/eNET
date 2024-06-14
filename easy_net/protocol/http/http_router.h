@@ -34,13 +34,21 @@ class HttpRouter {
             auto it = m_get_router.find(cmd);
             if (it != m_get_router.end()) {
                 it->second(req, resp);
+                return;
             }
-        } else if (method == "POST") {
+        }
+        if (method == "POST") {
             auto it = m_post_router.find(cmd);
             if (it != m_post_router.end()) {
                 it->second(req, resp);
+                return;
             }
         }
+
+        // 默认处理
+        resp.SetStatusCode("404");
+        resp.SetStatusCodeMsg("Not Found");
+        resp.SetBody("Not Found");
     }
 
  private:
