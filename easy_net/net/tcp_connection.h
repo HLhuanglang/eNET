@@ -1,10 +1,6 @@
-/*
-    tcp通信的本质就是建立一条tcp链接，在这条链接中发生读写事件，进而触发读写回调执行相应的逻辑
-*/
 #ifndef __EASYNET_TCP_CONNECTION_H
 #define __EASYNET_TCP_CONNECTION_H
 
-#include <chrono>
 #include <cstddef>
 #include <memory>
 
@@ -12,7 +8,6 @@
 #include "connection_owner.h"
 #include "inet_addr.h"
 #include "io_event.h"
-#include "socket_opt.h"
 
 namespace EasyNet {
 
@@ -29,38 +24,44 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
     };
 
  public:
-    TcpConn(ConnOwner *owner, int fd, const InetAddress &perrAddr) : IOEvent(owner->GetEventLoop(), fd), m_owner(owner) {
-        // 1,初始化buffer
-        m_read_buf = new Buffer();
-        m_write_buf = new Buffer();
+    ///@brief 构造函数
+    ///@param owner 当前这条tcp连接的拥有者，可以是tcpclient或者tcpserver
+    ///@param fd 当前这条tcp连接的文件描述符
+    ///@param perrAddr 对端地址
+    TcpConn(ConnOwner *owner, int fd, const InetAddress &perrAddr);
 
-        // 2,初始化链接名称
-        auto ip_port = perrAddr.SerializationToIpPort();
-        auto now = std::chrono::system_clock::now();
-        auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-        m_name = std::to_string(timestamp) + "_" + ip_port;
-
-        // 3,设置状态
-        SocketOpt::SetKeepAlive(fd, true);  // 只能保证TCP连接是正常的,当对端掉电或者网络断开时,通过tcp保活机制来检测连接是否正常
-        m_status = ConnStatus::CONNECTING;
-    }
-
-    ~TcpConn() override {
-        // 避免释放连接时候内存泄漏
-        if (m_read_buf) {
-            delete m_read_buf;
-        }
-        if (m_write_buf) {
-            delete m_write_buf;
-        }
-    }
+    ///@brief 析构函数
+    ~TcpConn() override;
 
  public:
+    ///@brief 延长tcp连接的生命周期
+    ///@note 为了防止恶意客户端一直占据连接,服务端需要控制tcp连接的生命周期,当连接闲置(无数据收发)时,服务端主动断开连接
+    void KeepAlive();
+
+    ///@brief 发送数据
+    ///@param data 指向存放数据的指针
+    ///@param data_size 待发送的数据大小
     void SendData(const char *data, size_t data_size);
+
+    ///@brief 发送数据
+    ///@param data 待发送的数据,使用std::string进行存储
     void SendData(const std::string &data);
+
+    ///@brief 获取读缓存
+    ///@return 返回当前tcp连接中的读缓存(可读数据)
     Buffer &GetBuffer() { return *m_read_buf; }
+
+    ///@brief 获取当前这条tcp连接的名字
+    ///@return 连接名字
     std::string GetConnName() { return m_name; }
+
+    ///@brief 设置当前tcp连接的状态
+    ///@param status tcp状态枚举
+    ///@see ConnStatus
     void SetStatus(ConnStatus status) { m_status = status; }
+
+    ///@brief 获取当前这条tcp连接属于哪一个loop
+    ///@return 所属的loop
     EventLoop *GetOwnerLoop() { return m_ioloop; }
 
  public:
@@ -68,11 +69,11 @@ class TcpConn : public std::enable_shared_from_this<TcpConn>, public IOEvent {
     void ProcessReadEvent() override;
 
  private:
-    ConnOwner *m_owner;  // tcpclient或tcpserver会传入this指针，此时owner_指向tcpclient或tcpserver
-    Buffer *m_read_buf;
-    Buffer *m_write_buf;
-    std::string m_name;  // 连接的name
-    ConnStatus m_status;
+    ConnOwner *m_owner;   // tcpclient或tcpserver会传入this指针，此时owner_指向tcpclient或tcpserver
+    Buffer *m_read_buf;   // 读buffer(存储对端发送给本端的数据)
+    Buffer *m_write_buf;  // 写buffer(存储本端将要发送给对端的数据)
+    std::string m_name;   // 连接的name
+    ConnStatus m_status;  // 连接的状态
 };
 
 }  // namespace EasyNet

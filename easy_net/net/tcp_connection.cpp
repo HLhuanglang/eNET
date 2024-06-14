@@ -14,6 +14,36 @@
 
 using namespace EasyNet;
 
+TcpConn::TcpConn(ConnOwner *owner, int fd, const InetAddress &perrAddr) : IOEvent(owner->GetEventLoop(), fd), m_owner(owner) {
+    // 1,初始化buffer
+    m_read_buf = new Buffer();
+    m_write_buf = new Buffer();
+
+    // 2,初始化链接名称
+    auto ip_port = perrAddr.SerializationToIpPort();
+    auto now = std::chrono::system_clock::now();
+    auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+    m_name = std::to_string(timestamp) + "_" + ip_port;
+
+    // 3,设置状态
+    SocketOpt::SetKeepAlive(fd, true);  // 只能保证TCP连接是正常的,当对端掉电或者网络断开时,通过tcp保活机制来检测连接是否正常
+    m_status = ConnStatus::CONNECTING;
+}
+
+TcpConn::~TcpConn() {
+    // 避免释放连接时候内存泄漏
+    if (m_read_buf) {
+        delete m_read_buf;
+    }
+    if (m_write_buf) {
+        delete m_write_buf;
+    }
+}
+
+void TcpConn::KeepAlive() {
+    // TODO
+}
+
 void TcpConn::SendData(const char *data, size_t data_size) {
     // 这个函数主要是为了做异步发送，上层调用直接往buf里面写，不让上层阻塞在write上面
     // 上层调用的,只要判断buf中有数据就将EPOLLOUT事件添加到epoll,传入回调。在回调中调用write_buf_to_fd
