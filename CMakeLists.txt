@@ -196,3 +196,19 @@ option(BUILD_WITH_RAWEXAMPLES "是否编译raw_examples" OFF)
 if(BUILD_WITH_RAWEXAMPLES)
   add_subdirectory(raw_examples)
 endif()
+
+
+message(STATUS "summary of build information:
+    Install prefix:  ${CMAKE_INSTALL_PREFIX}
+    Target system:   ${CMAKE_SYSTEM_NAME}
+    Build Type:      ${CMAKE_BUILD_TYPE}
+    Compiler:
+      C compiler:    ${CMAKE_C_COMPILER} (${CMAKE_C_COMPILER_ID})
+      Cxx compiler:  ${CMAKE_CXX_COMPILER} (${CMAKE_CXX_COMPILER_ID})
+    Build options:
+      Build with DNS: ${BUILD_WITH_DNS}
+      Build with HTTP: ${BUILD_WITH_HTTP}
+      Build with UnitTest: ${BUILD_WITH_UNITTEST}
+      Build with Examples: ${BUILD_WITH_EXAMPLES}
+      Build with RawExamples: ${BUILD_WITH_RAWEXAMPLES}
+")
