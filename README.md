@@ -16,8 +16,8 @@
 - gcc>=4.8.1(支持c++11)
 - git
 - cmake
-- geogletest
-- spdlog
+- geogletest(可选)
+- spdlog(必须)：如果使用gcc4.8.1编译失败,见[issues-3050](https://github.com/gabime/spdlog/issues/3050)
 
 ## 4.编译运行
 
@@ -31,11 +31,11 @@ cmake --build build
 
 | 选项                   | 描述                       | 默认值 |
 | ---------------------- | -------------------------- | ------ |
-| BUILD_WITH_DNS         | 是否支持dns协议            | OFF    |
-| BUILD_WITH_HTTP        | 是否支持http协议           | OFF    |
-| BUILD_WITH_EXAMPLES    | 是否编译使用案例           | OFF    |
-| BUILD_WITH_RAWEXAMPLES | 是否编译原始socket使用案例 | OFF    |
-| BUILD_WITH_UNITTEST    | 是否编译单元测试           | OFF    |
+| WITH_DNS         | 是否支持dns协议            | OFF    |
+| WITH_HTTP        | 是否支持http协议           | OFF    |
+| BUILD_EXAMPLES    | 是否编译使用案例           | OFF    |
+| BUILD_RAWEXAMPLES | 是否编译原始socket使用案例 | OFF    |
+| BUILD_UNITTEST    | 是否编译单元测试           | OFF    |
 
 
 

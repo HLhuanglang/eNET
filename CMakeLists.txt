@@ -40,15 +40,15 @@ if(spdlog_FOUND)
   message(STATUS "spdlog found")
 endif()
 
-option(BUILD_WITH_DNS "是否编译dns协议模块" OFF)
-if(BUILD_WITH_DNS)
+option(WITH_DNS "是否编译dns协议模块" OFF)
+if(WITH_DNS)
   file(GLOB_RECURSE DNS_SOURCES
        "${CMAKE_SOURCE_DIR}/easy_net/protocol/dns/*.cpp")
   list(APPEND EASYNET_SOURCES ${DNS_SOURCES})
 endif()
 
-option(BUILD_WITH_HTTP "是否编译http协议模块" OFF)
-if(BUILD_WITH_HTTP)
+option(WITH_HTTP "是否编译http协议模块" OFF)
+if(WITH_HTTP)
   file(GLOB_RECURSE HTTP_SOURCES
        "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.cpp"
        "${CMAKE_SOURCE_DIR}/easy_net/protocol/http/*.c")
@@ -64,8 +64,8 @@ target_include_directories(
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/easy_net/base>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/easy_net/net>
-    $<BUILD_INTERFACE:$<IF:$<BOOL:${BUILD_WITH_HTTP}>,${CMAKE_SOURCE_DIR}/easy_net/protocol/http,>>
-    $<BUILD_INTERFACE:$<IF:$<BOOL:${BUILD_WITH_DNS}>,${CMAKE_SOURCE_DIR}/easy_net/protocol/dns,>>
+    $<BUILD_INTERFACE:$<IF:$<BOOL:${WITH_HTTP}>,${CMAKE_SOURCE_DIR}/easy_net/protocol/http,>>
+    $<BUILD_INTERFACE:$<IF:$<BOOL:${WITH_DNS}>,${CMAKE_SOURCE_DIR}/easy_net/protocol/dns,>>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 
@@ -101,7 +101,7 @@ set(easynet_core_headers
     easy_net/base/win_support.h)
 install(FILES ${easynet_core_headers}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
-if(BUILD_WITH_HTTP)
+if(WITH_HTTP)
   set(easynet_http_headers
       easy_net/protocol/http/http_headers.h
       easy_net/protocol/http/http_router.h
@@ -115,7 +115,7 @@ if(BUILD_WITH_HTTP)
   install(FILES ${easynet_http_headers}
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 endif()
-if(BUILD_WITH_DNS)
+if(WITH_DNS)
   set(easynet_dns_headers
       easy_net/protocol/dns/dns.h)
   install(FILES ${easynet_dns_headers}
@@ -167,8 +167,8 @@ install(
 # ---------------------------------------------------------------------------------------
 # EasyNet库单元测试
 # ---------------------------------------------------------------------------------------
-option(BUILD_WITH_UNITTEST "是否编译单元测试" OFF)
-if(BUILD_WITH_UNITTEST)
+option(BUILD_UNITTEST "是否编译单元测试" OFF)
+if(BUILD_UNITTEST)
   find_package(GTest REQUIRED)
   if(GTest_FOUND)
     message(STATUS "GTest found")
@@ -184,16 +184,16 @@ endif()
 # ---------------------------------------------------------------------------------------
 # EasyNet使用案例
 # ---------------------------------------------------------------------------------------
-option(BUILD_WITH_EXAMPLES "是否编译examples" OFF)
-if(BUILD_WITH_EXAMPLES)
+option(BUILD_EXAMPLES "是否编译examples" OFF)
+if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
 
 # ---------------------------------------------------------------------------------------
 # compile raw_examples
 # ---------------------------------------------------------------------------------------
-option(BUILD_WITH_RAWEXAMPLES "是否编译raw_examples" OFF)
-if(BUILD_WITH_RAWEXAMPLES)
+option(BUILD_RAWEXAMPLES "是否编译raw_examples" OFF)
+if(BUILD_RAWEXAMPLES)
   add_subdirectory(raw_examples)
 endif()
 
@@ -206,9 +206,9 @@ message(STATUS "summary of build information:
       C compiler:    ${CMAKE_C_COMPILER} (${CMAKE_C_COMPILER_ID})
       Cxx compiler:  ${CMAKE_CXX_COMPILER} (${CMAKE_CXX_COMPILER_ID})
     Build options:
-      Build with DNS: ${BUILD_WITH_DNS}
-      Build with HTTP: ${BUILD_WITH_HTTP}
-      Build with UnitTest: ${BUILD_WITH_UNITTEST}
-      Build with Examples: ${BUILD_WITH_EXAMPLES}
-      Build with RawExamples: ${BUILD_WITH_RAWEXAMPLES}
+      Build with DNS: ${WITH_DNS}
+      Build with HTTP: ${WITH_HTTP}
+      Build with UnitTest: ${BUILD_UNITTEST}
+      Build with Examples: ${BUILD_EXAMPLES}
+      Build with RawExamples: ${BUILD_RAWEXAMPLES}
 ")

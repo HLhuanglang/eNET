@@ -61,7 +61,7 @@ void EpollPoller::Polling(int timeout_ms, active_events_t &events) {
     ///             代表连接可读。然后服务器上层软件read连接，只能读到 EOF
     ///             2.6.17 以后的版本增加了EPOLLRDHUP事件，对端连接断开触发
     ///             的事件会包含 EPOLLIN | EPOLLRDHUP，即 0x2001
-    /// EPOLLEXCLUSIVE：表示独占事件。当设置此标志时，epoll仅向一个线程报告事件，即使多个线程在同一个epoll实例上等待事件。这可以用于避免竞争条件和锁争用。
+    /// EPOLLEXCLUSIVE：(since linux4.5)表示独占事件。当设置此标志时，epoll仅向一个线程报告事件，即使多个线程在同一个epoll实例上等待事件。这可以用于避免竞争条件和锁争用。
     /// EPOLLET     表示边缘触发（Edge-Triggered）模式。当设置此标志时，epoll仅在事件状态发生变化时报告事件。
     ///             这意味着，如果事件仍然有效，epoll不会再次报告该事件，除非事件状态再次发生变化。这种模式通常用于高性能的网络编程，因为它减少了事件通知的频率，从而提高了效率。
     for (int i = 0; i < nfds; ++i) {
