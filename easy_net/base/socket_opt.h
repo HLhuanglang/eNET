@@ -100,6 +100,9 @@ class SocketOpt {
 
     static void ShutDownWrite(int fd);
     static void ShutDownRead(int fd);
+
+    static int SetSendTimeOut(int fd, int timeout);
+    static int SetRecvTimeOut(int fd, int timeout);
 };
 }  // namespace EasyNet
 

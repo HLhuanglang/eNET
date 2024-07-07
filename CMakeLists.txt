@@ -24,11 +24,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 # 生成compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# 判断编译类型
-if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
-  add_definitions("-DEASYNET_DEBUG")
-endif()
-
 # ---------------------------------------------------------------------------------------
 # EasyNet库编译
 # ---------------------------------------------------------------------------------------
@@ -74,7 +69,19 @@ target_link_libraries(${EASYNET_LIB_NAME} spdlog::spdlog)
 # ---------------------------------------------------------------------------------------
 add_library(easynet::easynet ALIAS easynet)
 # 安装头文件和库 --头文件
-set(easynet_core_headers
+set(easynet_base_headers
+    easy_net/base/socket_opt.h
+    easy_net/base/buffer.h
+    easy_net/base/log.h
+    easy_net/base/copyable.h
+    easy_net/base/inet_addr.h
+    easy_net/base/non_copyable.h
+    easy_net/base/thread.h
+    easy_net/base/sigleton.h
+    easy_net/base/win_support.h)
+install(FILES ${easynet_base_headers}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
+set(easynet_net_headers
     easy_net/net/tcp_server.h
     easy_net/net/connection_owner.h
     easy_net/net/tcp_connection.h
@@ -89,17 +96,8 @@ set(easynet_core_headers
     easy_net/net/tcp_client.h
     easy_net/net/event_loop.h
     easy_net/net/def.h
-    easy_net/net/epoll_poller.h
-    easy_net/base/socket_opt.h
-    easy_net/base/buffer.h
-    easy_net/base/log.h
-    easy_net/base/copyable.h
-    easy_net/base/inet_addr.h
-    easy_net/base/non_copyable.h
-    easy_net/base/thread.h
-    easy_net/base/sigleton.h
-    easy_net/base/win_support.h)
-install(FILES ${easynet_core_headers}
+    easy_net/net/epoll_poller.h)
+install(FILES ${easynet_net_headers}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 if(WITH_HTTP)
   set(easynet_http_headers
@@ -125,7 +123,10 @@ endif()
 # install( DIRECTORY
 # ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION
 # ${CMAKE_INSTALL_INCLUDEDIR}/easynet )
-source_group("Headers" FILES ${easynet_core_headers} ${easynet_http_headers} ${easynet_dns_headers})
+source_group("Headers\\base" FILES ${easynet_base_headers})
+source_group("Headers\\net" FILES ${easynet_net_headers})
+source_group("Headers\\protocol\\dns" FILES ${easynet_dns_headers})
+source_group("Headers\\protocol\\http" FILES ${easynet_http_headers})
 
 # --库和可执行文件
 install(

@@ -234,3 +234,21 @@ void SocketOpt::ShutDownRead(int sockfd) {
         LOG_ERROR("shutDownRead error");
     }
 }
+
+int SocketOpt::SetSendTimeOut(int sockfd, int timeout) {
+#ifdef _WIN32
+    return setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char *)&timeout, sizeof(int));
+#else
+    struct timeval tv = {timeout / 1000, (timeout % 1000) * 1000};
+    return setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+#endif
+}
+
+int SocketOpt::SetRecvTimeOut(int sockfd, int timeout) {
+#ifdef _WIN32
+    return setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char *)&timeout, sizeof(int));
+#else
+    struct timeval tv = {timeout / 1000, (timeout % 1000) * 1000};
+    return setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+#endif
+}
