@@ -35,6 +35,8 @@ target_include_directories(tcpcli PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
 target_link_libraries(tcpcli ${EASYNET_LIB_NAME})
 
 # dns
+if(WITH_DNS)
 add_executable(dns dns/dns.cpp)
 target_include_directories(dns PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
 target_link_libraries(dns ${EASYNET_LIB_NAME})
+endif(WITH_DNS)
