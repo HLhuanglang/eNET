@@ -2,12 +2,10 @@
 #define __EASYNET_SOCKET_OPT_H
 
 #ifdef _WIN32
-#    include <winsock2.h>
-
-#    include "win_support.h"
+#include <winsock2.h>
 #else
-#    include <netinet/in.h>
-#    include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #endif
 
 #include "buffer.h"

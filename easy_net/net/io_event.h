@@ -15,7 +15,7 @@
 #include "socket_opt.h"
 
 #ifdef __linux__
-#    include <sys/poll.h>
+#include <sys/poll.h>
 #endif
 
 namespace EasyNet {

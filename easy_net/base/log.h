@@ -6,16 +6,16 @@
 
 namespace EasyNet {
 #ifdef _WIN32
-#    define DIR_SEPARATOR '\\'
-#    define DIR_SEPARATOR_STR "\\"
+#define DIR_SEPARATOR '\\'
+#define DIR_SEPARATOR_STR "\\"
 #else
-#    define DIR_SEPARATOR '/'
-#    define DIR_SEPARATOR_STR "/"
+#define DIR_SEPARATOR '/'
+#define DIR_SEPARATOR_STR "/"
 #endif
 
 #ifndef __FILENAME__
 // #define __FILENAME__  (strrchr(__FILE__, DIR_SEPARATOR) ? strrchr(__FILE__, DIR_SEPARATOR) + 1 : __FILE__)
-#    define __FILENAME__ (strrchr(DIR_SEPARATOR_STR __FILE__, DIR_SEPARATOR) + 1)
+#define __FILENAME__ (strrchr(DIR_SEPARATOR_STR __FILE__, DIR_SEPARATOR) + 1)
 #endif
 
 #define LOG_TRACE(fmt, ...) spdlog::log({__FILENAME__, __LINE__, __FUNCTION__}, spdlog::level::trace, fmt, ##__VA_ARGS__)

@@ -2,15 +2,15 @@
 #define __EASYNET_INET_ADDR_H_
 
 #ifdef _WIN32
-#    include <WinSock2.h>
-#    include <ws2tcpip.h>
+#include <WinSock2.h>
+#include <ws2tcpip.h>
 using sa_family_t = unsigned short;
 using in_addr_t = uint32_t;
 using uint16_t = unsigned short;
 #else
-#    include <arpa/inet.h>
-#    include <netinet/in.h>
-#    include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #endif
 
 #include <string>

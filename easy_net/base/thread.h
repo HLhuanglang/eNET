@@ -1,11 +1,11 @@
 #include <cstddef>
 #ifdef _WIN32
-#    include <processthreadsapi.h>
+#include <processthreadsapi.h>
 #elif defined(__linux__)
-#    include <sys/syscall.h>
-#    include <unistd.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 #else
-#    include <thread>
+#include <thread>
 #endif
 
 namespace EasyNet {

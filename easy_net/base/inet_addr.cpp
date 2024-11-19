@@ -1,9 +1,9 @@
 #include "inet_addr.h"
 
 #ifdef _WIN32
-#    include <ws2tcpip.h>
+#include <ws2tcpip.h>
 #else
-#    include <arpa/inet.h>
+#include <arpa/inet.h>
 #endif
 
 #include <cassert>

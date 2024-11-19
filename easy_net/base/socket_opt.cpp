@@ -1,11 +1,13 @@
 #include "socket_opt.h"
 
 #ifdef _WIN32
-#    include <ws2tcpip.h>
+#include <ws2tcpip.h>
+
+#include "win_support.h"
 #else
-#    include <sys/socket.h>
-#    include <sys/uio.h>  // readv
-#    include <unistd.h>   // read
+#include <sys/socket.h>
+#include <sys/uio.h>  // readv
+#include <unistd.h>   // read
 #endif
 
 #include <fcntl.h>
@@ -46,7 +48,11 @@ nonblock write则是返回能够放下的字节数，如果缓冲区满了之后
 
 size_t SocketOpt::ReadFdToBuffer(Buffer &buf, int fd) {
     char extrabuf[65536];
+#ifdef _WIN32
+    EasyNet::iovec vec[2];
+#else
     struct iovec vec[2];
+#endif
     ssize_t n = 0;
     size_t read_size = buf.GetWriteableSize();
 
@@ -58,7 +64,11 @@ size_t SocketOpt::ReadFdToBuffer(Buffer &buf, int fd) {
     do {
         // 可能被系统调用中断,但是实际并没有调用结束,所以用一层while循环.
         const int iovcnt = (read_size < sizeof extrabuf) ? 2 : 1;
+#ifdef _WIN32
+        n = EasyNet::readv(fd, vec, iovcnt);
+#else
         n = ::readv(fd, vec, iovcnt);
+#endif
     } while (n == -1 && errno == EINTR);
 
     if (n <= 0) {

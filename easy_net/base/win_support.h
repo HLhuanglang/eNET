@@ -1,6 +1,7 @@
 #ifndef __EASYNET_WIN_SUPPORT_H
 #define __EASYNET_WIN_SUPPORT_H
 
+#ifdef _WIN32
 #include <winsock2.h>
 
 namespace EasyNet {
@@ -37,4 +38,5 @@ int readv(int fd, const struct iovec *vector, int count) {
     return ret;
 }
 }  // namespace EasyNet
+#endif
 #endif  // !__EASYNET_WIN_SUPPORT_H

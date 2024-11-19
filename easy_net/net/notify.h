@@ -6,8 +6,8 @@
 #include "io_event.h"
 
 #if defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 9)
-#    define HAVE_EVENTFD 1
-#    include <sys/eventfd.h>
+#define HAVE_EVENTFD 1
+#include <sys/eventfd.h>
 #endif
 
 namespace EasyNet {

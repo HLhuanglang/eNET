@@ -35,6 +35,7 @@ void Acceptor::ProcessReadEvent() {
 void Acceptor::StartListen() {
     // SOMAXCONN定义了系统中每一个端口最大的监听队列的长度
     // cat /proc/sys/net/core/somaxconn 也可以查看
+    // https://www.cnxct.com/something-about-phpfpm-s-backlog/
     int ret = SocketOpt::Listen(m_fd, SOMAXCONN);
     if (ret < 0) {
         LOG_ERROR("listen error!");
