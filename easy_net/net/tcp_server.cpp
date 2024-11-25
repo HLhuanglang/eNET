@@ -14,10 +14,10 @@
 
 using namespace EasyNet;
 
-CallBack TcpServer::onNewConnection;
-CallBack TcpServer::onDelConnection;
-CallBack TcpServer::onRecvMsg;
-CallBack TcpServer::onWriteComplete;
+EventCallBack TcpServer::onNewConnection;
+EventCallBack TcpServer::onDelConnection;
+EventCallBack TcpServer::onRecvMsg;
+EventCallBack TcpServer::onWriteComplete;
 
 TcpServer::TcpServer(const std::string &nameArg, unsigned int numEventThreads,
                      const InetAddress &listenAddr)
@@ -104,7 +104,7 @@ void TcpServer::NewConn(int fd, const InetAddress &peerAddr) {
     }
 }
 
-void TcpServer::DelConn(const tcp_connection_t &conn) {
+void TcpServer::DelConn(const TcpConnSPtr &conn) {
     if (onDelConnection != nullptr) {
         onDelConnection(conn);
     }
@@ -115,13 +115,13 @@ void TcpServer::DelConn(const tcp_connection_t &conn) {
     assert(n == 1);
 }
 
-void TcpServer::RecvMsg(const tcp_connection_t &conn) {
+void TcpServer::RecvMsg(const TcpConnSPtr &conn) {
     if (onRecvMsg != nullptr) {
         onRecvMsg(conn);
     }
 }
 
-void TcpServer::WriteComplete(const tcp_connection_t &conn) {
+void TcpServer::WriteComplete(const TcpConnSPtr &conn) {
     if (onWriteComplete != nullptr) {
         onWriteComplete(conn);
     }

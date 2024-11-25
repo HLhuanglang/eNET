@@ -13,10 +13,10 @@ class HttpServer {
     void Run(const HttpRouter &router);
 
  private:
-    void _on_connection(const tcp_connection_t &conn);
-    void _on_recv_msg(const tcp_connection_t &conn);
-    void _on_send_complete(const tcp_connection_t &conn);
-    void _on_del_connection(const tcp_connection_t &conn);
+    void _on_connection(const TcpConnSPtr &conn);
+    void _on_recv_msg(const TcpConnSPtr &conn);
+    void _on_send_complete(const TcpConnSPtr &conn);
+    void _on_del_connection(const TcpConnSPtr &conn);
 
  private:
     TcpServer m_server;

@@ -56,7 +56,9 @@ class EventLoop : public NonCopyable {
     void Quit();
 
     std::string GetLoopName() { return m_name; }
-    std::unique_ptr<Poller> &get_poller() { return m_poller; }
+
+    // 获取poller：(返回unique_ptr引用只会获得访问权，不会导致所有权转移.)
+    std::unique_ptr<Poller> &GetPoller() { return m_poller; }
 
  private:
     void DoPendiongFunc();

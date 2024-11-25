@@ -26,7 +26,9 @@ TcpConn::TcpConn(ConnOwner *owner, int fd, const InetAddress &perrAddr) : IOEven
     m_name = std::to_string(timestamp) + "_" + ip_port;
 
     // 3,设置状态
-    SocketOpt::SetKeepAlive(fd, true);  // 只能保证TCP连接是正常的,当对端掉电或者网络断开时,通过tcp保活机制来检测连接是否正常
+    // 只能保证TCP连接是正常的,当对端掉电或者网络断开时,通过tcp保活机制来检测连接是否正常,不能确保业务是否存活。
+    // 业务是否存活要依赖于心跳机制,心跳机制是业务层面的,不是网络层面的。
+    SocketOpt::SetKeepAlive(fd, true);
     m_status = ConnStatus::CONNECTING;
 }
 
@@ -99,10 +101,11 @@ void TcpConn::ProcessReadEvent() {
 
 void TcpConn::ProcessWriteEvent() {
     if (m_status == ConnStatus::DISCONNECTED) {
-        LOG_DEBUG("Connection has been disconnected");
+        LOG_ERROR("Connection has been disconnected");
         return;
     }
 
+    // 此时对端可能是全链接or只读不写，那么继续给对端发送数据
     while (m_write_buf->GetReadableSize() != 0U) {
         auto ret = SocketOpt::WriteBufferToFd(*m_write_buf, this->GetFD());
         if (ret < 0) {
@@ -115,8 +118,11 @@ void TcpConn::ProcessWriteEvent() {
             break;
         }
     }
+
+    // 根据剩余数据以及状态判断是否需要关闭写
     if (m_write_buf->GetReadableSize() == 0) {
-        // 无数据可写了,如果对端关闭了写,那么就断开连接
+        // 无数据可写了:
+        // 如果对端关闭了写,那么就断开连接
         // 如果链接正常，则将EPOLLOUT事件删除，避免一直触发
         if (m_status == ConnStatus::DISCONNECTING) {
             LOG_DEBUG("Connection is disconnecting and no more data to send");

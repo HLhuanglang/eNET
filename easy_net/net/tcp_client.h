@@ -21,17 +21,17 @@ class TcpClient : public ConnOwner {
  public:
     // 框架本身需要关心的接口
     void NewConn(int fd, const InetAddress &peerAddr) override;
-    void DelConn(const tcp_connection_t &conn) override;
-    void RecvMsg(const tcp_connection_t &conn) override;
-    void WriteComplete(const tcp_connection_t &conn) override;
+    void DelConn(const TcpConnSPtr &conn) override;
+    void RecvMsg(const TcpConnSPtr &conn) override;
+    void WriteComplete(const TcpConnSPtr &conn) override;
     EventLoop *GetEventLoop() const override;
 
  public:
     // tcp_client使用者需要关心的接口，由框架回调
-    CallBack onNewConnection;
-    CallBack onDelConnection;
-    CallBack onRecvMsg;
-    CallBack onWriteComplete;
+    EventCallBack onNewConnection;
+    EventCallBack onDelConnection;
+    EventCallBack onRecvMsg;
+    EventCallBack onWriteComplete;
 
  public:
     void connect();
@@ -39,7 +39,7 @@ class TcpClient : public ConnOwner {
  private:
     EventLoop *m_loop;
     std::unique_ptr<Connector> m_connector;
-    tcp_connection_t m_conn;  // 必须持有一下,不然NewConn结束链接就释放了
+    TcpConnSPtr m_conn;  // 必须持有一下,不然NewConn结束链接就释放了
 };
 }  // namespace EasyNet
 

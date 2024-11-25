@@ -35,11 +35,11 @@ int main() {
     EasyNet::TcpServer svr("echosvr", 2 * std::thread::hardware_concurrency() - 1, {"127.0.0.1", 8888});
 
     // 设置业务回调
-    svr.onNewConnection = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onNewConnection = ([](const EasyNet::TcpConnSPtr &conn) {
         LOG_DEBUG("Get New Conn");
     });
 
-    svr.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onRecvMsg = ([](const EasyNet::TcpConnSPtr &conn) {
         // fixme-hl：出现回包为空的情况
         auto msg = conn->GetBuffer().RetriveAllAsString();
         if (msg.empty()) {
@@ -50,11 +50,11 @@ int main() {
         }
     });
 
-    svr.onDelConnection = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onDelConnection = ([](const EasyNet::TcpConnSPtr &conn) {
         LOG_DEBUG("Remove Conn:{}", conn->GetConnName());
     });
 
-    svr.onWriteComplete = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onWriteComplete = ([](const EasyNet::TcpConnSPtr &conn) {
         LOG_DEBUG("Sent Complete: {}", conn->GetConnName());
     });
 

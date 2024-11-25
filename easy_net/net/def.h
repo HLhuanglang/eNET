@@ -9,12 +9,12 @@ namespace EasyNet {
 
 class TcpConn;
 
-using tcp_connection_t = std::shared_ptr<TcpConn>;
-using CallBack = std::function<void(const tcp_connection_t &)>;
+using TcpConnSPtr = std::shared_ptr<TcpConn>;
+using EventCallBack = std::function<void(const TcpConnSPtr &)>;
 using TimerCallBack = std::function<void()>;
 
 const int KThreadPoolSize = 2 * std::thread::hardware_concurrency();
-const constexpr int KMaxTimeout = 5 * 1000;
+const constexpr int KDefaultWaitTimeMS = 10;
 const constexpr int KMaxRetryTimeMS = 5 * 1000;
 const constexpr int KInitRetryTimeMS = 500;
 

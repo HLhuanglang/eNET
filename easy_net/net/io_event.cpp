@@ -74,7 +74,7 @@ std::string IOEvent::cover_opt_to_string(update_opt_e opt) {
 }
 
 void IOEvent::update_event_status(update_opt_e opt) {
-    std::unique_ptr<Poller> &Poller = m_ioloop->get_poller();
+    std::unique_ptr<Poller> &Poller = m_ioloop->GetPoller();
     // 1,已经添加过监控,那么只能做更新(启动或者不启动)或者删除操作
     // 2,未添加过监控,那么只能做添加操作
     if (m_ioloop->IsRegistered(m_fd)) {

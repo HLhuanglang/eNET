@@ -33,7 +33,8 @@ class Connector : public IOEvent {
     enum class ConnectState {
         DISCONNECTED,
         CONNECTING,
-        CONNECTED
+        CONNECTED,
+        CONNERROR,
     };
     ConnectState m_status;  // 当前连接状态
     InetAddress m_addr;     // 服务端地址

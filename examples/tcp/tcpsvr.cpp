@@ -20,17 +20,17 @@ int main() {
     signal(SIGINT, sighandler);
 
     // 设置日志
-    EasyNet::LogInit(EasyNet::level::debug);
+    EasyNet::LogInit(EasyNet::level::trace);
 
     // 创建tcpsvr
     EasyNet::TcpServer svr("tcpsvr", 2 * std::thread::hardware_concurrency() - 1, {"127.0.0.1", 8888});
 
     // 设置业务回调
-    svr.onNewConnection = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onNewConnection = ([](const EasyNet::TcpConnSPtr &conn) {
         LOG_DEBUG("{}: Get New Conn", conn->GetConnName());
     });
 
-    svr.onRecvMsg = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onRecvMsg = ([](const EasyNet::TcpConnSPtr &conn) {
         auto msg = conn->GetBuffer().RetriveAllAsString();
         if (msg.empty()) {
             global_counter.fetch_add(1, std::memory_order_relaxed);
@@ -40,11 +40,11 @@ int main() {
         }
     });
 
-    svr.onDelConnection = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onDelConnection = ([](const EasyNet::TcpConnSPtr &conn) {
         LOG_DEBUG("{}: Remove Conn", conn->GetConnName());
     });
 
-    svr.onWriteComplete = ([](const EasyNet::tcp_connection_t &conn) {
+    svr.onWriteComplete = ([](const EasyNet::TcpConnSPtr &conn) {
         LOG_DEBUG("{}: Sent Complete", conn->GetConnName());
     });
 

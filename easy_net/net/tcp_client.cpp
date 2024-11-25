@@ -25,20 +25,20 @@ void TcpClient::NewConn(int fd, const InetAddress &peerAddr) {
     }
 }
 
-void TcpClient::DelConn(const tcp_connection_t &conn) {
+void TcpClient::DelConn(const TcpConnSPtr &conn) {
     if (onDelConnection != nullptr) {
         onDelConnection(conn);
     }
     conn->RemoveEvent();
 }
 
-void TcpClient::RecvMsg(const tcp_connection_t &conn) {
+void TcpClient::RecvMsg(const TcpConnSPtr &conn) {
     if (onRecvMsg != nullptr) {
         onRecvMsg(conn);
     }
 }
 
-void TcpClient::WriteComplete(const tcp_connection_t &conn) {
+void TcpClient::WriteComplete(const TcpConnSPtr &conn) {
     if (onWriteComplete != nullptr) {
         onWriteComplete(conn);
     }

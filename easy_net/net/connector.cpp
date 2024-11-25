@@ -21,7 +21,7 @@ void Connector::Start() {
         case EISCONN:
             LOG_DEBUG("Connecting...");
             m_status = ConnectState::CONNECTING;
-            EnableWrite();  // 使能读,必定在下一次loop中能唤醒，进行回调
+            EnableWrite();  // 使能写,必定在下一次loop中能唤醒，进行回调
             break;
 
         case EAGAIN:
@@ -57,9 +57,11 @@ void Connector::ProcessWriteEvent() {
         int err = SocketOpt::GetSocketError(m_fd);
         if (err) {
             LOG_ERROR("connect fail={}", strerror(err));
+            m_status = ConnectState::CONNERROR;
             Retry();
         } else if (SocketOpt::IsSelfConnect(m_fd)) {
             LOG_ERROR("Self connect");
+            m_status = ConnectState::CONNERROR;
             Retry();
         } else {
             m_status = ConnectState::CONNECTED;
@@ -69,6 +71,12 @@ void Connector::ProcessWriteEvent() {
 }
 
 void Connector::Retry() {
+    if (m_status == ConnectState::CONNECTING) {
+        // 关闭fd之前，需要确保fd已经从epoll监控中移除. 避免epoll的幽灵事件问题
+        // 参考：https://andypan.me/zh-hans/posts/2024/08/23/linux-epoll-with-level-triggering-and-edge-triggering
+        // CONNERROR状态时已移除了监控,可以直接关闭
+        RemoveEvent();
+    }
     m_status = ConnectState::DISCONNECTED;
     SocketOpt::Close(m_fd);
     m_ioloop->TimerAfter(std::bind(&Connector::ReConnect, this), m_retry_delay_ms);

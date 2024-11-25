@@ -1,5 +1,7 @@
 #include "socket_opt.h"
 
+#include <cstdlib>
+
 #ifdef _WIN32
 #include <ws2tcpip.h>
 
@@ -172,6 +174,7 @@ int SocketOpt::CreateNonBlockSocket(sa_family_t family) {
     int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
     if (sockfd < 0) {
         LOG_ERROR("createSocket fail, errno={}", errno);
+        exit(EXIT_FAILURE);
     }
     LOG_TRACE("createSocket fd={}", sockfd);
     return sockfd;

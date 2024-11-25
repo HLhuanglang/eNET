@@ -76,3 +76,17 @@ epoll是怎么知道哪个io就绪了呢？我们从ip头可以解析出源ip，
 ## ET和LT是如何实现的
 
 从协议栈检测到接收数据，就调用一次回调加入到就绪队列，这就是ET。而LT水平触发，检测到recvbuf里面有数据就调用回调加入就绪队列，如果还有数据就再调用回调加入到rdlist。所以ET和LT就是在使用回调的次数上面的差异。（ET是纯天然的只触发一次，而LT是经过一点点代码修改的）。
+
+
+## epoll的坑
+
+参考：https://andypan.me/zh-hans/posts/2024/08/23/linux-epoll-with-level-triggering-and-edge-triggering/#%E5%B9%BD%E7%81%B5%E4%BA%8B%E4%BB%B6
+
+### 幽灵事件
+
+问题：
+解法：先调用调用epoll_ctl通过EPOLL_CTL_DEL将fd从epoll监听中删除，然后再close
+
+### 饥饿问题
+
+### 事件聚合

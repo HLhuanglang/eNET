@@ -16,11 +16,11 @@ HttpServer::HttpServer(const std::string &ip, size_t port)
     m_server.onDelConnection = std::bind(&HttpServer::_on_del_connection, this, std::placeholders::_1);
 }
 
-void HttpServer::_on_connection(const tcp_connection_t &conn) {
+void HttpServer::_on_connection(const TcpConnSPtr &conn) {
     LOG_DEBUG("Get New Conn");
 }
 
-void HttpServer::_on_recv_msg(const tcp_connection_t &conn) {
+void HttpServer::_on_recv_msg(const TcpConnSPtr &conn) {
     LOG_DEBUG("Recv Msg: {}", conn->GetConnName());
     HttpContext ctx;
     HttpRequest req;
@@ -42,11 +42,11 @@ void HttpServer::_on_recv_msg(const tcp_connection_t &conn) {
     }
 }
 
-void HttpServer::_on_send_complete(const tcp_connection_t &conn) {
+void HttpServer::_on_send_complete(const TcpConnSPtr &conn) {
     LOG_DEBUG("Sent Complete: {}", conn->GetConnName());
 }
 
-void HttpServer::_on_del_connection(const tcp_connection_t &conn) {
+void HttpServer::_on_del_connection(const TcpConnSPtr &conn) {
     LOG_DEBUG("Remove Conn:{}", conn->GetConnName());
 }
 

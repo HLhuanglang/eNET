@@ -18,7 +18,7 @@ namespace EasyNet {
 class IdleFD {
  public:
     IdleFD() {
-        m_idlefd = ::open("/tmp/easy_net_idle", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
+        m_idlefd = ::open("/tmp/easy_net_idlefd", O_CREAT | O_RDONLY | O_CLOEXEC, 0666);
         if (m_idlefd < 0) {
             LOG_ERROR("create idlefd failed!");
         }
@@ -64,7 +64,8 @@ class Acceptor : public IOEvent {
         // 2,bind
         int ret = ::bind(m_fd, listenAddr.GetAddr(), listenAddr.GetAddrSize());
         if (ret < 0) {
-            LOG_ERROR("bindAddress error!");
+            LOG_ERROR("bindAddress error:{}", strerror(errno));
+            exit(EXIT_FAILURE);  // 关键路径
         }
 
         // 3,StartListen，由tcp_server来控制开启时机

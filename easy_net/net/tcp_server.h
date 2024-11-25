@@ -32,17 +32,17 @@ class TcpServer : public ConnOwner {
  public:
     // 框架本身需要关心的接口
     void NewConn(int fd, const InetAddress &peerAddr) override;
-    void DelConn(const tcp_connection_t &conn) override;
-    void RecvMsg(const tcp_connection_t &conn) override;
-    void WriteComplete(const tcp_connection_t &conn) override;
+    void DelConn(const TcpConnSPtr &conn) override;
+    void RecvMsg(const TcpConnSPtr &conn) override;
+    void WriteComplete(const TcpConnSPtr &conn) override;
     EventLoop *GetEventLoop() const override;
 
  public:
     // tcp_server使用者需要关心的接口，由框架回调
-    static CallBack onNewConnection;
-    static CallBack onDelConnection;
-    static CallBack onRecvMsg;
-    static CallBack onWriteComplete;
+    static EventCallBack onNewConnection;
+    static EventCallBack onDelConnection;
+    static EventCallBack onRecvMsg;
+    static EventCallBack onWriteComplete;
 
  public:
     // 运行tcp server

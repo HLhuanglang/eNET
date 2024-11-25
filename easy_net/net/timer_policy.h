@@ -35,7 +35,7 @@ class ListTimer : public TimerPolicy<std::list<Timer>> {
  public:
     int GetNextExpiredTime() override {
         if (m_timers.empty()) {
-            return 1 * 1000;  // 默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
+            return KDefaultWaitTimeMS;  // 默认1s,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
         }
         // 可能返回0,需要立刻执行把堆积的过期定时器全部处理完.
         auto next_expired_timer = m_timers.front();
@@ -121,7 +121,7 @@ class MiniHeapTimer : public TimerPolicy<std::priority_queue<Timer, std::vector<
  public:
     int GetNextExpiredTime() override {
         if (m_timers.empty()) {
-            return 1 * 10;  // 默认10ms,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
+            return KDefaultWaitTimeMS;  // 默认10ms,如果直接返回0,会导致epoll_wait立即返回,整个进程的CPU占用率会很高
         }
         // 可能返回0,需要立刻执行把堆积的过期定时器全部处理完.
         auto next_expired_timer = m_timers.top();
