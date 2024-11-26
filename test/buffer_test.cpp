@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include <cstring>
-#include <iostream>
 #include <string>
 
 TEST(BufferTest, BasicTest) {

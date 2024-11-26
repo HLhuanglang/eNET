@@ -78,7 +78,9 @@ set(easynet_base_headers
     easy_net/base/non_copyable.h
     easy_net/base/thread.h
     easy_net/base/sigleton.h
-    easy_net/base/win_support.h)
+    easy_net/base/win_support.h
+    easy_net/base/countdown_latch.h
+    easy_net/base/cyclic_barrier.h)
 install(FILES ${easynet_base_headers}
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 set(easynet_net_headers
