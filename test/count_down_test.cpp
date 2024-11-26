@@ -4,7 +4,10 @@
 
 #include "countdown_latch.h"
 
-struct Job {
+class Job {
+ public:
+    Job(std::string name) : name{std::move(name)} {}
+
     const std::string name;
     std::string product{"未工作"};
     std::thread action{};
