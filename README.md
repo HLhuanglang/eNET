@@ -16,18 +16,40 @@
 - gcc>=4.8.1(支持c++11)
 - git
 - cmake
-- geogletest(可选)
+- geogletest(可选 tag：release-1.12.1 该版本是最后一个支持的c++11版本)
 - spdlog(必须)：如果使用gcc4.8.1编译失败,见[issues-3050](https://github.com/gabime/spdlog/issues/3050)
 
 ## 4.编译运行
 
+### 4.1 编译依赖
+
+ps：假定cmake、gtest、spdlog都安装在/opt/xxx目录下
+
+spdlog
 ```
-git clone https://github.com/HLhuanglang/EasyNet.git
-cmake -S . -B build
+git clone https://github.com/gabime/spdlog.git
+cd spdlog
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/opt/spdlog
+cmake --build build --target install
+```
+
+gtest
+```
+git clone https://github.com/google/googletest.git
+cd googletest
+git checkout release-1.12.1
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/opt/gtest
+cmake --build build --target install
+```
+
+### 4.2 编译eNet
+```
+git clone https://github.com/HLhuanglang/eNET.git
+cmake -S . -B build -D{Options}=ON
 cmake --build build
 ```
 
-编译选项
+编译选项Option
 
 | 选项                   | 描述                       | 默认值 |
 | ---------------------- | -------------------------- | ------ |
