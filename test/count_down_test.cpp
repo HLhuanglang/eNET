@@ -26,21 +26,25 @@ TEST(CountDown, BasicTest) {
         my_job.product = my_job.name + " 已清理";
     };
 
-    std::cout << "工作启动... ";
+    std::string actual;
+    actual += "工作启动... ";
     for (auto& job : jobs)
         job.action = std::thread{work, std::ref(job)};
 
     work_done.Wait();
-    std::cout << "完成:\n";
+    actual += "完成:\n";
     for (auto const& job : jobs)
-        std::cout << "  " << job.product << '\n';
+        actual += " " + job.product + '\n';
 
-    std::cout << "清理工作线程... ";
+    actual += "清理工作线程... ";
     start_clean_up.CountDown();
     for (auto& job : jobs)
         job.action.join();
 
-    std::cout << "完成:\n";
+    actual += "完成:\n";
     for (auto const& job : jobs)
-        std::cout << "  " << job.product << '\n';
+        actual += " " + job.product + '\n';
+
+    std::string excepted = "工作启动... 完成:\n Annika 已工作\n Buru 已工作\n Chuck 已工作\n清理工作线程... 完成:\n Annika 已清理\n Buru 已清理\n Chuck 已清理\n";
+    EXPECT_EQ(actual, excepted);
 }
