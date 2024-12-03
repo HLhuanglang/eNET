@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "def.h"
 #include "non_copyable.h"
 #include "socket_opt.h"
 
@@ -45,7 +46,9 @@ class IOEvent : public EasyNet::NonCopyable {
         // nothing todo
     }
     virtual ~IOEvent() {
-        SocketOpt::Close(m_fd);
+        if (m_fd != KInvalidFD) {
+            SocketOpt::Close(m_fd);
+        }
     }
 
     /// @brief 分发处理IO事件

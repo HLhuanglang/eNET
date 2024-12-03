@@ -1,6 +1,7 @@
 #include "http_server.h"
 
 #include "http_context.h"
+#include "http_parser.h"
 #include "http_request.h"
 #include "http_response.h"
 #include "log.h"
@@ -22,7 +23,7 @@ void HttpServer::_on_connection(const TcpConnSPtr &conn) {
 
 void HttpServer::_on_recv_msg(const TcpConnSPtr &conn) {
     LOG_DEBUG("Recv Msg: {}", conn->GetConnName());
-    HttpContext ctx;
+    HttpContext ctx(http_parser_type::HTTP_REQUEST);
     HttpRequest req;
     // PS：buff里面的数据有多种情况：
     // 1,完整的http请求

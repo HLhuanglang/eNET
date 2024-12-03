@@ -59,6 +59,7 @@ class InetAddress {
 
     void setSockAddrInet6(const struct sockaddr_in6 &addr6) { m_addr6 = addr6; }
     void setSockAddrInet(const struct sockaddr_in &addr) { m_addr = addr; }
+    void setPort(uint16_t port);
 
  private:
     /*

@@ -1,5 +1,7 @@
 #include "inet_addr.h"
 
+#include <cstdint>
+
 #ifdef _WIN32
 #include <ws2tcpip.h>
 #else
@@ -96,4 +98,12 @@ std::string InetAddress::SerializationToPort() const {
     }
     snprintf(buf, size, "%u", port);
     return buf;
+}
+
+void InetAddress::setPort(uint16_t port) {
+    if (m_ipv6) {
+        m_addr6.sin6_port = htons(port);
+    } else {
+        m_addr.sin_port = htons(port);
+    }
 }

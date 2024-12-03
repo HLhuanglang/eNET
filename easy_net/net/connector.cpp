@@ -1,5 +1,6 @@
 #include "connector.h"
 
+#include "def.h"
 #include "log.h"
 #include "socket_opt.h"
 
@@ -11,7 +12,7 @@ using namespace EasyNet;
 // 3. 接着调用 select 函数，在指定的时间内判断该 socket 是否可写，如果可写说明连接成功，反之则认为连接失败。
 void Connector::Start() {
     m_fd = SocketOpt::CreateNonBlockSocket(m_addr.family());
-    LOG_DEBUG("CreateNonBlockSocket fd={}", m_fd);
+    LOG_DEBUG("CreateNonBlockSocket fd={} addr={}", m_fd, m_addr.SerializationToIpPort());
     int ret = SocketOpt::Connect(m_fd, m_addr.GetAddr());
     int savedErrno = (ret == 0) ? 0 : errno;
     switch (savedErrno) {
@@ -66,6 +67,7 @@ void Connector::ProcessWriteEvent() {
         } else {
             m_status = ConnectState::CONNECTED;
             m_client->NewConn(m_fd, m_addr);
+            m_fd = KInvalidFD;
         }
     }
 }
@@ -89,7 +91,7 @@ void Connector::ReConnect() {
             if (m_retry_delay_ms <= KMaxRetryTimeMS) {
                 Start();
             } else {
-                LOG_ERROR("Retry too many times, give up!");
+                LOG_ERROR("Retry too many times, give up!");  // fixme：这里停止尝试后,需要告知上层?
             }
         }
     });

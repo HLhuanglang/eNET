@@ -15,6 +15,6 @@ int main() {
         res.SetBody("Hello, World!");
     });
 
-    EasyNet::HttpServer svr("0.0.0.0", 8888);
+    EasyNet::HttpServer svr("127.0.0.1", 8888);
     svr.Run(route);
 }

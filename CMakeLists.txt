@@ -80,7 +80,8 @@ set(easynet_base_headers
     easy_net/base/sigleton.h
     easy_net/base/win_support.h
     easy_net/base/countdown_latch.h
-    easy_net/base/cyclic_barrier.h)
+    easy_net/base/cyclic_barrier.h
+    easy_net/base/string_util.h)
 install(FILES ${easynet_base_headers}
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 set(easynet_net_headers
@@ -111,7 +112,8 @@ if(WITH_HTTP)
       easy_net/protocol/http/http_parser.h
       easy_net/protocol/http/http_def.h
       easy_net/protocol/http/http_client.h
-      easy_net/protocol/http/http_server.h)
+      easy_net/protocol/http/http_server.h
+      easy_net/protocol/http/http_url.h)
   install(FILES ${easynet_http_headers}
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/easynet")
 endif()

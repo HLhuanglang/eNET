@@ -18,7 +18,7 @@ class HttpRequest {
  public:
     std::string m_method;
     std::string m_url;
-    std::string m_version;
+    std::string m_version{"HTTP/1.1"};
     mutable HttpHeaders m_headers;  // key-val
     std::string m_body;
 };

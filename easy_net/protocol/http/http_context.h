@@ -5,6 +5,7 @@
 
 #include "http_parser.h"
 #include "http_request.h"
+#include "http_response.h"
 
 namespace EasyNet {
 class HttpContext {
@@ -34,11 +35,14 @@ class HttpContext {
     };
 
  public:
-    HttpContext();
+    HttpContext(http_parser_type type);
     Status Parse(const char *data, size_t len, HttpRequest &req);
+    Status Parse(const char *data, size_t len, HttpResponse &rsp);
 
  public:
+    http_parser_type m_type;
     HttpRequest *m_req;
+    HttpResponse *m_rsp;
     std::string m_header_filed;
     std::string m_header_value;
 

@@ -16,10 +16,14 @@ target_link_libraries(timer ${EASYNET_LIB_NAME})
 
 # http
 # -httpsvr
+# -httpcli
 if(WITH_HTTP)
 add_executable(httpsvr http/httpsvr.cpp)
 target_include_directories(httpsvr PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
-target_link_libraries(httpsvr ${EASYNET_LIB_NAME})    
+target_link_libraries(httpsvr ${EASYNET_LIB_NAME}) 
+add_executable(httpcli http/httpcli.cpp)
+target_include_directories(httpcli PUBLIC ${CMAKE_SOURCE_DIR}/easy_net)
+target_link_libraries(httpcli ${EASYNET_LIB_NAME})    
 endif(WITH_HTTP)
 
 

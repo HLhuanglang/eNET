@@ -17,6 +17,7 @@ const int KThreadPoolSize = 2 * std::thread::hardware_concurrency();
 const constexpr int KDefaultWaitTimeMS = 10;
 const constexpr int KMaxRetryTimeMS = 5 * 1000;
 const constexpr int KInitRetryTimeMS = 500;
+const constexpr int KInvalidFD = -1;
 
 }  // namespace EasyNet
 
