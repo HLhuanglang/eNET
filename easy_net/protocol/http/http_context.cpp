@@ -63,8 +63,10 @@ int on_header_value(http_parser *parser, const char *at, size_t length) {
         switch (ctx->m_type) {
             case http_parser_type::HTTP_REQUEST:
                 ctx->m_req->m_headers.SetHeader(ctx->m_header_filed, ctx->m_header_value);
+                break;
             case http_parser_type::HTTP_RESPONSE:
                 ctx->m_rsp->m_headers.SetHeader(ctx->m_header_filed, ctx->m_header_value);
+                break;
         }
         ctx->m_header_filed.clear();
         ctx->m_header_value.clear();
@@ -82,8 +84,10 @@ int on_body(http_parser *parser, const char *at, size_t length) {
     switch (ctx->m_type) {
         case http_parser_type::HTTP_REQUEST:
             ctx->m_req->m_body.assign(at, length);
+            break;
         case http_parser_type::HTTP_RESPONSE:
             ctx->m_rsp->m_body.assign(at, length);
+            break;
     }
     return 0;
 }
