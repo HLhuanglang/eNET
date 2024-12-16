@@ -66,7 +66,7 @@ void Connector::ProcessWriteEvent() {
             Retry();
         } else {
             m_status = ConnectState::CONNECTED;
-            m_client->NewConn(m_fd, m_addr);
+            m_client->NewConn(m_fd, m_addr);  // 完成了tcp三次握手,通知上层,可以开始发送数据了
             m_fd = KInvalidFD;
         }
     }

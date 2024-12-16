@@ -1,7 +1,9 @@
 #ifndef __EASYNET_TCP_CLIENT_H
 #define __EASYNET_TCP_CLIENT_H
 
+#include <map>
 #include <memory>
+#include <string>
 
 #include "connection_owner.h"
 #include "def.h"
@@ -40,6 +42,7 @@ class TcpClient : public ConnOwner {
     EventLoop *m_loop;
     std::unique_ptr<Connector> m_connector;
     TcpConnSPtr m_conn;  // 必须持有一下,不然NewConn结束链接就释放了
+    std::map<std::string, TcpConnSPtr> m_conn_map;
 };
 }  // namespace EasyNet
 

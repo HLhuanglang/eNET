@@ -11,20 +11,21 @@
 #include "tcp_client.h"
 
 namespace EasyNet {
-
-class HttpClient {
+///@brief 异步http客户端
+///@note 需要由外部传入event_loop
+class AsyncHttpClient {
  public:
+    using CallBack = std::function<void(const HttpResponse &rsp)>;
+
     ///@brief 使用外部传入的event_loop构建http_client
-    HttpClient(std::shared_ptr<EventLoop> loop, const std::string url);
+    ///@param loop 事件循环
+    ///@param url 请求的url
+    AsyncHttpClient(std::shared_ptr<EventLoop> loop, const std::string url);
 
-    ///@brief 使用内部创建的event_loop构建http_client
-    HttpClient(const std::string url);
+    ~AsyncHttpClient() = default;
 
-    ~HttpClient() = default;
-
-    HttpResponse Get(const std::string &url);
-
-    HttpResponse Post(const std::string &url, const HttpRequest &req);
+    void AddRequest(const HttpRequestPtr &req, const CallBack &cb, double timeout = 0.0);
+    void Run();
 
  private:
     void _on_connection(const TcpConnSPtr &conn);
@@ -35,10 +36,21 @@ class HttpClient {
  private:
     HttpHeaders m_headers;
     HttpRequest m_req;
-    HttpResponse m_rsp;
     std::shared_ptr<EventLoop> m_loop;
     std::unique_ptr<TcpClient> m_client;
 };
+
+///@brief 同步http客户端
+///@note [GET/POST/...]-> connect -> send -> recv -> http_parser -> HttpResponse
+class SyncHttpClient {
+ public:
+    SyncHttpClient(const std::string url);
+
+    ~SyncHttpClient() = default;
+
+ private:
+};
+
 }  // namespace EasyNet
 
 #endif  // !__EASYNET_HTTP_CLIENT_H

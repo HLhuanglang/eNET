@@ -17,3 +17,9 @@ void HttpHeaders::SetHeader(const std::string &key, const std::string &val) {
 void HttpHeaders::SetHeader(const char *key, const std::string &val) {
     m_headers[key] = val;
 }
+
+void HttpHeaders::SetHeader(std::map<std::string, std::string> headers) {
+    for (auto &header : headers) {
+        m_headers[header.first] = header.second;
+    }
+}

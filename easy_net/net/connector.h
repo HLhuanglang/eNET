@@ -23,6 +23,7 @@ class Connector : public IOEvent {
 
  public:
     // connector负责连接对端
+    // fixme：考虑多线程问题？ 但是TcpClient是单线程的，因此这里不需要考虑多线程问题
     void Start();  // 开始主动发起连接
 
  private:

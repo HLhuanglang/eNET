@@ -45,7 +45,7 @@ TcpServer::~TcpServer() {
 
 // 应该先loop，然后再acceptor
 void TcpServer::start() {
-    // 1,开启子线程(如果是子线程,这里直接跳过)
+    // 1,开启子线程(如果是子线程,这里直接跳过,由m_thread_cnt来判断)
     startThreadPool();
 
     // 2,开启主线程

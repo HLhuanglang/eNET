@@ -17,6 +17,7 @@ void TcpClient::connect() {
 }
 
 void TcpClient::NewConn(int fd, const InetAddress &peerAddr) {
+    // fixme：如果每次有连接事件都新建conn,那么新连接到来时旧连接会被释放...或许应该用map存所有的conn?
     m_conn = std::make_shared<TcpConn>(this, fd, peerAddr);
     m_conn->SetStatus(TcpConn::ConnStatus::CONNECTED);
     m_conn->EnableRead();
