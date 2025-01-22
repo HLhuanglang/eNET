@@ -1,5 +1,5 @@
 # 设置最低cmake版本,3.6-Morden CMake
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.12)
 
 # ---------------------------------------------------------------------------------------
 # Start EasyNet project

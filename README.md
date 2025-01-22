@@ -1,15 +1,14 @@
-<p align="center"><img src="https://hl1998-1255562705.cos.ap-shanghai.myqcloud.com/Img/20240418114045.png"></p>
-
-# EasyNet
+# eNET
 
 ## 1.序言
 
-我认为网络编程的能力对于一名优秀的后端开发来说是必要的。后台开发，无非就是server串server，服务之间定义一些业务协议，然后通过tcp传输，这种模式能覆盖绝大部分的产品。EasyNet的目标主要是用于学习网络编程中的各自细节，理解tcp是流式协议这一个概念，学会如何处理七层协议的组包拆包等
+我认为网络编程的能力对于一名优秀的后端开发来说是必要的。后台开发，无非就是server串server，服务之间定义一些业务协议，然后通过tcp传输，这种模式能覆盖绝大部分的产品，因此有必要深入学习一把网络系统：
+- EasyNet的目标主要是用于学习网络编程中的各自细节，理解tcp是流式协议这一个概念，学会如何处理七层协议的组包拆包等
+- tapip的目标主要是深入理解网络协议栈的实现细节
 
 ## 2.支持平台
 
 - linux
-- windows(doing)
 
 ## 3.依赖
 
@@ -67,6 +66,7 @@ cmake --build build
 | ------------ | -------------------------------------------------- |
 | cmake        | cmake安装模板文件|
 | docs         | 开发文档                                           |
+| tapip      | 基于tun/tap设备实现简易的tcp/ip协议栈 |
 | easy_net     | 网络库底层，目前主要支持tcp协议，udp暂未考虑       |
 | examples     | 使用easynet编写的demo       |
 | raw_examples | socket系列接口的原生使用方法、优秀的网络库使用案例 |
@@ -80,6 +80,8 @@ cmake --build build
 - [sim_muduo](https://gitee.com/coolbaul/sim_muduo)
 - [trantor](https://github.com/an-tao/trantor)
 - [ZlToolKit](https://github.com/ZLMediaKit/ZLToolKit)
+- [tapip](https://github.com/chobits/tapip)
+- [level-ip](https://github.com/saminiir/level-ip)
 
 ## 7.授权许可
 本项目采用 MIT 开源授权许可证，完整的授权说明已放置在 [LICENSE](LICENSE) 文件中。

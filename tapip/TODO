@@ -1,0 +1,35 @@
+1. TCP implementation
+ not implemented:
+  timer(retransmission/...)
+  packet retransmission
+  tcp option handling
+---
+ implemented:
+  tcp three-way handshake connection
+  tcp connection terminal
+  tcp data receiving and sending
+  tcp TIME-WAIT timer
+
+2. Application support
+ network debug tools: traceroute, arping, ss, route, arp, ip [...]
+
+3.
+ In TOP1, l2 cannot receive its reply packet sometimes!
+ (Should we use a single thread to receive packet and
+  another thread to parse it?)
+
+5. Add bridge programming, then we will not use brctl and can delete doc/brctl.sh
+
+6. test udp port allocation alogrithm
+
+7. multicast/broadcast ip address handling
+ ip option handling
+
+8. icmp error report to l4(TCP/UDP/RawIP)
+
+9. add cache layer for internal structure
+
+10. remove timer thread. use poll timeout to implement it
+
+11. support select, epoll, kqueue ...
+    or use a third-party event library

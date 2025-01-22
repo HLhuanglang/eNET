@@ -1,0 +1,123 @@
++ TOP1:
+================================================
+1. test icmp and ip fragment/defragment:
+ # sudo ./tapip
+ [net shell]: ping 10.20.133.20
+             (ping gateway, and see debug informantion)
+             (NOTE: maybe we should ping it many times, because we
+              cannot read and write linux tap device at the same time)
+ [net shell]: ping -s 60000 10.20.133.2
+             (ping someone on the same LAN via 60000-bytes icmp data)
+
+
+
+
++ TOP2:
+(tty1 and tty2 are in the same local host)
+================================================
+1. test arp reply:
+
+(tty1)	# sudo ./tapip
+(tty1)	[net shell]: debug arp
+	(waiting debug information)
+
+(tty2)	# sudo route add -net 10.0.0.0 netmask 255.255.255 tap0
+	# sudo arping 10.0.0.1 -I tap0
+
+================================================
+2. test ip(tap0 -> ./tapip) and icmp fragment
+
+(tty2)	# sudo tcpdump -vvv -i tap0
+	(waiting debug information)
+
+(tty1)	# sudo ./tapip
+(tty1)	[net shell]: ping -s 6000 10.0.0.2
+
+
+================================================
+3. test ip(./tapip -> tap0) and icmp defragment
+
+(tty2)	# ping 10.0.0.1 -s 6000
+
+(tty1)	# sudo ./tapip
+(tty1)	[net shell]: debug ip icmp
+	(see debug information)
+
+
+================================================
+4. test ip forward:
+
+(tty1)	# sudo route add -net 10.0.1.0 netmask 255.255.255.0 gw 10.0.0.1
+	# sudo ./tapip
+	[net shell]: debug ip
+	(waiting debug information)
+
+(tty2)	# ping 10.0.1.1
+
+================================================
+5. test:
+	1.icmp redirect
+	2.icmp time exceeded(ttl)
+
+(tty1)	# sudo route add -host 10.0.0.3 gw 10.0.0.1 tap0
+	# sudo ./tapip
+	[net shell]: debug ip icmp
+	(waiting debug information)
+
+(tty2)	# ping 10.0.0.3 -c 1
+	(waiting redirect reply)
+	# ping 10.0.0.3 -c 1 -t 1
+	(waiting time exceeded reply)
+
+================================================
+6. test icmp defragment timeout
+
+(tty1)	# (set "CONFIG_DEBUG_ICMPEXCFRAGTIME = y" in global Makefile)
+	# sudo ./tapip
+	[net shell]: debug ip icmp
+	(waiting debug information)
+
+(tty2)	# ping 10.0.0.1 -c 5 -s 60000
+	(waiting frag reassembly time exceeded reply)
+
+================================================
+7. test loopback device
+
+(tty1)	# sudo ./tapip
+	[net shell]: ping 10.0.0.1 -c1 -s65000
+	(waiting debug information)
+	[net shell]: ping 127.0.0.1
+	(waiting debug information)
+	[net shell]: ping 127.1.2.3
+	(waiting debug information)
+
+================================================
+8. udp test for sending packet
+
+(tty2)	# sudo iptables -I INPUT 9 -p udp -s 10.0.0.1 -j ACCEPT
+	# nc -l 12341
+        (waiting tty1's message)
+
+(tty1)	# sudo ./tapip
+	[net shell]: snc -u -c 10.0.0.2:12345
+        (input something)
+
+================================================
+9. udp test for receiving packet
+
+(tty2)	# nc 10.0.0.1 12345
+        (input something)
+
+(tty1)	# sudo ./tapip
+	[net shell]: snc -u -b 10.0.0.1:12345
+        (waiting tty2's message)
+
+================================================
+10. tcp test for receiving packet
+
+(tty1)	# sudo ./tapip
+	[net shell]: snc -b 0.0.0.0:12345
+        (waiting tty2's message)
+
+(tty2)  # cat Makefile | nc 10.0.0.1 12345
+

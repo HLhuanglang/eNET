@@ -2,3 +2,5 @@
 build
 tools/bin
 .vscode
+*.o
+easyip
